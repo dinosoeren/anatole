@@ -50,9 +50,19 @@
       {{ end }}
       <div class="post__content">
         {{ if (eq .Site.Params.disableTitleCapitalization true) }}
-          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <h3><a href="{{ .RelPermalink }}">
+            {{ if .Params.external }}
+              <i class="fas fa-external-link-alt" aria-label="External link"></i>
+            {{ end }}
+            {{ .Title }}
+          </a></h3>
         {{ else }}
-          <h3><a href="{{ .RelPermalink }}">{{ upper .Title }}</a></h3>
+          <h3><a href="{{ .RelPermalink }}">
+            {{ if .Params.external }}
+              <i class="fas fa-external-link-alt" aria-label="External link"></i>
+            {{ end }}
+            {{ upper .Title }}
+          </a></h3>
         {{ end }}
         {{ if .Site.Params.fullPostContent }}
           <p>{{ .Content | safeHTML | plainify }}</p>
