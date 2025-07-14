@@ -97,7 +97,10 @@
     font-weight: 500;
     text-decoration: none;
     border: 1.5px solid transparent;
-    transition: background 0.2s, color 0.2s, border 0.2s;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      border 0.2s;
     margin-bottom: 0.25em;
 
     @include color.themed() {
@@ -107,7 +110,8 @@
           background: nth($pastels, $i);
         }
       }
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         background: color.t('accent');
         border: color.t('border');
         text-decoration: none;
@@ -118,7 +122,8 @@
             background: nth($pastels, $i);
           }
         }
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
           background: color.t('primary');
           border: color.t('border');
         }

@@ -15,11 +15,15 @@ $themes: (
     warning: var.$warning,
     danger: var.$danger,
     pastels: (
-      #a3c9f9, // pastel blue
-      #f9d1d1, // pastel pink
-      #b8e2d3, // pastel mint
-      #ffe5b4, // pastel peach
-      #e2d5f7  // pastel lavender
+      #a3c9f9,
+      // pastel blue
+      #f9d1d1,
+      // pastel pink
+      #b8e2d3,
+      // pastel mint
+      #ffe5b4,
+      // pastel peach
+      #e2d5f7, // pastel lavender
     ),
   ),
   dark: (
@@ -35,11 +39,15 @@ $themes: (
     warning: var.$warning,
     danger: var.$danger,
     pastels: (
-      #3a5379, // muted blue
-      #7a4c58, // muted pink
-      #3d6656, // muted mint
-      #7a6240, // muted peach
-      #5a4c7a  // muted lavender
+      #3a5379,
+      // muted blue
+      #7a4c58,
+      // muted pink
+      #3d6656,
+      // muted mint
+      #7a6240,
+      // muted peach
+      #5a4c7a, // muted lavender
     ),
   ),
 );
