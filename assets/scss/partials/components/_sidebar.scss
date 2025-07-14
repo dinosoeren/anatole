@@ -78,4 +78,51 @@
       }
     }
   }
+
+  &__posts {
+    margin: 1.5em 0 0 0;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    justify-content: center;
+  }
+
+  &__post-link {
+    display: inline-block;
+    padding: 0.3em 1em;
+    border-radius: 999px;
+    color: color.t('primary');
+    font-size: 0.95em;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    margin-bottom: 0.25em;
+
+    @include color.themed() {
+      $pastels: color.t('pastels');
+      @for $i from 1 through length($pastels) {
+        &:nth-child(#{$i}) {
+          background: nth($pastels, $i);
+        }
+      }
+      &:hover, &:focus {
+        background: color.t('accent');
+        border: color.t('border');
+        text-decoration: none;
+      }
+      .theme--dark & {
+        @for $i from 1 through length($pastels) {
+          &:nth-child(#{$i}) {
+            background: nth($pastels, $i);
+          }
+        }
+        &:hover, &:focus {
+          background: color.t('primary');
+          border: color.t('border');
+        }
+      }
+    }
+  }
 }

@@ -42,6 +42,17 @@
         </li>
       {{ end }}
     </ul>
+    <div class="sidebar__posts">
+      {{ range $section := .Site.Params.postSections }}
+        {{ $sectionPage := site.GetPage (printf "section/%s" $section) }}
+        {{ $sectionTitle := cond (and $sectionPage $sectionPage.Title) $sectionPage.Title (title $section) }}
+        {{ $sectionURL := printf "/%s/" $section | relLangURL }}
+        {{ $postCount := len (where $.Site.RegularPages "Section" $section) }}
+        <a href="{{ $sectionURL }}" class="sidebar__post-link">
+          {{ $sectionTitle }} ({{ $postCount }})
+        </a>
+      {{ end }}
+    </div>
   </div>
   {{- partial "footer.html" (dict "context" . "footerClassModifier" "sidebar") -}}
 </div>
