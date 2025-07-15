@@ -11,10 +11,20 @@
       {{ range .Pages }}
         <ul class="archive__list">
           <li class="archive__list-item">
+            {{ $target := "" }}
+            {{ $postUrl := .RelPermalink }}
+            {{ if .Params.redirectUrl }}
+              {{ $postUrl = .Params.redirectUrl }}
+              {{ $target = "_blank" }}
+            {{ end }}
             {{ if (eq .Site.Params.disableArchiveTitleStyling true) }}
-              <a class="archive__list-title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Title }}</a>
+              <a class="archive__list-title" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}"
+                >{{ .Title }}</a
+              >
             {{ else }}
-              <a class="archive__list-title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ upper .Title }}</a>
+              <a class="archive__list-title" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}"
+                >{{ upper .Title }}</a
+              >
             {{ end }}
             <div class="archive__list-date">
               {{ if isset .Site.Params "listdateformat" }}
