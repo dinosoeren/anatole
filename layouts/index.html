@@ -34,19 +34,21 @@
 
   {{ $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
   {{ range $paginator.Pages }}
+    {{ $postClass := "" }}
+    {{ $target := "" }}
+    {{ $postUrl := .RelPermalink }}
+    {{ if .Params.redirectUrl }}
+      {{ $postUrl = .Params.redirectUrl }}
+      {{ $target = "_blank" }}
+      {{ $postClass = "external" }}
+    {{ end }}
     <div
-      class="post {{ with .Site.Params.doNotLoadAnimations }}
+      class="post {{ $postClass }} {{ with .Site.Params.doNotLoadAnimations }}
         .
       {{ else }}
         animated fadeInDown
       {{ end }}"
     >
-      {{ $target := "" }}
-      {{ $postUrl := .RelPermalink }}
-      {{ if .Params.redirectUrl }}
-        {{ $postUrl = .Params.redirectUrl }}
-        {{ $target = "_blank" }}
-      {{ end }}
       {{ if .Params.thumbnail }}
         <div class="post__thumbnail-wrapper">
           <a href="{{ $postUrl }}" target="{{ $target }}">
