@@ -219,6 +219,14 @@
     {{- partial "analytics/meta.html" . -}}
   {{ end }}
 
+  {{ $thumbnailHdLoader := resources.Get "js/thumbnail-hd-loader.js" }}
+  {{ $secureThumbnailHdLoaderJS := $thumbnailHdLoader |  resources.Minify | resources.Fingerprint }}
+  <script
+    type="text/javascript"
+    src="{{ $secureThumbnailHdLoaderJS.RelPermalink }}"
+    integrity="{{ $secureThumbnailHdLoaderJS.Data.Integrity }}"
+    crossorigin="anonymous"
+  ></script>
 
   <!-- Twitter Cards -->
   {{ template "_internal/twitter_cards.html" . }}

@@ -52,7 +52,13 @@
       {{ if .Params.thumbnail }}
         <div class="post__thumbnail-wrapper">
           <a href="{{ $postUrl }}" target="{{ $target }}">
-            <img class="post__thumbnail" src="{{ .Params.thumbnail | relURL }}" alt="Thumbnail image" loading="lazy" />
+            <img
+              class="post__thumbnail"
+              src="{{ .Params.thumbnail | relURL }}"
+              alt="Thumbnail image"
+              loading="lazy"
+              {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
+            />
           </a>
         </div>
       {{ end }}

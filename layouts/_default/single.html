@@ -8,7 +8,12 @@
   >
     {{ if .Params.thumbnail }}
       <div class="post__thumbnail-wrapper">
-        <img class="post__thumbnail" src="{{ .Params.thumbnail | relURL }}" alt="Thumbnail image" />
+        <img
+          class="post__thumbnail"
+          src="{{ .Params.thumbnail | relURL }}"
+          alt="Thumbnail image"
+          {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
+        />
       </div>
     {{ end }}
     <div class="post__content">
