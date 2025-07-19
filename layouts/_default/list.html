@@ -20,7 +20,7 @@
           {{ end }}
           <li class="archive__list-item {{ $postClass }}">
             {{ if (eq .Site.Params.disableArchiveTitleStyling true) }}
-              <a class="archive__list-title" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}"></a>
+              <a class="archive__list-title" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}">
                 {{ if .Params.redirectUrl }}
                   <i class="fas fa-external-link-alt" aria-label="External link"></i>
                 {{ end }}
