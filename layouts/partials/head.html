@@ -134,10 +134,26 @@
   {{- end -}}
 
 
+  <!-- Web manifest (Android PWA) -->
+  {{ if .Site.Params.manifest }}
+    <link rel="manifest" href="{{ .Site.Params.manifest | relURL }}" />
+  {{ end }}
+
+
   <!-- Favicons -->
   <link rel="shortcut icon" href="{{ .Site.Params.favicon | relURL }}favicon.ico" type="image/x-icon" />
-  <link rel="icon" type="image/png" sizes="512x512" href="{{ .Site.Params.favicon | relURL }}android-chrome-512x512.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="{{ .Site.Params.favicon | relURL }}android-chrome-192x192.png" />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="512x512"
+    href="{{ .Site.Params.favicon | relURL }}android-chrome-512x512.png"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="192x192"
+    href="{{ .Site.Params.favicon | relURL }}android-chrome-192x192.png"
+  />
   <link rel="apple-touch-icon" sizes="180x180" href="{{ .Site.Params.favicon | relURL }}apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="{{ .Site.Params.favicon | relURL }}favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="{{ .Site.Params.favicon | relURL }}favicon-16x16.png" />
