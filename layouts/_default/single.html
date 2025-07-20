@@ -12,6 +12,7 @@
           class="post__thumbnail"
           src="{{ .Params.thumbnail | relURL }}"
           alt="Thumbnail image"
+          fetchpriority="high"
           {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
         />
       </div>

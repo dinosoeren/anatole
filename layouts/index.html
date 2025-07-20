@@ -33,7 +33,7 @@
   {{ end }}
 
   {{ $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
-  {{ range $paginator.Pages }}
+  {{ range $index, $page := $paginator.Pages }}
     {{ $postClass := "" }}
     {{ $target := "" }}
     {{ $postUrl := .RelPermalink }}
@@ -56,7 +56,7 @@
               class="post__thumbnail"
               src="{{ .Params.thumbnail | relURL }}"
               alt="Thumbnail image"
-              loading="lazy"
+              {{ if le $index 1 }}fetchpriority="high"{{ else }}loading="lazy"{{ end }}
               {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
             />
           </a>
