@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
       img.src = hdSrc;
       img.removeAttribute('data-hd-src');
     };
-    hdImg.src = hdSrc;
+    setTimeout(() => {
+      hdImg.src = hdSrc;
+    }, 1);
   }
 
   // Check if Intersection Observer is supported
