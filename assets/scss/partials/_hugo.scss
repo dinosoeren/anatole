@@ -1,5 +1,6 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use "sass:color" as scolor;
 
 a {
   text-decoration: none;
@@ -16,17 +17,60 @@ a {
 }
 
 blockquote {
-  padding: 0 1em;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.1em 1em;
 
   @include color.themed() {
-    color: color.t('primary');
+    background: color.t('primary-lighter');
 
     @include conf.ltr {
-      border-left: color.t('border');
+      border-left: 5px solid color.t('info');
     }
 
     @include conf.rtl {
-      border-right: color.t('border');
+      border-right: 5px solid color.t('info');
+    }
+  }
+  p:first-of-type {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-left: 0.5em;
+  }
+  p:nth-of-type(2) {
+    margin-top: -1em;
+  }
+  p:not(:first-of-type) {
+    margin-left: 2.2em;
+  }
+  &.success {
+    @include color.themed() {
+      background: scolor.mix(color.t('primary-lighter'), color.t('success'), 80%);
+      border-left-color: color.t('success');
+    }
+  }
+  &.failure {
+    @include color.themed() {
+      background: scolor.mix(color.t('primary-lighter'), color.t('danger'), 80%);
+      border-left-color: color.t('danger');
+    }
+  }
+  &.warning {
+    @include color.themed() {
+      background: scolor.mix(color.t('primary-lighter'), color.t('warning'), 80%);
+      border-left-color: color.t('warning');
+    }
+  }
+  &.disclaimer {
+    @include color.themed() {
+      background: scolor.mix(color.t('primary-lighter'), color.t('disclaimer'), 80%);
+      border-left-color: color.t('disclaimer');
+    }
+  }
+  &.tip {
+    @include color.themed() {
+      background: scolor.mix(color.t('primary-lighter'), color.t('tip'), 80%);
+      border-left-color: color.t('tip');
     }
   }
 }
