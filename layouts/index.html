@@ -56,7 +56,11 @@
               class="post__thumbnail"
               src="{{ .Params.thumbnail | relURL }}"
               alt="Thumbnail image"
-              {{ if le $index 1 }}fetchpriority="high"{{ else }}loading="lazy"{{ end }}
+              {{ if le $index 1 }}
+                fetchpriority="high"
+              {{ else }}
+                loading="lazy"
+              {{ end }}
               {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
             />
           </a>
