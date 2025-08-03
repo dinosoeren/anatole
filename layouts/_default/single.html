@@ -56,6 +56,19 @@
             <em class="fas fa-stopwatch post__meta-icon"></em>
             <span class="post__meta-text">{{ i18n "reading_time" .ReadingTime }}</span>
           </li>
+          {{ if .Params.attr }}
+            <li class="post__meta-item">
+              <em class="fas fa-camera post__meta-icon"></em>
+              <span class="post__meta-text">
+                Image:
+                {{ if .Params.attrLink }}
+                  <a href="{{ .Params.attrLink }}" target="_blank" rel="noopener">{{ .Params.attr }}</a>
+                {{ else }}
+                  {{ .Params.attr }}
+                {{ end }}
+              </span>
+            </li>
+          {{ end }}
         </ul>
       {{ end }}
 
