@@ -117,6 +117,12 @@
 
           {{ end }}</span
         >
+        {{ if .Params.updated }}
+          <em class="fas fa-edit"></em>
+          <span class="post__footer-date">
+            {{ partial "humanize-date.html" (time .Params.updated) }}
+          </span>
+        {{ end }}
         {{ if .Params.attr }}
           <em class="fas fa-camera"></em>
           <span class="post__footer-date">

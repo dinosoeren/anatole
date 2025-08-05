@@ -48,6 +48,22 @@ other = "Info"
 [update]
 other = "Update"
 
+[days_ago]
+one = "{{ .Count }} day ago"
+other = "{{ .Count }} days ago"
+
+[weeks_ago]
+one = "{{ .Count }} week ago"
+other = "{{ .Count }} weeks ago"
+
+[months_ago]
+one = "{{ .Count }} month ago"
+other = "{{ .Count }} months ago"
+
+[years_ago]
+one = "{{ .Count }} year ago"
+other = "{{ .Count }} years ago"
+
 [series_posts]
 other = "Posts in this series"
 

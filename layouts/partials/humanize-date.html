@@ -1,0 +1,14 @@
+{{ $date := . }}
+{{ $days := div (sub now.Unix $date.Unix) 86400 }}
+{{ if gt $days 365 }}
+  {{ $years := div $days 365 }}
+  {{ i18n "years_ago" (dict "Count" $years) }}
+{{ else if gt $days 30 }}
+  {{ $months := div $days 30 }}
+  {{ i18n "months_ago" (dict "Count" $months) }}
+{{ else if gt $days 7 }}
+  {{ $weeks := div $days 7 }}
+  {{ i18n "weeks_ago" (dict "Count" $weeks) }}
+{{ else if gt $days 0 }}
+  {{ i18n "days_ago" (dict "Count" $days) }}
+{{ end }}

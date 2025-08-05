@@ -1,5 +1,9 @@
 {{- if (eq .Site.Params.oldContentWarning true) -}}
-  {{- $ageDays := div (sub now.Unix .Date.Unix) 86400 -}}
+  {{- $expiryDate := .Date -}}
+  {{- with .Params.updated -}}
+    {{- $expiryDate = time . -}}
+  {{- end -}}
+  {{- $ageDays := div (sub now.Unix $expiryDate.Unix) 86400 -}}
   {{- $duration := .Site.Params.oldContentDuration -}}
 
   {{- $isPostSection := (eq .Type "post") -}}

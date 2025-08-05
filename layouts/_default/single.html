@@ -52,6 +52,14 @@
               {{ end }}
             </span>
           </li>
+          {{ if .Params.updated }}
+            <li class="post__meta-item">
+              <em class="fas fa-edit post__meta-icon"></em>
+              <span class="post__meta-text">
+                {{ partial "humanize-date.html" (time .Params.updated) }}
+              </span>
+            </li>
+          {{ end }}
           <li class="post__meta-item">
             <em class="fas fa-stopwatch post__meta-icon"></em>
             <span class="post__meta-text">{{ i18n "reading_time" .ReadingTime }}</span>
