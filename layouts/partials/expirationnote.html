@@ -20,7 +20,8 @@
   {{- if and (gt $ageDays $duration) (ne $duration 0) -}}
     <div class="alert">
       <div class="alert__indicator">!</div>
-      {{ i18n "old_content_warning" (dict "Count" $duration) }}
+      {{- $durationInYears := div $duration 365 -}}
+      {{ i18n "old_content_warning" (dict "Count" $durationInYears) }}
     </div>
   {{- end -}}
 

@@ -9,8 +9,8 @@ one = "Egyperces olvasmány"
 other = "{{ .Count }} perces olvasmány"
 
 [old_content_warning]
-one = "Figyelem: Ez a bejegyzés több, mint {{ .Count }} napja készült. A benne szereplő információ elavult lehet."
-other = "Figyelem: Ez a bejegyzés több, mint {{ .Count }} napja készült. A benne szereplő információ elavult lehet."
+one = "Figyelem: Ez a bejegyzés több, mint {{ .Count }} éve készült. A benne szereplő információ elavult lehet."
+other = "Figyelem: Ez a bejegyzés több, mint {{ .Count }} éve készült. A benne szereplő információ elavult lehet."
 
 [page_not_found]
 other = "Az oldal nem található"

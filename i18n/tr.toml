@@ -9,8 +9,8 @@ one = "Bir dakikalık okuma"
 other = "{{ .Count }}-dakikalık okuma"
 
 [old_content_warning]
-one = "Uyarı: Bu gönderi en fazla {{ .Count }} gün eski. Bilgiler eski olabilir."
-other = "Uyarı: Bu gönderi en fazla {{ .Count }} gün eski. Bilgiler eski olabilir."
+one = "Uyarı: Bu gönderi en fazla {{ .Count }} yıl eski. Bilgiler eski olabilir."
+other = "Uyarı: Bu gönderi en fazla {{ .Count }} yıl eski. Bilgiler eski olabilir."
 
 [page_not_found]
 other = "Sayfa bulunamadı"
@@ -37,7 +37,7 @@ other = "Isim"
 other = "e-posta"
 
 [message]
-other = "Mesaj" 
+other = "Mesaj"
 
 [warning]
 other = "Uyarı"
