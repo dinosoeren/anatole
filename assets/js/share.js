@@ -8,15 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
         text: button.getAttribute('data-share-text'),
         url: button.getAttribute('data-share-url'),
       };
-      if (navigator.canShare && navigator.canShare()) {
+      if (navigator.share) {
         navigator.share(shareData).catch((err) => {
+          copyToClipboard(shareData.url);
           console.error('Error sharing:', err);
         });
+      } else {
+        // Fallback to copy to clipboard
+        copyToClipboard(shareData.url);
       }
-      // Fallback to copy to clipboard
-      navigator.clipboard.writeText(shareData.url).catch((err) => {
-        console.error('Failed to copy: ', err);
-      });
     });
   });
 });
+
+function copyToClipboard(text) {
+  return navigator.clipboard.writeText(text).catch((err) => {
+    console.error('Failed to copy: ', err);
+  });
+}
