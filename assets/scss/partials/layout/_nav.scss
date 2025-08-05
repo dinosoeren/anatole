@@ -19,10 +19,6 @@
     padding: 0;
     width: 100%;
 
-    @include color.themed() {
-      background-color: color.t('primary-lighter');
-    }
-
     @include conf.desktop {
       display: flex;
       padding: $py-desktop 30px;

@@ -3,8 +3,9 @@
 
 .header {
   @include color.themed() {
-    background-color: color.t('accent');
+    background-color: adjust-color(color.t('accent'), $alpha: -0.3);
   }
+  backdrop-filter: blur(20px);
   width: 100%;
   position: fixed;
   z-index: 1;
