@@ -134,6 +134,7 @@
             {{ end }}
           </span>
         {{ end }}
+        {{ partial "share.html" . }}
         {{ with .Page.Params.Categories }}
           {{ partial "taxonomy/categories.html" . }}
         {{ end }}

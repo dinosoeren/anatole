@@ -1,0 +1,49 @@
+@use 'modules/color_theme' as color;
+
+.share-buttons {
+  display: inline-block;
+  margin-top: 1rem;
+  a {
+    margin-right: 10px;
+    cursor: pointer;
+
+    @include color.themed() {
+      color: color.t('info');
+    }
+
+    &:hover {
+      @include color.themed() {
+        color: color.t('primary');
+      }
+    }
+  }
+}
+
+.post__meta .share-buttons {
+  margin-top: 0;
+}
+
+.post__footer + .share-buttons {
+  display: block;
+  margin-top: 2rem;
+  a {
+    margin-right: 0;
+    margin-bottom: 10px;
+    display: inline-block;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+
+    @include color.themed() {
+      color: color.t('info');
+      background-color: color.t('primary-lighter');
+    }
+
+    &:hover {
+      @include color.themed() {
+        background-color: color.t('primary');
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{{ $link := .Permalink }}
+{{ if .Params.redirectUrl }}
+  {{ $link = .Params.redirectUrl }}
+{{ end }}
+
+
+<div class="share-buttons">
+  <a
+    role="button"
+    title="Copy Link"
+    class="share-button"
+    data-share-url="{{ $link }}"
+    data-share-title="{{ .Title }}"
+    data-share-text="{{ .Summary }}"
+  >
+    <em class="fas fa-share-alt"></em
+  ></a>
+  <a
+    href="https://www.facebook.com/sharer/sharer.php?u={{ $link }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Share on Facebook"
+    ><em class="fab fa-facebook"></em
+  ></a>
+  <a
+    href="https://x.com/intent/post/?url={{ $link }}&text={{ .Title | urlquery }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Share on X"
+    ><em class="fab fa-twitter"></em
+  ></a>
+  <a
+    href="https://www.linkedin.com/shareArticle?mini=true&url={{ $link }}&title={{ .Title | urlquery }}&source={{ .Site.Title | urlquery }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Share on LinkedIn"
+    ><em class="fab fa-linkedin"></em
+  ></a>
+  <a
+    href="mailto:?subject={{ .Title | urlquery }}&body={{ $link }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Share via Email"
+    ><em class="fas fa-envelope"></em
+  ></a>
+</div>

@@ -181,6 +181,15 @@
     crossorigin="anonymous"
   ></script>
 
+  {{ $shareJs := resources.Get "js/share.js" }}
+  {{ $secureShareJs := $shareJs |  resources.Minify | resources.Fingerprint }}
+  <script
+    type="text/javascript"
+    src="{{ $secureShareJs.RelPermalink }}"
+    integrity="{{ $secureShareJs.Data.Integrity }}"
+    crossorigin="anonymous"
+  ></script>
+
   {{ if not .Site.Params.disableThemeSwitcher }}
     {{ $anatoleThemeSwitcher := resources.Get "js/anatole-theme-switcher.js" }}
     {{ $secureThemeSwitcherJS := $anatoleThemeSwitcher |  resources.Minify | resources.Fingerprint }}
