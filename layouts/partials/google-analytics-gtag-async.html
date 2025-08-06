@@ -1,10 +1,17 @@
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.gtagId }}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag('js', new Date());
-  gtag('config', '{{ .Site.Params.gtagId }}');
-</script>
+<div id="gtag-id" data-gtag-id="{{ .Site.Params.gtagId }}"></div>
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.gtagId }}"
+  integrity="{{ .Site.Params.gtagIntegrity }}"
+  crossorigin="anonymous"
+></script>
+
+{{ $gtagJs := resources.Get "js/gtag.js" }}
+{{ $secureGtagJs := $gtagJs |  resources.Minify | resources.Fingerprint }}
+<script
+  type="text/javascript"
+  src="{{ $secureGtagJs.RelPermalink }}"
+  integrity="{{ $secureGtagJs.Data.Integrity }}"
+  crossorigin="anonymous"
+></script>
