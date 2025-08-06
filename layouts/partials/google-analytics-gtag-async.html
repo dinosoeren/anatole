@@ -1,11 +1,6 @@
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <div id="gtag-id" data-gtag-id="{{ .Site.Params.gtagId }}"></div>
-<script
-  async
-  src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.gtagId }}"
-  integrity="{{ .Site.Params.gtagIntegrity }}"
-  crossorigin="anonymous"
-></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.gtagId }}"></script>
 
 {{ $gtagJs := resources.Get "js/gtag.js" }}
 {{ $secureGtagJs := $gtagJs |  resources.Minify | resources.Fingerprint }}
