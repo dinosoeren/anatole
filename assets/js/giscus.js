@@ -1,0 +1,48 @@
+const getStoredTheme = () => (localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+
+const setGiscusTheme = () => {
+  const sendMessage = (message) => {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (iframe) {
+      iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+    }
+  };
+  sendMessage({ setConfig: { theme: getStoredTheme() } });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const giscusData = document.getElementById('giscus-data');
+  if (!giscusData) {
+    console.warn('Giscus data element not found.');
+    return;
+  }
+
+  const giscusAttributes = {
+    src: 'https://giscus.app/client.js',
+    'data-repo': giscusData.dataset.repo,
+    'data-repo-id': giscusData.dataset.repoId,
+    'data-category': giscusData.dataset.category,
+    'data-category-id': giscusData.dataset.categoryId,
+    'data-mapping': giscusData.dataset.mapping || 'pathname',
+    'data-strict': giscusData.dataset.strict || '0',
+    'data-reactions-enabled': giscusData.dataset.reactionsEnabled || '1',
+    'data-emit-metadata': giscusData.dataset.emitMetadata || '0',
+    'data-input-position': giscusData.dataset.inputPosition || 'bottom',
+    'data-theme': getStoredTheme(),
+    'data-lang': giscusData.dataset.lang || 'en',
+    'data-loading': giscusData.dataset.loading || 'lazy',
+    crossorigin: 'anonymous',
+    async: '',
+  };
+
+  // Dynamically create script tag.
+  const giscusScript = document.createElement('script');
+  Object.entries(giscusAttributes).forEach(([key, value]) => giscusScript.setAttribute(key, value));
+  document.getElementById('comment').appendChild(giscusScript);
+
+  // Update giscus theme when the theme switcher is clicked.
+  const themeSwitcher = document.querySelector('.themeswitch');
+  if (themeSwitcher) {
+    themeSwitcher.addEventListener('click', setGiscusTheme);
+  }
+});
