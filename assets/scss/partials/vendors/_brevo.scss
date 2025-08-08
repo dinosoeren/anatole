@@ -54,11 +54,12 @@
 .sib-form {
   text-align: center;
   background-color: transparent;
-  padding: 0;
+  padding: 0 20px;
   margin: 30px 0 86px 0;
 }
 
 .post__content .sib-form {
+  padding: 0;
   margin: 60px 0;
 }
 
@@ -157,5 +158,20 @@
     background-color: #3e4857;
     border-radius: 3px;
     border-width: 0px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  #sib-container {
+    padding: 16px 0;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .post__content .sib-form {
+    margin: 30px 0;
+  }
+  #sib-container {
+    padding: 16px 9px;
   }
 }
