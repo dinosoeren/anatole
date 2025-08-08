@@ -117,12 +117,18 @@
         {{- partial "related.html" . -}}
       {{- end -}}
 
-      {{- if (eq .Params.contact true) -}}
-        {{- partial "contact.html" . -}}
-      {{- end -}}
-
       {{- if (eq .Site.Params.mermaid.enable true) -}}
         {{- partial "mermaid.html" . -}}
+      {{- end -}}
+
+      {{ if and .Site.Params.brevoFormAction (ne .Params.noNewsletter true) }}
+        <div class="newsletter">
+          {{ partial "brevo.html" . }}
+        </div>
+      {{ end }}
+
+      {{- if (eq .Params.contact true) -}}
+        {{- partial "contact.html" . -}}
       {{- end -}}
     </div>
     <div class="post__footer">
