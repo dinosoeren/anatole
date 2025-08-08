@@ -1,6 +1,15 @@
 {{ if .Page.Store.Get "hasMermaid" }}
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-  <script>
+  <script
+    type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"
+    integrity="sha384-UzWEhMP22MxNnr2bzqAdmtf1FDy5iKDUq6hLXJFLqC7dfGkc6W/hshbx9m71zyt5"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    type="text/javascript"
+    integrity="sha384-Rha5Bjn5EBBO5M1fKWWUeDo+72x3YVtjVIQ2bQMeTbVf6IAUBhAKTStUSOVRxfXA"
+    crossorigin="anonymous"
+  >
     mermaid.initialize({ startOnLoad: true });
   </script>
 {{ end }}
