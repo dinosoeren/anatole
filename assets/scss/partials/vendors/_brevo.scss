@@ -1,6 +1,6 @@
 @use 'modules/color_theme' as color;
 
-.sib-form {
+.newsletter .sib-form {
   text-align: center;
   background-color: transparent;
   padding: 0 20px;
@@ -178,7 +178,7 @@
   }
 }
 
-.post__content .sib-form {
+.post__content .newsletter .sib-form {
   padding: 0;
   margin: 60px 0;
 }
@@ -195,7 +195,5 @@
   }
   .sib-form #sib-container {
     padding: 16px 9px;
-  }
-  .sib-form #sib-form .sib-form-block__button {
   }
 }
