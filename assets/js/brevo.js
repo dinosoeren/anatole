@@ -59,3 +59,49 @@ document.addEventListener('DOMContentLoaded', function () {
   // Add scroll event listener
   window.addEventListener('scroll', onScrollCheckForm);
 });
+
+// Listen for email input events
+document.addEventListener('DOMContentLoaded', () => {
+  const emailInput = document.getElementById('EMAIL');
+  const optinContainer = document.querySelector('.sib-optin');
+  const declarationContainer = document.querySelector('.sib-form__declaration');
+  const subscribeButton = document.querySelector('.sib-form-block__button');
+  const optinCheckbox = document.getElementById('OPT_IN');
+
+  if (!emailInput || !optinContainer || !declarationContainer || !subscribeButton || !optinCheckbox) {
+    return;
+  }
+
+  subscribeButton.disabled = true;
+  subscribeButton.classList.add('is-disabled');
+
+  const validateEmail = (email) => {
+    const re =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const checkFormValidity = () => {
+    const isEmailValid = validateEmail(emailInput.value);
+    const isOptinChecked = optinCheckbox.checked;
+
+    if (isEmailValid) {
+      optinContainer.classList.add('is-visible');
+      declarationContainer.classList.add('is-visible');
+    } else {
+      optinContainer.classList.remove('is-visible');
+      declarationContainer.classList.remove('is-visible');
+    }
+
+    if (isEmailValid && isOptinChecked) {
+      subscribeButton.disabled = false;
+      subscribeButton.classList.remove('is-disabled');
+    } else {
+      subscribeButton.disabled = true;
+      subscribeButton.classList.add('is-disabled');
+    }
+  };
+
+  emailInput.addEventListener('input', checkFormValidity);
+  optinCheckbox.addEventListener('change', checkFormValidity);
+});
