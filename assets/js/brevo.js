@@ -18,21 +18,27 @@ window.translation = {
 
 var AUTOHIDE = Boolean(1);
 
-// When brevo form container scrolls into view, load recaptcha
+// Listen for email input events to show disclosure and load recaptcha
 document.addEventListener('DOMContentLoaded', function () {
   let loadedReCaptcha = false;
   const formContainer = document.getElementById('sib-form-container');
   if (!formContainer) {
-    console.warn(`Brevo form container not found, won't load recaptcha on scroll`);
     return;
   }
 
-  function loadReCaptchaIfFormInView() {
+  const emailInput = document.getElementById('EMAIL');
+  const optinContainer = document.querySelector('.sib-optin');
+  const declarationContainer = document.querySelector('.sib-form__declaration');
+  const subscribeButton = document.querySelector('.sib-form-block__button');
+  const optinCheckbox = document.getElementById('OPT_IN');
+
+  if (!emailInput || !optinContainer || !declarationContainer || !subscribeButton || !optinCheckbox) {
+    return;
+  }
+
+  function loadReCaptcha() {
     if (loadedReCaptcha) return;
-
-    const scrollPosition = window.scrollY + window.innerHeight + 100; // offset for better UX
-
-    if (formContainer && scrollPosition >= formContainer.offsetTop) {
+    if (formContainer) {
       const scriptEl = document.createElement('script');
       scriptEl.src = 'https://www.google.com/recaptcha/api.js?hl=en&trustedtypes=true';
 
@@ -42,34 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       loadedReCaptcha = true;
     }
-  }
-
-  // Throttled scroll handler for better performance
-  let ticking = false;
-  function onScrollCheckForm() {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        loadReCaptchaIfFormInView();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }
-
-  // Add scroll event listener
-  window.addEventListener('scroll', onScrollCheckForm);
-});
-
-// Listen for email input events
-document.addEventListener('DOMContentLoaded', () => {
-  const emailInput = document.getElementById('EMAIL');
-  const optinContainer = document.querySelector('.sib-optin');
-  const declarationContainer = document.querySelector('.sib-form__declaration');
-  const subscribeButton = document.querySelector('.sib-form-block__button');
-  const optinCheckbox = document.getElementById('OPT_IN');
-
-  if (!emailInput || !optinContainer || !declarationContainer || !subscribeButton || !optinCheckbox) {
-    return;
   }
 
   subscribeButton.disabled = true;
@@ -88,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isEmailValid) {
       optinContainer.classList.add('is-visible');
       declarationContainer.classList.add('is-visible');
+      loadReCaptcha();
     } else {
       optinContainer.classList.remove('is-visible');
       declarationContainer.classList.remove('is-visible');
