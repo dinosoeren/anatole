@@ -22,7 +22,30 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function copyToClipboard(text) {
-  return navigator.clipboard.writeText(text).catch((err) => {
-    console.error('Failed to copy: ', err);
-  });
+  return navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      let overlay = document.querySelector('.notifs-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.classList.add('notifs-overlay');
+        document.body.appendChild(overlay);
+      }
+      const notif = document.createElement('div');
+      notif.classList.add('copy-notification');
+      notif.innerText = '✅ Post link copied to your clipboard';
+      overlay.appendChild(notif);
+      setTimeout(() => {
+        notif.classList.add('visible');
+      }, 50);
+      setTimeout(() => {
+        notif.classList.remove('visible');
+      }, 5000);
+      setTimeout(() => {
+        document.body.removeChild(notif);
+      }, 6000);
+    })
+    .catch((err) => {
+      console.error('Failed to copy: ', err);
+    });
 }
