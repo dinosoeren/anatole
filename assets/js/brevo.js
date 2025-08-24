@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const checkFormValidity = (input) => {
     const isEmailValid = validateEmail(input.value);
 
-    if (optinCheckbox) {
+    if (input === emailInput) {
       const isOptinChecked = optinCheckbox.checked;
 
       if (isEmailValid) {
