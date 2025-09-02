@@ -166,6 +166,12 @@
           {{- partial "series.html" . -}}
         </div>
       {{- end -}}
+
+      {{ if and .Site.Params.brevoFormAction (ne .Params.noNewsletter true) }}
+        <div class="newsletter">
+          {{ partial "brevo.html" . }}
+        </div>
+      {{ end }}
     {{ end }}
   {{ end }}
 
