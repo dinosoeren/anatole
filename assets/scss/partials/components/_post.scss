@@ -111,7 +111,6 @@
 
       font-size: $font-size-h1;
       letter-spacing: 1px;
-      line-height: 1;
 
       a {
         font-size: $font-size-h1;
@@ -123,12 +122,11 @@
     }
 
     h2 {
-      $font-size-h2: 2.4rem;
+      $font-size-h2: 2.8rem;
 
       font-size: $font-size-h2;
       font-weight: 600;
       letter-spacing: 1px;
-      line-height: 1;
 
       a {
         font-size: $font-size-h2;
@@ -140,15 +138,30 @@
     }
 
     h3 {
-      $font-size-h3: 2rem;
+      $font-size-h3: 2.3rem;
 
       font-size: $font-size-h3;
       font-weight: 600;
       letter-spacing: 1px;
-      line-height: 1;
 
       a {
         font-size: $font-size-h3;
+
+        @include color.themed() {
+          color: color.t('primary');
+        }
+      }
+    }
+
+    h4 {
+      $font-size-h4: 2rem;
+
+      font-size: $font-size-h4;
+      font-weight: 600;
+      letter-spacing: 1px;
+
+      a {
+        font-size: $font-size-h4;
 
         @include color.themed() {
           color: color.t('primary');
