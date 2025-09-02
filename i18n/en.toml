@@ -5,8 +5,8 @@ other = "category"
 other = "tag"
 
 [reading_time]
-one = "One-minute read"
-other = "{{ .Count }}-minute read"
+one = "1m read"
+other = "{{ .Count }}m read"
 
 [old_content_warning]
 one = "Warning: This post is over {{ .Count }} year old. The information may be out of date."
@@ -22,7 +22,7 @@ other = "Sorry, this page does not exist."
 other = "You can head back to <a href=\"{{ . }}\">homepage</a>."
 
 [comments]
-other = "comments"
+other = "Comments"
 
 [send]
 other = "Send"
@@ -52,28 +52,28 @@ other = "Update"
 other = "Just now"
 
 [minutes_ago]
-one = "{{ .Count }} min ago"
-other = "{{ .Count }} mins ago"
+one = "{{ .Count }}m ago"
+other = "{{ .Count }}m ago"
 
 [hours_ago]
-one = "{{ .Count }} hour ago"
-other = "{{ .Count }} hours ago"
+one = "{{ .Count }}h ago"
+other = "{{ .Count }}h ago"
 
 [days_ago]
-one = "{{ .Count }} day ago"
-other = "{{ .Count }} days ago"
+one = "{{ .Count }}d ago"
+other = "{{ .Count }}d ago"
 
 [weeks_ago]
-one = "{{ .Count }} week ago"
-other = "{{ .Count }} weeks ago"
+one = "{{ .Count }}w ago"
+other = "{{ .Count }}w ago"
 
 [months_ago]
-one = "{{ .Count }} month ago"
-other = "{{ .Count }} months ago"
+one = "{{ .Count }}mo ago"
+other = "{{ .Count }}mo ago"
 
 [years_ago]
-one = "{{ .Count }} year ago"
-other = "{{ .Count }} years ago"
+one = "{{ .Count }}y ago"
+other = "{{ .Count }}y ago"
 
 [series_posts]
 other = "Posts in this series"
