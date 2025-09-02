@@ -1,6 +1,6 @@
 {{- if (eq .Site.Params.oldContentWarning true) -}}
   {{- $expiryDate := .Date -}}
-  {{- with .Params.updated -}}
+  {{- with .Lastmod -}}
     {{- $expiryDate = time . -}}
   {{- end -}}
   {{- $ageDays := div (sub now.Unix $expiryDate.Unix) 86400 -}}

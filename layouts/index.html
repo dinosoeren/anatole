@@ -117,10 +117,10 @@
 
           {{ end }}</span
         >
-        {{ if .Params.updated }}
+        {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
           <em class="fas fa-edit"></em>
           <span class="post__footer-date">
-            {{ partial "humanize-date.html" (time .Params.updated) }}
+            {{ partial "humanize-date.html" (time .Lastmod) }}
           </span>
         {{ end }}
         {{ if .Params.attr }}
