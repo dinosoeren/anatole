@@ -187,9 +187,15 @@
     pre {
       padding: 5px;
       overflow-x: auto;
+      position: relative;
 
       @include color.themed() {
         background-color: color.t('primary-lighter');
+      }
+
+      @include conf.mobile {
+        width: calc(100% + 60px);
+        left: -30px;
       }
     }
 
