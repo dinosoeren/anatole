@@ -80,7 +80,6 @@
 
         @include color.themed() {
           background-color: color.t('accent');
-          border: 1px solid color.t('primary-lighter');
         }
 
         @include conf.desktop {
@@ -90,6 +89,10 @@
           max-width: none;
           border-radius: 0.5em;
           padding: 0;
+
+          @include color.themed() {
+            border: 1px solid color.t('primary-lighter');
+          }
         }
       }
 
@@ -123,6 +126,7 @@
     border-radius: 0.5em;
 
     @include color.themed() {
+      border: color.t('border');
       background: mix(color.t('primary-lighter'), rgba(0, 0, 0, 0));
     }
 
@@ -188,6 +192,7 @@
     @include color.themed() {
       background: color.t('accent');
       color: color.t('info');
+      border: 1px solid color.t('primary-lighter');
     }
 
     &:hover {
