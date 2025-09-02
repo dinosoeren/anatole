@@ -279,6 +279,8 @@
 
       @include conf.mobile {
         max-width: calc(100% + 60px);
+        width: calc(100% + 60px);
+        height: auto;
         left: -30px;
       }
     }
