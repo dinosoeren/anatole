@@ -28,11 +28,11 @@
                   {{ .Title }}</a
                 >
               {{ else }}
-                <a class="archive__list-title" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}">
+                <a class="archive__list-title styled" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}">
                   {{ if .Params.redirectUrl }}
                     <i class="fas fa-external-link-alt" aria-label="External link"></i>
                   {{ end }}
-                  {{ upper .Title }}</a
+                  {{ .Title }}</a
                 >
               {{ end }}
               <div class="archive__list-date">

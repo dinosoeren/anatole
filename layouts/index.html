@@ -77,12 +77,12 @@
             </a>
           </h3>
         {{ else }}
-          <h3>
+          <h3 class="upper">
             <a href="{{ $postUrl }}" target="{{ $target }}">
               {{ if .Params.redirectUrl }}
                 <i class="fas fa-external-link-alt" aria-label="External link"></i>
               {{ end }}
-              {{ upper .Title }}
+              {{ .Title }}
             </a>
           </h3>
         {{ end }}

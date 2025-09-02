@@ -35,6 +35,10 @@
       display: inline-block;
       flex: 0.96;
 
+      &.styled {
+        text-transform: uppercase;
+      }
+
       @include color.themed() {
         color: color.t('primary');
       }
