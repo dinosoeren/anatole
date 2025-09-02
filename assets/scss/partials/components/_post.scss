@@ -83,6 +83,7 @@
       justify-content: space-between;
       width: 100%;
       padding-top: 20px;
+      font-weight: 600;
       text-shadow: 0 0 5px mix(color.t('primary-light'), rgba(255, 255, 255, 0.7));
 
       @include color.themed() {
@@ -136,6 +137,9 @@
         text-align: right;
         justify-content: end;
         padding: 7px 5px 3px 5px;
+        flex-shrink: 1;
+        text-wrap: nowrap;
+        width: auto;
 
         .category {
           font-size: 1.2rem;
