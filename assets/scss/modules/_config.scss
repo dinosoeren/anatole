@@ -1,5 +1,11 @@
 @use 'hugo:vars' as hugo;
 
+@mixin mobile {
+  @media screen and (max-width: 480px) {
+    @content;
+  }
+}
+
 @mixin desktop {
   @media screen and (min-width: 961px) {
     @content;

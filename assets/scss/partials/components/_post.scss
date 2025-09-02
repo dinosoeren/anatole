@@ -51,6 +51,10 @@
     display: block;
     transition: opacity 0.2s ease;
 
+    @include conf.mobile {
+      height: var.$thumbnail-sm-height;
+    }
+
     // HD loading state
     &.hd-loading {
       // Subtle visual indication that HD is loading
