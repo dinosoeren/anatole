@@ -118,14 +118,8 @@
                   {{ end }}
                   {{ if .start }}
                     <li class="portfolio__meta-item">
-                      <em class="fas fa-arrow-up"></em>
-                      <span>{{ .start }}</span>
-                    </li>
-                  {{ end }}
-                  {{ if .end }}
-                    <li class="portfolio__meta-item">
-                      <em class="fas fa-arrow-down"></em>
-                      <span>{{ .end }}</span>
+                      <em class="fas fa-calendar-alt"></em>
+                      <span>{{ .start }}{{ if and .end (not (eq .end .start)) }}&nbsp;-&nbsp;{{ .end }}{{ end }}</span>
                     </li>
                   {{ end }}
                   {{ if .authors }}
@@ -145,7 +139,8 @@
                       {{- if .linktext -}}
                         {{ .linktext | markdownify }}
                       {{- else -}}
-                        Visit Site
+                        <em class="fas fa-external-link-alt"></em>
+                        Read More
                       {{- end -}}
                     </a>
                   </div>

@@ -8,8 +8,12 @@
   padding-bottom: 0px;
   padding-top: 48px;
 
+  &:first-of-type {
+    padding-top: 12px;
+  }
+
   @include conf.desktop {
-    padding: 48px;
+    padding: 36px 48px;
   }
 
   &::before {
@@ -39,9 +43,7 @@
   &__image {
     max-width: 100%;
     min-width: 100%;
-    box-shadow: color.t('shadow');
     overflow: hidden;
-    transition: box-shadow 0.3s ease;
     object-fit: cover;
     border-bottom: 0px;
     display: block;
@@ -52,20 +54,22 @@
       background-color: #fff;
       position: relative;
       overflow: hidden;
+      left: -30px;
+      width: 100svw;
 
       &--right,
       &--left {
         margin-right: auto;
         margin-left: auto;
-        width: calc(100% - 64px);
-        padding: 32px 32px 0px 32px;
         max-width: inherit;
 
         @include color.themed() {
           background-color: color.t('accent');
+          border: 1px solid color.t('primary-lighter');
         }
 
         @include conf.desktop {
+          left: 0;
           width: 60%;
           object-fit: contain;
           max-width: none;
@@ -90,38 +94,40 @@
     }
   }
 
+  &__image-wrapper + &__description {
+    margin-top: -30px;
+
+    @include conf.desktop {
+      margin-top: -48px;
+    }
+  }
+
   &__description {
     padding: 32px;
     position: relative;
+    border-radius: 0.5em;
 
     @include color.themed() {
-      background-color: color.t('accent');
+      background: mix(color.t('primary-lighter'), rgba(0, 0, 0, 0));
     }
 
     @include conf.desktop {
       padding: 48px;
-      border-radius: 0.5em;
-
-      @include color.themed() {
-        box-shadow: color.t('shadow');
-      }
     }
 
     &--left,
     &--right {
-      margin-top: -24px;
+      padding-top: 16px;
+      backdrop-filter: blur(10px);
 
       @include color.themed() {
         border-bottom: color.t('border');
       }
 
       @include conf.desktop {
-        @include color.themed() {
-          background: color.t('primary-lighter');
-        }
+        padding-top: 32px;
         border-bottom: 0px;
         width: 60%;
-        margin-top: -48px;
       }
     }
 
@@ -139,6 +145,10 @@
     padding: 0;
     row-gap: 0.8rem;
 
+    @include color.themed() {
+      color: color.t('primary-light');
+    }
+
     &-item {
       &:not(:last-child) {
         margin-right: 1.25rem;
@@ -151,7 +161,6 @@
     display: inline-block;
     position: relative;
     outline: 0;
-    background: transparent;
 
     text-align: center;
     text-decoration: none;
@@ -159,10 +168,10 @@
     white-space: nowrap;
     font-style: normal;
     border-radius: 999em;
-    padding: 10px;
+    padding: 10px 15px;
 
     @include color.themed() {
-      border: 1px solid color.t('primary-light');
+      background: color.t('accent');
       color: color.t('info');
     }
 
