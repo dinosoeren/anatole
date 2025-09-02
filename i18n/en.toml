@@ -48,6 +48,17 @@ other = "Info"
 [update]
 other = "Update"
 
+[just_now]
+other = "Just now"
+
+[minutes_ago]
+one = "{{ .Count }} min ago"
+other = "{{ .Count }} mins ago"
+
+[hours_ago]
+one = "{{ .Count }} hour ago"
+other = "{{ .Count }} hours ago"
+
 [days_ago]
 one = "{{ .Count }} day ago"
 other = "{{ .Count }} days ago"

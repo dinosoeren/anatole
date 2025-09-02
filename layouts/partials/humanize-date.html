@@ -1,5 +1,6 @@
 {{ $date := . }}
-{{ $days := div (sub now.Unix $date.Unix) 86400 }}
+{{ $secs := sub now.Unix $date.Unix }}
+{{ $days := div $secs 86400 }}
 {{ if gt $days 365 }}
   {{ $years := div $days 365 }}
   {{ i18n "years_ago" (dict "Count" $years) }}
@@ -11,4 +12,12 @@
   {{ i18n "weeks_ago" (dict "Count" $weeks) }}
 {{ else if gt $days 0 }}
   {{ i18n "days_ago" (dict "Count" $days) }}
+{{ else if gt $secs 3600 }}
+  {{ $hours := div $secs 3600 }}
+  {{ i18n "hours_ago" (dict "Count" $hours) }}
+{{ else if gt $secs 120 }}
+  {{ $mins := div $secs 60 }}
+  {{ i18n "minutes_ago" (dict "Count" $mins) }}
+{{ else }}
+  {{ i18n "just_now" }}
 {{ end }}
