@@ -64,6 +64,57 @@
               {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
             />
           </a>
+          <div class="post__thumbnail-overlay">
+            <div class="left">
+              <div>
+                <em class="fas fa-calendar-day"></em>
+                <span class="post__footer-date"
+                  >{{ if isset .Site.Params "indexdateformat" }}
+                    {{ if .Site.Params.localizedDates }}
+                      {{ time.Format .Site.Params.indexDateFormat .Date }}
+                    {{ else }}
+                      {{ .Date.Format .Site.Params.indexDateFormat }}
+                    {{ end }}
+
+                  {{ else }}
+                    {{ if .Site.Params.localizedDates }}
+                      {{ time.Format "Mon, Jan 2, 2006" .Date }}
+                    {{ else }}
+                      {{ .Date.Format "Mon, Jan 2, 2006" }}
+                    {{ end }}
+
+                  {{ end }}</span
+                >
+              </div>
+              {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
+                <div>
+                  <em class="fas fa-edit"></em>
+                  <span class="post__footer-date">
+                    {{ partial "humanize-date.html" (time .Lastmod) }}
+                  </span>
+                </div>
+              {{ end }}
+              {{ if .Params.attr }}
+                <div>
+                  <em class="fas fa-camera"></em>
+                  <span class="post__footer-date">
+                    Image:
+                    {{ if .Params.attrLink }}
+                      <a href="{{ .Params.attrLink }}" target="_blank" rel="noopener">{{ .Params.attr }}</a>
+                    {{ else }}
+                      {{ .Params.attr }}
+                    {{ end }}
+                  </span>
+                </div>
+              {{ end }}
+            </div>
+            <div class="middle"></div>
+            <div class="right">
+              {{ if not (eq .Params.noShare true) }}
+                {{ partial "share.html" . }}
+              {{ end }}
+            </div>
+          </div>
         </div>
       {{ end }}
       <div class="post__content">
@@ -99,48 +150,9 @@
 
       <!--  -->
       <div class="post__footer">
-        <em class="fas fa-calendar-day"></em>
-        <span class="post__footer-date"
-          >{{ if isset .Site.Params "indexdateformat" }}
-            {{ if .Site.Params.localizedDates }}
-              {{ time.Format .Site.Params.indexDateFormat .Date }}
-            {{ else }}
-              {{ .Date.Format .Site.Params.indexDateFormat }}
-            {{ end }}
-
-          {{ else }}
-            {{ if .Site.Params.localizedDates }}
-              {{ time.Format "Mon, Jan 2, 2006" .Date }}
-            {{ else }}
-              {{ .Date.Format "Mon, Jan 2, 2006" }}
-            {{ end }}
-
-          {{ end }}</span
-        >
-        {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
-          <em class="fas fa-edit"></em>
-          <span class="post__footer-date">
-            {{ partial "humanize-date.html" (time .Lastmod) }}
-          </span>
-        {{ end }}
-        {{ if .Params.attr }}
-          <em class="fas fa-camera"></em>
-          <span class="post__footer-date">
-            Image:
-            {{ if .Params.attrLink }}
-              <a href="{{ .Params.attrLink }}" target="_blank" rel="noopener">{{ .Params.attr }}</a>
-            {{ else }}
-              {{ .Params.attr }}
-            {{ end }}
-          </span>
-        {{ end }}
-        {{ if not (eq .Params.noShare true) }}
-          {{ partial "share.html" . }}
-        {{ end }}
         {{ with .Page.Params.Categories }}
           {{ partial "taxonomy/categories.html" . }}
         {{ end }}
-
         {{ with .Page.Params.Tags }}
           {{ partial "taxonomy/tags.html" . }}
         {{ end }}

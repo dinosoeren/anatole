@@ -2,12 +2,27 @@
 
 .share-buttons {
   display: inline-block;
-  margin: 1rem 0 0.5rem 0;
 
   a {
-    margin-right: 10px;
+    padding: 5px;
     cursor: pointer;
 
+    @include color.themed() {
+      color: color.t('primary-dark');
+    }
+
+    &:hover {
+      @include color.themed() {
+        color: color.t('primary-lighter');
+      }
+    }
+  }
+}
+
+.post__meta .share-buttons {
+  margin: 0 0 0.5rem 0;
+
+  a {
     @include color.themed() {
       color: color.t('primary');
     }
@@ -20,16 +35,14 @@
   }
 }
 
-.post__meta .share-buttons {
-  margin-top: 0;
-}
-
 .post__footer + .share-buttons {
   display: block;
   margin-top: 2rem;
+
   a {
     margin-right: 0;
     margin-bottom: 10px;
+    font-size: 1.1em;
     display: inline-block;
     padding: 0.5em 1em;
     border-radius: 4px;
@@ -44,7 +57,7 @@
     &:hover {
       @include color.themed() {
         color: color.t('info');
-        background-color: color.t('primary');
+        background-color: color.t('accent');
       }
     }
   }
