@@ -59,7 +59,12 @@
       {{ end }}
     </div>
   {{ else }}
-    {{ $data := index .Site.Data .CurrentSection.Type }}
+    {{ $data := "" }}
+    {{ if .CurrentSection.File }}
+      {{ $data = index .Site.Data .CurrentSection.File.ContentBaseName }}
+    {{ else }}
+      {{ $data = index .Site.Data .Section }}
+    {{ end }}
     {{ if $data }}
       {{ range $index, $elemen:= $data.portfolioitems }}
         <div
