@@ -266,10 +266,16 @@
       margin-right: auto;
       max-width: 100%;
       transition: opacity 0.2s ease;
+      position: relative;
 
       // HD loading state for any image with data-hd-src
       &[data-hd-src].hd-loading {
         filter: brightness(0.98);
+      }
+
+      @include conf.mobile {
+        max-width: calc(100% + 60px);
+        left: -30px;
       }
     }
 
