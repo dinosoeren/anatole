@@ -16,7 +16,15 @@
     padding: 36px 48px;
   }
 
-  &::before {
+  &.post__content {
+    padding: 2px 48px 36px 48px;
+
+    @include conf.desktop {
+      padding: 0 48px 36px 48px;
+    }
+  }
+
+  &:not(.post__content)::before {
     content: '';
     position: absolute;
     top: 10%;

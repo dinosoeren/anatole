@@ -160,6 +160,12 @@
           {{ end }}
         </div>
       {{ end }}
+
+      {{- if isset .Params "series" -}}
+        <div class="post__content portfolio">
+          {{- partial "series.html" . -}}
+        </div>
+      {{- end -}}
     {{ end }}
   {{ end }}
 
