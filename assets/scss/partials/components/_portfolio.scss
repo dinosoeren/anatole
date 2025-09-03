@@ -45,14 +45,14 @@
     letter-spacing: 1px;
     font-size: 2.6rem;
     line-height: 1;
-    font-weight: 600;
+    font-weight: 300;
   }
 
   &__name {
     letter-spacing: 1px;
     font-size: 2.2rem;
     line-height: 1.3em;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   &__image {
@@ -128,6 +128,7 @@
     @include color.themed() {
       border: color.t('border');
       background: mix(color.t('primary-lighter'), rgba(0, 0, 0, 0));
+      box-shadow: 0 5px 10px mix(color.t('accent'), rgba(123, 123, 123, 0.2));
     }
 
     @include conf.desktop {
