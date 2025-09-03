@@ -291,6 +291,22 @@
       }
     }
 
+    blockquote {
+      @include conf.mobile {
+        padding: 1px 30px 1px 11px;
+        position: relative;
+        left: -30px;
+        width: calc(100% + 14px);
+      }
+
+      img {
+        @include conf.mobile {
+          width: 100%;
+          left: unset;
+        }
+      }
+    }
+
     figure {
       max-width: 100%;
       height: auto;
