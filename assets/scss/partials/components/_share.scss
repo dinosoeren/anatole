@@ -36,6 +36,8 @@
     }
 
     &:hover {
+      background-color: unset;
+
       @include color.themed() {
         color: color.t('info');
       }
