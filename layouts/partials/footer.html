@@ -32,3 +32,18 @@
 {{- if and (hugo.IsProduction) (.context.Site.Params.gtagId) -}}
   {{ partial "google-analytics-gtag-async.html" .context }}
 {{- end -}}
+
+{{ $jsBuildOptions := dict "target" "es6" }}
+{{ if hugo.IsProduction }}
+  {{ $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") }}
+{{ end }}
+
+{{ $flexsearch := resources.Get "js/flexsearch.js" | resources.ExecuteAsTemplate "js/flexsearch.js" . | js.Build $jsBuildOptions }}
+
+{{ if hugo.IsProduction }}
+  {{ $flexsearch = $flexsearch | fingerprint "sha512" }}
+{{ end }}
+
+{{/* prettier-ignore-start */}}
+<script src="{{ $flexsearch.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $flexsearch.Data.Integrity }}"{{ end }}></script>
+{{/* prettier-ignore-end */}}
