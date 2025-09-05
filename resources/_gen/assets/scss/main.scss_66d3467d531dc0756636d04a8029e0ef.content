@@ -664,10 +664,6 @@ body {
 }
 
 .search__suggestion-title {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
   font-weight: 500;
 }
 .theme--light .search__suggestion-title span {
@@ -675,6 +671,9 @@ body {
 }
 .theme--dark .search__suggestion-title span {
   color: #9f9f9f;
+}
+.search__suggestion-title span:first-of-type {
+  margin-left: 4px;
 }
 .search__suggestion-title span:last-of-type {
   font-size: 0.75em;
