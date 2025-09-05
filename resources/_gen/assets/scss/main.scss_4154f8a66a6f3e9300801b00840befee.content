@@ -1417,6 +1417,9 @@ body {
 .theme--dark .post__meta .share-buttons a {
   color: #eeeeee;
 }
+.post__meta .share-buttons a:hover {
+  background-color: unset;
+}
 .theme--light .post__meta .share-buttons a:hover {
   color: #6086b4;
 }
