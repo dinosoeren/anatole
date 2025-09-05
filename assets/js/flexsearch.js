@@ -2,36 +2,43 @@ import FlexSearch from "flexsearch";
 
 document.addEventListener('DOMContentLoaded', () => {
   /*! FlexSearch logic adapted from Gruvbox theme | MIT license | https://github.com/schnerring/hugo-theme-gruvbox/blob/e37181494ba57cde994384fac8ef1becd3265fd0/assets/js/flexsearch.js */
-  const search = document.getElementById("search__text");
+  const searchInput = document.getElementById("search__text");
   const suggestions = document.getElementById("search__suggestions");
+  const search = searchInput.parentNode.parentNode;
 
-  if (search == null || suggestions == null) return;
+  if (search == null || searchInput == null || suggestions == null) return;
 
   document.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.key === "/") {
       // Focus search bar with CTRL + /
       e.preventDefault();
-      search.focus();
+      searchInput.focus();
     } else if (e.key === "Escape") {
       // Unfocus search bar with ESC
-      search.blur();
+      searchInput.blur();
       suggestions.classList.add("search__suggestions--hidden");
     }
   });
 
-  search.addEventListener("focus", () => {
+  searchInput.addEventListener("focus", () => {
     suggestions.classList.remove("search__suggestions--hidden");
+    search.classList.add("active");
   });
 
-  document.addEventListener("click", (e) => {
-    if (!search.parentNode.contains(e.target)) {
-      // Hide search suggestions if clicking elsewhere
-      suggestions.classList.add("search__suggestions--hidden");
-      search.parentNode.classList.remove("active");
-    } else {
-      search.parentNode.classList.add("active");
+  function handleGlobalClick(e) {
+    if (!suggestions.contains(e.target)) {
+      if (!search.contains(e.target)) {
+        // Hide search suggestions if clicking elsewhere
+        suggestions.classList.add("search__suggestions--hidden");
+        search.classList.remove("active");
+      } else {
+        searchInput.focus();
+      }
     }
-  });
+  }
+
+  document.addEventListener("click", handleGlobalClick);
+  document.addEventListener("touchstart", handleGlobalClick);
 
   /*! Source: https://dev.to/shubhamprakash/trap-focus-using-javascript-6a3 */
   document.addEventListener("keydown", (e) => {
@@ -92,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-    search.addEventListener("input", function () {
+    searchInput.addEventListener("input", function () {
       // Run search
       const maxResultsCount = {{ $.Site.Params.flexsearch.maxResultsCount | default 5 }};
       const searchText = this.value;
