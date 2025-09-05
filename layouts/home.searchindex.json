@@ -6,7 +6,7 @@
       "id" $index
       "title" .Title
       "date" (.Date.Format "2006-01-02")
-      "lastmod" (partial "humanize-date.html" (time .Lastmod))
+      "lastmod" .Lastmod.Unix
       "permalink" .RelPermalink
       "thumbnail" (.Params.thumbnail | default "")
       "tags" (.Params.tags | default slice)

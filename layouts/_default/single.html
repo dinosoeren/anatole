@@ -55,7 +55,7 @@
           {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
             <li class="post__meta-item">
               <em class="fas fa-edit post__meta-icon"></em>
-              <span class="post__meta-text">
+              <span class="post__meta-text" data-humanize-date="{{ .Lastmod.Unix }}">
                 {{ partial "humanize-date.html" (time .Lastmod) }}
               </span>
             </li>

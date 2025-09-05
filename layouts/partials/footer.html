@@ -39,13 +39,16 @@
     {{ $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") }}
   {{ end }}
 
+  {{ $humanizeDate := resources.Get "js/humanize-date.js" | resources.ExecuteAsTemplate "js/humanize-date.js" . | js.Build $jsBuildOptions }}
   {{ $flexsearch := resources.Get "js/flexsearch.js" | resources.ExecuteAsTemplate "js/flexsearch.js" . | js.Build $jsBuildOptions }}
 
   {{ if hugo.IsProduction }}
     {{ $flexsearch = $flexsearch | fingerprint "sha512" }}
+    {{ $humanizeDate = $humanizeDate | fingerprint "sha512" }}
   {{ end }}
 
   {{/* prettier-ignore-start */}}
+  <script src="{{ $humanizeDate.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $humanizeDate.Data.Integrity }}"{{ end }}></script>
   <script src="{{ $flexsearch.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $flexsearch.Data.Integrity }}"{{ end }}></script>
   {{/* prettier-ignore-end */}}
 {{ end }}

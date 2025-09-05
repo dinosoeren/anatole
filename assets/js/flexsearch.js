@@ -149,12 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
         suggestion.appendChild(title);
 
         const separator = document.createElement("span");
-        separator.textContent = "|";
+        separator.textContent = " | ";
         separator.classList.add("search__suggestion-separator");
         title.appendChild(separator);
 
         const lastmod = document.createElement("span");
-        lastmod.textContent = searchResult.lastmod;
+        if (typeof window.humanizeDate !== "undefined") {
+          lastmod.textContent = window.humanizeDate(searchResult.lastmod);
+        }
+        lastmod.setAttribute("data-humanize-date", searchResult.lastmod);
         lastmod.classList.add("search__suggestion-lastmod");
         title.appendChild(lastmod);
 

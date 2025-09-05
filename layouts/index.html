@@ -89,7 +89,7 @@
               {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
                 <div>
                   <em class="fas fa-edit"></em>
-                  <span class="post__footer-date">
+                  <span class="post__footer-date" data-humanize-date="{{ .Lastmod.Unix }}">
                     {{ partial "humanize-date.html" (time .Lastmod) }}
                   </span>
                 </div>
