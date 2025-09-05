@@ -140,7 +140,7 @@
 
   @include color.themed() {
     &:not(:last-child) {
-      border-bottom: 1px dashed color.t('primary-lighter');
+      border-bottom: 0 dashed color.t('primary-lighter');
     }
   }
 

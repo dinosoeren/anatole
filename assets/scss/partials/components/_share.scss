@@ -13,14 +13,16 @@
     backdrop-filter: blur(2px);
 
     @include color.themed() {
-      color: color.t('accent');
-      background-color: mix(color.t('primary'), rgba(0, 0, 0, 0.2));
+      color: #eee;
+      background-color: adjust-color(color.t('shadow-color'), $alpha: -0.3);
+      box-shadow: 0 0 2px color.t('shadow-color');
+      text-shadow: 0 0 3px color.t('shadow-color');
     }
 
     &:hover {
       @include color.themed() {
-        color: color.t('primary-lighter');
-        background-color: color.t('info');
+        color: color.t('info');
+        background-color: transparent;
       }
     }
   }
@@ -30,6 +32,8 @@
   a {
     padding: 0 5px;
     background-color: unset;
+    box-shadow: unset;
+    text-shadow: unset;
 
     @include color.themed() {
       color: color.t('primary');
@@ -54,10 +58,12 @@
     margin-bottom: 10px;
     font-size: 1.1em;
     padding: 0.5em 1em;
+    box-shadow: unset;
+    text-shadow: unset;
 
     @include color.themed() {
       color: color.t('primary');
-      background-color: color.t('primary-lighter');
+      background-color: color.t('shadow-color');
     }
 
     &:hover {

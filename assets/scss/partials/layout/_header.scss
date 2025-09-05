@@ -4,6 +4,7 @@
 .header {
   @include color.themed() {
     background-color: adjust-color(color.t('accent'), $alpha: -0.3);
+    box-shadow: 0 0 5px color.t('shadow-color');
   }
   backdrop-filter: blur(20px);
   width: 100%;
@@ -13,9 +14,8 @@
 
   @include conf.desktop {
     position: sticky;
-
     @include color.themed() {
-      border-bottom: color.t('border');
+      box-shadow: 5px 0 5px color.t('shadow-color');
     }
   }
 

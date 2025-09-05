@@ -14,14 +14,14 @@
     flex-direction: column;
 
     @include color.themed() {
+      box-shadow: 0 0 5px color.t('shadow-color');
+
       @include conf.ltr {
         margin-right: 4px;
-        border-right: color.t('border');
       }
 
       @include conf.rtl {
         margin-left: 4px;
-        border-left: color.t('border');
       }
     }
   }
