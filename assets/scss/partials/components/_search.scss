@@ -154,15 +154,15 @@
 }
 
 .search__suggestion-title {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
   font-weight: 500;
 
   span {
     @include color.themed() {
       color: color.t('primary-light');
+    }
+
+    &:first-of-type {
+      margin-left: 4px;
     }
 
     &:last-of-type {
