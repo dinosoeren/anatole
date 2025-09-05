@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             encode: false,
           },
         ],
-        store: ["title", "summary", "date", "permalink"],
+        store: ["title", "summary", "date", "lastmod", "permalink", "thumbnail"],
       },
     });
 
@@ -128,15 +128,28 @@ document.addEventListener('DOMContentLoaded', () => {
         suggestion.classList.add("search__suggestion-item");
         suggestions.appendChild(suggestion);
 
+        const thumbnail = document.createElement("img");
+        if (searchResult.thumbnail) {
+          thumbnail.src = searchResult.thumbnail;
+          thumbnail.alt = searchResult.title;
+          thumbnail.classList.add("search__suggestion-thumbnail");
+          suggestion.appendChild(thumbnail);
+        }
+
         const title = document.createElement("div");
         title.textContent = searchResult.title;
         title.classList.add("search__suggestion-title");
         suggestion.appendChild(title);
 
-        const summary = document.createElement("div");
-        summary.textContent = searchResult.summary;
-        summary.classList.add("search__suggestion-summary");
-        suggestion.appendChild(summary);
+        const separator = document.createElement("span");
+        separator.textContent = "|";
+        separator.classList.add("search__suggestion-separator");
+        title.appendChild(separator);
+
+        const lastmod = document.createElement("span");
+        lastmod.textContent = searchResult.lastmod;
+        lastmod.classList.add("search__suggestion-lastmod");
+        title.appendChild(lastmod);
 
         if (suggestions.childElementCount === maxResultsCount) break;
       }
