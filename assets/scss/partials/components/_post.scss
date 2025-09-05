@@ -364,7 +364,7 @@
   }
 
   &__footer {
-    padding: 12px 0;
+    padding: 0 0 12px 0;
 
     @include color.themed() {
       border-bottom: color.t('border');
@@ -382,6 +382,12 @@
         margin-left: 10px;
         margin-right: 5px;
       }
+    }
+  }
+
+  &:only-of-type {
+    .post__footer {
+      padding: 12px 0;
     }
   }
 }
