@@ -66,6 +66,16 @@
       {{ $data = index .Site.Data .Section }}
     {{ end }}
     {{ if $data }}
+      <div class="portfolio-filter-tags">
+        <div class="inputs">
+          <div class="multi-select-container">
+            <input type="text" id="tag-input" placeholder="Filter by tags..." autocomplete="off" />
+            <div class="dropdown" id="tag-dropdown"></div>
+          </div>
+          <button class="portfolio-filter-clear">Clear</button>
+        </div>
+        <div class="selected-tags" id="selected-tags"></div>
+      </div>
       {{ range $index, $elemen:= $data.portfolioitems }}
         <div
           class="post {{ with .Site.Params.doNotLoadAnimations }}
@@ -81,83 +91,87 @@
           {{ if .description }}
             <p>{{ .description | markdownify }}</p>
           {{ end }}
-          {{ range $i, $p := .portfolioitem }}
-            <div class="portfolio">
-              {{ if .image }}
-                <div
-                  class="portfolio__image-wrapper {{ if (modBool $i 2) }}
-                    portfolio__image-wrapper--right
-                  {{ else }}
-                    portfolio__image-wrapper--left
-                  {{ end }}"
-                >
-                  {{ if .link }}
-                    <a href="{{ .link | safeURL }}" target="_blank" rel="noopener">
+          <div class="portfolio-section">
+            {{ range $i, $p := .portfolioitem }}
+              <div class="portfolio" data-tags="{{ delimit .tags "," }}">
+                {{ if .image }}
+                  <div
+                    class="portfolio__image-wrapper {{ if (modBool $i 2) }}
+                      portfolio__image-wrapper--right
+                    {{ else }}
+                      portfolio__image-wrapper--left
+                    {{ end }}"
+                  >
+                    {{ if .link }}
+                      <a href="{{ .link | safeURL }}" target="_blank" rel="noopener">
+                        <img class="portfolio__image" src="{{ .image | relURL }}" alt="{{ .name | markdownify }}" />
+                      </a>
+                    {{ else }}
                       <img class="portfolio__image" src="{{ .image | relURL }}" alt="{{ .name | markdownify }}" />
-                    </a>
-                  {{ else }}
-                    <img class="portfolio__image" src="{{ .image | relURL }}" alt="{{ .name | markdownify }}" />
-                  {{ end }}
-                </div>
-              {{ end }}
-              <div
-                class="portfolio__description {{ if (modBool $i 2) }}
-                  portfolio__description--left
-                {{ else }}
-                  portfolio__description--right
-                {{ end }}"
-              >
-                <h3 class="portfolio__name">{{ .name | markdownify }}</h3>
-                <ul class="portfolio__meta">
-                  {{ if .status }}
-                    <li class="portfolio__meta-item">
-                      <em class="fas fa-flag-checkered"></em>
-                      <span>{{ .status }}</span>
-                    </li>
-                  {{ end }}
-                  {{ if .venue }}
-                    <li class="portfolio__meta-item">
-                      <em class="fas fa-map-marker-alt"></em>
-                      <span>{{ .venue }}</span>
-                    </li>
-                  {{ end }}
-                  {{ if .start }}
-                    <li class="portfolio__meta-item">
-                      <em class="fas fa-calendar-alt"></em>
-                      <span>{{ .start }}{{ if and .end (not (eq .end .start)) }}&nbsp;-&nbsp;{{ .end }}{{ end }}</span>
-                    </li>
-                  {{ end }}
-                  {{ if .authors }}
-                    {{ range .authors }}
-                      <li class="portfolio__meta-item">
-                        <em class="fas fa-at"></em>
-                        <span>{{ . }}</span>
-                      </li>
                     {{ end }}
-
-                  {{ end }}
-                </ul>
-                <p>{{ .description | markdownify }}</p>
-                {{ if .link }}
-                  <div class="portfolio__button-wrapper">
-                    <a class="portfolio__button" href="{{ .link | safeURL }}" target="_blank" rel="noopener">
-                      {{- if .linktext -}}
-                        {{ .linktext | markdownify }}
-                      {{- else -}}
-                        <em class="fas fa-external-link-alt"></em>
-                        Read More
-                      {{- end -}}
-                    </a>
                   </div>
                 {{ end }}
-                <div class="separator">
-                  {{ range .tags }}
-                    <p class="tag">{{ . }}</p>
+                <div
+                  class="portfolio__description {{ if (modBool $i 2) }}
+                    portfolio__description--left
+                  {{ else }}
+                    portfolio__description--right
+                  {{ end }}"
+                >
+                  <h3 class="portfolio__name">{{ .name | markdownify }}</h3>
+                  <ul class="portfolio__meta">
+                    {{ if .status }}
+                      <li class="portfolio__meta-item">
+                        <em class="fas fa-flag-checkered"></em>
+                        <span>{{ .status }}</span>
+                      </li>
+                    {{ end }}
+                    {{ if .venue }}
+                      <li class="portfolio__meta-item">
+                        <em class="fas fa-map-marker-alt"></em>
+                        <span>{{ .venue }}</span>
+                      </li>
+                    {{ end }}
+                    {{ if .start }}
+                      <li class="portfolio__meta-item">
+                        <em class="fas fa-calendar-alt"></em>
+                        <span
+                          >{{ .start }}{{ if and .end (not (eq .end .start)) }}&nbsp;-&nbsp;{{ .end }}{{ end }}</span
+                        >
+                      </li>
+                    {{ end }}
+                    {{ if .authors }}
+                      {{ range .authors }}
+                        <li class="portfolio__meta-item">
+                          <em class="fas fa-at"></em>
+                          <span>{{ . }}</span>
+                        </li>
+                      {{ end }}
+
+                    {{ end }}
+                  </ul>
+                  <p>{{ .description | markdownify }}</p>
+                  {{ if .link }}
+                    <div class="portfolio__button-wrapper">
+                      <a class="portfolio__button" href="{{ .link | safeURL }}" target="_blank" rel="noopener">
+                        {{- if .linktext -}}
+                          {{ .linktext | markdownify }}
+                        {{- else -}}
+                          <em class="fas fa-external-link-alt"></em>
+                          Read More
+                        {{- end -}}
+                      </a>
+                    </div>
                   {{ end }}
+                  <div class="separator">
+                    {{ range .tags }}
+                      <p class="tag">{{ . }}</p>
+                    {{ end }}
+                  </div>
                 </div>
               </div>
-            </div>
-          {{ end }}
+            {{ end }}
+          </div>
         </div>
       {{ end }}
 

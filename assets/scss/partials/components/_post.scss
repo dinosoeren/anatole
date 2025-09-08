@@ -199,6 +199,17 @@
       }
     }
 
+    h1,
+    h2,
+    h3,
+    h4 {
+      scroll-margin-top: 70px;
+
+      @include conf.desktop {
+        scroll-margin-top: 90px;
+      }
+    }
+
     h1 {
       $font-size-h1: 3.6rem;
 

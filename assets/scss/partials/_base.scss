@@ -1,8 +1,12 @@
-@use 'modules/config' as conf;
 @charset "UTF-8";
+@use 'modules/config' as conf;
 
 * {
   font-family: inherit;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
