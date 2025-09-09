@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const portfolioSections = document.querySelectorAll('.portfolio-section');
   const allPortfolioItems = Array.from(document.querySelectorAll('.portfolio'));
-  const allTags = new Set();
+  const allTags = new Map();
   const portfolioItemTagMap = new Map();
 
   allPortfolioItems.forEach((item, index) => {
@@ -13,7 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .map((t) => t.trim())
       .filter(Boolean);
     portfolioItemTagMap.set(index, tags);
-    tags.forEach((tag) => allTags.add(tag));
+    tags.forEach((tag) => {
+      if (allTags.has(tag)) {
+        allTags.set(tag, allTags.get(tag) + 1);
+      } else {
+        allTags.set(tag, 1);
+      }
+    });
     item.dataset.itemId = index;
     // Make tag anchors clickable
     const tagAnchors = item.querySelectorAll('.tag');
@@ -30,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (allTags.size === 0) return;
 
-  const sortedTags = Array.from(allTags).sort();
+  const sortedTags = Array.from(allTags.keys()).sort();
 
   const tagInput = document.getElementById('tag-input');
   const tagDropdown = document.getElementById('tag-dropdown');
@@ -68,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter((tag) => tag.toLowerCase().includes(filter))
       .forEach((tag) => {
         const option = document.createElement('div');
-        option.textContent = tag;
+        option.textContent = tag + ' (' + allTags.get(tag) + ')';
         option.classList.add('dropdown-option');
         option.addEventListener('click', () => {
           addTag(tag);
