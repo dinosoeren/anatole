@@ -104,7 +104,13 @@
       {{ $data = index .Site.Data .Section }}
     {{ end }}
     {{ if $data }}
-      <div class="portfolio-filter-tags">
+      <div
+        class="portfolio-filter-tags {{ with .Site.Params.doNotLoadAnimations }}
+          .
+        {{ else }}
+          animated fadeInDown
+        {{ end }}"
+      >
         <div class="multi-select-container">
           <div class="input-container">
             <div class="selected-tags" id="selected-tags">
