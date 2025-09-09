@@ -148,7 +148,12 @@
                     {{ end }}"
                   >
                     {{ if .link }}
-                      <a href="{{ .link | safeURL }}" target="_blank" rel="noopener">
+                      <a
+                        href="{{ .link | safeURL }}"
+                        {{ if strings.HasPrefix .link "http" }}
+                          target="_blank" rel="noopener"
+                        {{ end }}
+                      >
                         <img class="portfolio__image" src="{{ .image | relURL }}" alt="{{ .name | markdownify }}" />
                       </a>
                     {{ else }}
