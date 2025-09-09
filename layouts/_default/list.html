@@ -192,11 +192,21 @@
                   <p>{{ .description | markdownify }}</p>
                   {{ if .link }}
                     <div class="portfolio__button-wrapper">
-                      <a class="portfolio__button" href="{{ .link | safeURL }}" target="_blank" rel="noopener">
+                      <a
+                        class="portfolio__button"
+                        href="{{ .link | safeURL }}"
+                        {{ if strings.HasPrefix .link "http" }}
+                          target="_blank" rel="noopener"
+                        {{ end }}
+                      >
+                        {{ if strings.HasPrefix .link "http" }}
+                          <em class="fas fa-external-link-alt"></em>
+                        {{ else }}
+                          <em class="fas fa-arrow-right"></em>
+                        {{ end }}
                         {{- if .linktext -}}
                           {{ .linktext | markdownify }}
                         {{- else -}}
-                          <em class="fas fa-external-link-alt"></em>
                           Read More
                         {{- end -}}
                       </a>
