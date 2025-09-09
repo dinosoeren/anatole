@@ -15,6 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     portfolioItemTagMap.set(index, tags);
     tags.forEach((tag) => allTags.add(tag));
     item.dataset.itemId = index;
+    // Make tag anchors clickable
+    const tagAnchors = item.querySelectorAll('.tag');
+    tagAnchors.forEach((anchor) => {
+      anchor.addEventListener('click', () => {
+        if (selectedTags.includes(anchor.textContent)) {
+          removeTag(anchor.textContent);
+        } else {
+          addTag(anchor.textContent);
+        }
+      });
+    });
   });
 
   if (allTags.size === 0) return;
