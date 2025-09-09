@@ -233,8 +233,7 @@
 
 .portfolio-filter-tags {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
   position: sticky;
   top: calc(3.25rem + 12px);
   z-index: 1;
@@ -250,29 +249,46 @@
     top: calc(1.8rem + 48px);
   }
 
-  .inputs {
-    display: flex;
-    gap: 10px;
-    align-items: start;
-    width: 100%;
-  }
-
   .multi-select-container {
     position: relative;
     flex: 1;
   }
 
-  #tag-input {
+  .input-container {
+    display: flex;
+    flex-wrap: wrap;
     width: calc(100% - 10px);
     padding: 5px;
     border-radius: 0.25rem;
 
     @include color.themed() {
-      border: color.t('border');
+      background: adjust-color(color.t('accent'), $alpha: -0.5);
+      border: 1px solid color.t('primary-light');
+    }
+
+    &:has(input:focus) {
+      @include color.themed() {
+        border-color: color.t('info');
+      }
+    }
+  }
+
+  #tag-input {
+    outline: none;
+    border: none;
+    background: none;
+    flex: 1;
+    width: 40%;
+    min-width: 90px;
+    max-width: 100px;
+
+    @include color.themed() {
+      color: color.t('primary');
     }
   }
 
   .selected-tags {
+    flex: 1;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -304,7 +320,6 @@
   .dropdown {
     position: absolute;
     width: 100%;
-    font-size: 0.8em;
     border-top: none;
     max-height: 150px;
     overflow-y: auto;
@@ -320,7 +335,8 @@
     padding: 0.5rem;
     cursor: pointer;
 
-    &:hover {
+    &:hover,
+    &.focused {
       @include color.themed() {
         color: color.t('accent');
         background: color.t('info');
@@ -332,12 +348,28 @@
     padding: 5px 10px;
     border-radius: 0.25rem;
     cursor: pointer;
-    height: fit-content;
+    background: none;
+    height: 100%;
+    min-height: -webkit-fill-available;
 
     @include color.themed() {
-      color: color.t('info');
-      background: color.t('accent');
-      border: color.t('border');
+      color: color.t('primary');
+      border: 1px solid color.t('primary-light');
+    }
+
+    &[disabled] {
+      cursor: not-allowed;
+
+      @include color.themed() {
+        color: color.t('primary-light');
+        border-color: transparent;
+      }
+    }
+
+    &:focus {
+      @include color.themed() {
+        border-color: color.t('info');
+      }
     }
   }
 }

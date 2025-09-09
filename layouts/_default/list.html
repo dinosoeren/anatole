@@ -105,14 +105,17 @@
     {{ end }}
     {{ if $data }}
       <div class="portfolio-filter-tags">
-        <div class="inputs">
-          <div class="multi-select-container">
-            <input type="text" id="tag-input" placeholder="Filter by tags..." autocomplete="off" />
-            <div class="dropdown" id="tag-dropdown"></div>
+        <div class="multi-select-container">
+          <div class="input-container">
+            <div class="selected-tags" id="selected-tags">
+              <input type="text" id="tag-input" placeholder="Filter by tags..." autocomplete="off" />
+            </div>
           </div>
-          <button class="portfolio-filter-clear">Clear</button>
+          <div class="dropdown hidden" id="tag-dropdown"></div>
         </div>
-        <div class="selected-tags" id="selected-tags"></div>
+        <button class="portfolio-filter-clear" title="Clear" aria-label="Clear">
+          <i class="fas fa-close"></i>
+        </button>
       </div>
       {{ range $index, $elemen:= $data.portfolioitems }}
         <div

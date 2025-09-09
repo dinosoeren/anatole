@@ -63,7 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
           addTag(tag);
           tagInput.value = '';
           updateDropdown();
-          tagInput.focus();
+          // Use a small timeout to ensure the DOM is updated before blurring
+          setTimeout(() => {
+            tagInput.blur();
+          }, 100);
         });
         tagDropdown.appendChild(option);
       });
@@ -93,7 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderSelectedTags() {
-    selectedTagsContainer.innerHTML = '';
+    const existingTags = selectedTagsContainer.querySelectorAll('.selected-tag');
+    existingTags.forEach((tag) => {
+      tag.parentNode.removeChild(tag);
+    });
     selectedTags.forEach((tag) => {
       const tagElement = document.createElement('div');
       tagElement.classList.add('selected-tag');
@@ -103,8 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
       removeButton.classList.add('remove-tag');
       removeButton.addEventListener('click', () => removeTag(tag));
       tagElement.appendChild(removeButton);
-      selectedTagsContainer.appendChild(tagElement);
+      selectedTagsContainer.insertBefore(tagElement, tagInput);
     });
+    if (selectedTags.length === 0) {
+      clearButton.setAttribute('disabled', 'true');
+    } else {
+      clearButton.removeAttribute('disabled');
+    }
   }
 
   function applyFilter() {
@@ -122,14 +133,56 @@ document.addEventListener('DOMContentLoaded', () => {
       section.parentElement.classList.toggle('hidden', visibleItems === 0);
     });
     updateDropdown();
+    renderSelectedTags();
   }
 
   tagInput.addEventListener('input', updateDropdown);
   tagInput.addEventListener('focus', updateDropdown);
 
+  tagInput.addEventListener('keydown', (e) => {
+    const options = Array.from(tagDropdown.querySelectorAll('.dropdown-option'));
+    const focusedOption = tagDropdown.querySelector('.dropdown-option.focused');
+    let focusedIndex = options.indexOf(focusedOption);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (focusedOption) {
+        focusedOption.classList.remove('focused');
+        focusedIndex = (focusedIndex + 1) % options.length;
+      } else {
+        focusedIndex = 0;
+      }
+      options[focusedIndex].classList.add('focused');
+      tagDropdown.scrollTo({ top: focusedIndex * options[focusedIndex].scrollHeight });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (focusedOption) {
+        focusedOption.classList.remove('focused');
+        focusedIndex = (focusedIndex - 1 + options.length) % options.length;
+      } else {
+        focusedIndex = options.length - 1;
+      }
+      options[focusedIndex].classList.add('focused');
+      tagDropdown.scrollTo({ top: focusedIndex * options[focusedIndex].scrollHeight });
+    } else if (e.key === 'Enter' && focusedOption) {
+      e.preventDefault();
+      addTag(focusedOption.textContent);
+      tagInput.value = '';
+      updateDropdown();
+      tagDropdown.scrollTo({ top: 0 });
+      setTimeout(() => tagInput.focus(), 100);
+    } else if (e.key === 'Backspace' && tagInput.value === '' && selectedTags.length > 0) {
+      e.preventDefault();
+      removeTag(selectedTags[selectedTags.length - 1]);
+    }
+  });
+
   document.addEventListener('click', (e) => {
-    if (!filterContainer.contains(e.target)) {
+    if (!tagDropdown.contains(e.target) && !tagInput.contains(e.target)) {
       tagDropdown.classList.add('hidden');
+    }
+    if (selectedTagsContainer.parentElement.contains(e.target)) {
+      tagInput.focus();
     }
   });
 
@@ -140,4 +193,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   applyFilter(); // Initial filter application
+  tagDropdown.classList.add('hidden');
 });
