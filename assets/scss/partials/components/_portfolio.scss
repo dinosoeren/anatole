@@ -263,16 +263,16 @@
     flex-wrap: wrap;
     width: calc(100% - 10px);
     padding: 5px;
-    border-radius: 0.25rem;
+    border-radius: 0.25rem 0 0 0.25rem;
+    border: 0;
 
     @include color.themed() {
-      background: adjust-color(color.t('accent'), $alpha: -0.5);
-      border: 1px solid color.t('primary-light');
+      background: adjust-color(color.t('primary'), $alpha: -0.7);
     }
 
     &:has(input:focus) {
       @include color.themed() {
-        border-color: color.t('info');
+        background: adjust-color(color.t('info'), $alpha: -0.7);
       }
     }
   }
@@ -285,9 +285,16 @@
     width: 40%;
     min-width: 90px;
     max-width: 100px;
+    padding: calc(0.25rem + 1px);
 
     @include color.themed() {
       color: color.t('primary');
+    }
+
+    &::placeholder {
+      @include color.themed() {
+        color: adjust-color(color.t('primary'), $alpha: -0.5);
+      }
     }
   }
 
@@ -350,23 +357,24 @@
 
   .portfolio-filter-clear {
     padding: 5px 10px;
-    border-radius: 0.25rem;
+    border-radius: 0 0.25rem 0.25rem 0;
     cursor: pointer;
     background: none;
     height: 100%;
     min-height: -webkit-fill-available;
+    border: 0;
 
     @include color.themed() {
       color: color.t('primary');
-      border: 1px solid color.t('primary-light');
+      background: adjust-color(color.t('primary'), $alpha: -0.7);
     }
 
     &[disabled] {
+      border-color: transparent;
       cursor: not-allowed;
 
       @include color.themed() {
-        color: color.t('primary-light');
-        border-color: transparent;
+        color: adjust-color(color.t('primary'), $alpha: -0.5);
       }
     }
 
