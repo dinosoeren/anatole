@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             encode: false,
           },
         ],
-        store: ["title", "summary", "date", "lastmod", "permalink", "thumbnail"],
+        store: ["title", "summary", "date", "dateunix", "permalink", "thumbnail"],
       },
     });
 
@@ -153,13 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
         separator.classList.add("search__suggestion-separator");
         title.appendChild(separator);
 
-        const lastmod = document.createElement("span");
+        const dateunix = document.createElement("span");
         if (typeof window.humanizeDate !== "undefined") {
-          lastmod.textContent = window.humanizeDate(searchResult.lastmod);
+          dateunix.textContent = window.humanizeDate(searchResult.dateunix);
         }
-        lastmod.setAttribute("data-humanize-date", searchResult.lastmod);
-        lastmod.classList.add("search__suggestion-lastmod");
-        title.appendChild(lastmod);
+        dateunix.setAttribute("data-humanize-date", searchResult.dateunix);
+        dateunix.classList.add("search__suggestion-lastmod");
+        title.appendChild(dateunix);
 
         if (suggestions.childElementCount === maxResultsCount) break;
       }

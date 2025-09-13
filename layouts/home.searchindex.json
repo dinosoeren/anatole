@@ -6,7 +6,7 @@
       "id" $index
       "title" .Title
       "date" (.Date.Format "2006-01-02")
-      "lastmod" .Lastmod.Unix
+      "dateunix" .Date.Unix
       "permalink" .RelPermalink
       "thumbnail" (.Params.thumbnail | default "")
       "tags" (.Params.tags | default slice)
