@@ -9,32 +9,47 @@
     >
       {{ range .Pages.GroupByDate "2006" }}
         <div class="archive__heading">{{ .Key }}</div>
-        {{ range .Pages }}
+        {{ range $index, $page := .Pages }}
           <ul class="archive__list">
             {{ $postClass := "" }}
-            {{ $target := "" }}
+            {{ $external := false }}
             {{ $postUrl := .RelPermalink }}
             {{ if .Params.redirectUrl }}
               {{ $postUrl = .Params.redirectUrl }}
-              {{ $target = "_blank" }}
+              {{ $external = true }}
               {{ $postClass = "external" }}
             {{ end }}
+            {{ $linkClass := "styled" }}
+            {{ if (eq .Site.Params.disableArchiveTitleStyling true) }}
+              {{ $linkClass = "" }}
+            {{ end }}
             <li class="archive__list-item {{ $postClass }}">
-              {{ if (eq .Site.Params.disableArchiveTitleStyling true) }}
-                <a class="archive__list-title" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}">
-                  {{ if .Params.redirectUrl }}
-                    <i class="fas fa-external-link-alt" aria-label="External link"></i>
-                  {{ end }}
-                  {{ .Title }}</a
-                >
-              {{ else }}
-                <a class="archive__list-title styled" href="{{ $postUrl }}" target="{{ $target }}" title="{{ .Title }}">
-                  {{ if .Params.redirectUrl }}
-                    <i class="fas fa-external-link-alt" aria-label="External link"></i>
-                  {{ end }}
-                  {{ .Title }}</a
-                >
-              {{ end }}
+              <a
+                class="archive__list-title {{ $linkClass }}"
+                href="{{ $postUrl }}"
+                title="{{ .Title }}"
+                {{ if $external }}
+                  target="_blank" rel="noopener noreferrer"
+                {{ end }}
+              >
+                {{ if .Params.thumbnail }}
+                  <img
+                    class="archive__list-image"
+                    src="{{ .Params.thumbnail | relURL }}"
+                    width="48"
+                    alt="Thumbnail image"
+                    {{ if le $index 5 }}
+                      fetchpriority="high"
+                    {{ else }}
+                      loading="lazy"
+                    {{ end }}
+                  />
+                {{ end }}
+                {{ if .Params.redirectUrl }}
+                  <i class="fas fa-external-link-alt" aria-label="External link"></i>
+                {{ end }}
+                {{ .Title }}</a
+              >
               <div class="archive__list-date">
                 {{ if isset .Site.Params "listdateformat" }}
                   {{ if .Site.Params.localizedDates }}

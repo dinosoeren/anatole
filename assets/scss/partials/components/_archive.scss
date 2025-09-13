@@ -21,6 +21,7 @@
       justify-content: space-between;
       padding-bottom: 5px;
       list-style-type: none;
+      align-items: center;
     }
 
     &-date {
@@ -32,11 +33,14 @@
     }
 
     &-title {
-      display: inline-block;
+      display: flex;
       flex: 0.96;
+      gap: 12px;
+      align-items: center;
 
       &.styled {
         text-transform: uppercase;
+        font-weight: 500;
       }
 
       @include color.themed() {
@@ -46,6 +50,17 @@
         @include color.themed() {
           color: color.t('info');
         }
+      }
+    }
+
+    &-image {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 4px;
+
+      @include color.themed() {
+        box-shadow: color.t('shadow');
       }
     }
   }
