@@ -185,10 +185,12 @@
                 >
                   <h3 class="portfolio__name">{{ .name | markdownify }}</h3>
                   <ul class="portfolio__meta">
-                    {{ if .status }}
+                    {{ if .start }}
                       <li class="portfolio__meta-item">
-                        <em class="fas fa-flag-checkered"></em>
-                        <span>{{ .status }}</span>
+                        <em class="fas fa-calendar-alt"></em>
+                        <span
+                          >{{ .start }}{{ if and .end (not (eq .end .start)) }}&nbsp;-&nbsp;{{ .end }}{{ end }}</span
+                        >
                       </li>
                     {{ end }}
                     {{ if .venue }}
@@ -197,12 +199,10 @@
                         <span>{{ .venue }}</span>
                       </li>
                     {{ end }}
-                    {{ if .start }}
+                    {{ if .status }}
                       <li class="portfolio__meta-item">
-                        <em class="fas fa-calendar-alt"></em>
-                        <span
-                          >{{ .start }}{{ if and .end (not (eq .end .start)) }}&nbsp;-&nbsp;{{ .end }}{{ end }}</span
-                        >
+                        <em class="fas fa-flag-checkered"></em>
+                        <span>{{ .status }}</span>
                       </li>
                     {{ end }}
                     {{ if .authors }}
