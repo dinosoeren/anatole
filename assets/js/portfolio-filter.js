@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (allTags.size === 0) return;
 
   const sortedTags = Array.from(allTags.keys()).sort();
+  const tagFiltersUrlParam = 'tags';
 
   const tagInput = document.getElementById('tag-input');
   const tagDropdown = document.getElementById('tag-dropdown');
@@ -44,6 +45,41 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearButton = filterContainer.querySelector('.portfolio-filter-clear');
 
   let selectedTags = [];
+
+  // Helper function to update URL with current filters
+  function updateURL(pushState = true) {
+    const url = new URL(window.location);
+    if (selectedTags.length > 0) {
+      url.searchParams.set(tagFiltersUrlParam, selectedTags.join(','));
+    } else {
+      url.searchParams.delete(tagFiltersUrlParam);
+    }
+
+    if (pushState) {
+      window.history.pushState({ filters: selectedTags }, '', url);
+    } else {
+      window.history.replaceState({ filters: selectedTags }, '', url);
+    }
+  }
+
+  // Initialize filters from URL parameters
+  function initializeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const filtersParam = urlParams.get(tagFiltersUrlParam);
+    if (filtersParam) {
+      const tagsFromURL = filtersParam
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean);
+      // Only add tags that exist in our available tags
+      const validTags = tagsFromURL.filter((tag) => allTags.has(tag));
+      selectedTags = validTags;
+      renderSelectedTags();
+      updateURL(false); // Use replaceState for initial load
+    }
+    applyFilter(); // Initial filter application
+    tagDropdown.classList.add('hidden'); // Hide dropdown on-load
+  }
 
   function getCoexistingTags() {
     if (selectedTags.length === 0) {
@@ -95,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedTags.push(tag);
       renderSelectedTags();
       applyFilter();
+      updateURL();
       const firstVisibleSection = document.querySelector('.post:not(.hidden)');
       if (firstVisibleSection) {
         // Use a small timeout to ensure the DOM is updated before scrolling
@@ -110,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedTags = selectedTags.filter((t) => t !== tag);
     renderSelectedTags();
     applyFilter();
+    updateURL();
   }
 
   function renderSelectedTags() {
@@ -207,8 +245,31 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedTags = [];
     renderSelectedTags();
     applyFilter();
+    updateURL();
   });
 
-  applyFilter(); // Initial filter application
-  tagDropdown.classList.add('hidden');
+  // Handle browser back/forward navigation
+  window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.filters) {
+      selectedTags = event.state.filters;
+    } else {
+      // Parse from URL if no state
+      const urlParams = new URLSearchParams(window.location.search);
+      const filtersParam = urlParams.get(tagFiltersUrlParam);
+      if (filtersParam) {
+        const tagsFromURL = filtersParam
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter(Boolean);
+        selectedTags = tagsFromURL.filter((tag) => allTags.has(tag));
+      } else {
+        selectedTags = [];
+      }
+    }
+    renderSelectedTags();
+    applyFilter();
+  });
+
+  // Initialize from URL and apply initial filter
+  initializeFromURL();
 });
