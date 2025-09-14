@@ -267,7 +267,7 @@
     border: 0;
 
     @include color.themed() {
-      background: adjust-color(color.t('primary'), $alpha: -0.7);
+      background: adjust-color(color.t('primary'), $alpha: -0.9);
     }
 
     &:has(input:focus) {
@@ -335,6 +335,7 @@
     max-height: 150px;
     overflow-y: auto;
     z-index: 1000;
+    font-size: 0.9em;
 
     @include color.themed() {
       background: color.t('accent');
@@ -366,7 +367,7 @@
 
     @include color.themed() {
       color: color.t('primary');
-      background: adjust-color(color.t('primary'), $alpha: -0.7);
+      background: adjust-color(color.t('primary'), $alpha: -0.9);
     }
 
     &[disabled] {
