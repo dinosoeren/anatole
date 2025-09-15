@@ -354,6 +354,16 @@
       margin: 0 auto;
       text-align: center;
 
+      &.inline {
+        display: inline-block;
+
+        img {
+          max-width: 100%;
+          width: revert-layer;
+          left: 0;
+        }
+      }
+
       &.big {
         max-width: 87.5%;
       }
