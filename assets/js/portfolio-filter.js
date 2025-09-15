@@ -136,7 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (firstVisibleSection) {
         // Use a small timeout to ensure the DOM is updated before scrolling
         setTimeout(() => {
-          firstVisibleSection.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+          firstVisibleSection.previousElementSibling.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest',
+          });
         }, 100);
       }
     }
@@ -172,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  const tocLinks = document.querySelectorAll('.table-of-contents a');
+
   function applyFilter() {
     portfolioSections.forEach((section) => {
       let visibleItems = 0;
@@ -186,6 +192,18 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       section.classList.toggle('hidden', visibleItems === 0);
       section.parentElement.classList.toggle('hidden', visibleItems === 0);
+    });
+    tocLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        const sectionId = href.substring(1);
+        const section = document.getElementById(sectionId);
+        if (section.classList.contains('hidden') || section.parentElement.classList.contains('hidden')) {
+          link.classList.add('hidden');
+        } else {
+          link.classList.remove('hidden');
+        }
+      }
     });
     updateDropdown();
     renderSelectedTags();

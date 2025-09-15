@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       mobileTocTrigger.setAttribute('disabled', true);
     }
+    header.classList.add('toc-loaded');
   }
 
   // Initialize scroll highlighting for all TOC links
@@ -65,8 +66,6 @@ function setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrapper) {
       header.classList.remove('expanded');
     }
   });
-
-  header.classList.add('toc-loaded');
 }
 
 function initScrollHighlighting() {
@@ -182,6 +181,9 @@ function initScrollHighlighting() {
     // Find the current section based on scroll position
     for (let i = orderedSections.length - 1; i >= 0; i--) {
       const section = orderedSections[i][1];
+      if (section.element.classList.contains('hidden') || section.element.parentElement.classList.contains('hidden'))
+        continue;
+
       let sectionTop = section.element.getBoundingClientRect().top + window.scrollY;
 
       // Adjust for thumbnail wrapper if present
