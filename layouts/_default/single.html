@@ -85,10 +85,6 @@
 
       {{- partial "expirationnote.html" . -}}
 
-      {{- if (eq .Params.toc true) -}}
-        {{- partial "toc.html" . -}}
-      {{- end -}}
-
       {{ $emojiMapping := dict
         "✅" "success"
         "❌" "failure"

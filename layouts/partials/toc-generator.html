@@ -1,0 +1,106 @@
+{{- $context := . -}}
+{{- $isHome := eq .Kind "home" -}}
+{{- $isSinglePost := eq .Kind "page" -}}
+{{- $tocItems := slice -}}
+
+{{- /* Use Hugo's built-in TableOfContents for content headings */ -}}
+{{- $builtInTOC := .TableOfContents -}}
+{{- $hasContentTOC := and $builtInTOC (ne $builtInTOC "<nav id=\"TableOfContents\"></nav>") -}}
+
+{{- /* Check for list headers */ -}}
+{{- $hasListItems := and (ne $isSinglePost true) (ne $isHome true) (gt .Pages.Len 0) -}}
+
+{{- /* For portfolio pages, get portfolio section headings */ -}}
+{{- $data := "" -}}
+{{- if .CurrentSection.File -}}
+  {{- $data = index .Site.Data .CurrentSection.File.ContentBaseName -}}
+{{- else -}}
+  {{- $data = index .Site.Data .Section -}}
+{{- end -}}
+
+{{- $hasPortfolio := and $data $data.portfolioitems -}}
+
+{{- /* Check for additional sections */ -}}
+{{- $hasSeries := and $isSinglePost (isset .Params "series") -}}
+{{- $hasRelated := and $isSinglePost (eq .Site.Params.relatedPosts true) (gt (len (.Site.RegularPages.Related .)) 0) -}}
+
+{{- /* Check for comments */ -}}
+{{- $hasComments := false -}}
+{{- if $isSinglePost -}}
+  {{- $isPostSection := (eq .Type "post") -}}
+  {{- if .Site.Params.postSectionName -}}
+    {{- $isPostSection = or $isPostSection (eq .Type .Site.Params.postSectionName) -}}
+  {{- end -}}
+  {{- if .Site.Params.postSections -}}
+    {{- $isPostSection = or $isPostSection (in .Site.Params.postSections .Type) -}}
+  {{- end -}}
+  {{- if and $isPostSection (ne .Page.Params.disableComments true) -}}
+    {{- if .Site.Config.Services.Disqus.Shortname -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.utterances.repo -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.giscus.repo -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.CommentoURL -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.gitalk.repo -}}{{- $hasComments = true -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Only generate TOC if we have content */ -}}
+{{- if or $isHome $hasContentTOC $hasListItems $hasPortfolio $hasSeries $hasRelated $hasComments -}}
+  <nav class="table-of-contents">
+    {{- /* Add content TOC items */ -}}
+    {{- if $hasContentTOC -}}
+      {{- $tocContent := $builtInTOC | replaceRE `<nav[^>]*>` "" | replaceRE `</nav>` "" -}}
+      {{- $tocContent | safeHTML -}}
+    {{- end -}}
+    <ul>
+      {{- /* Add home paginated items */ -}}
+      {{- if $isHome -}}
+        {{- $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
+        {{- range $index, $page := $paginator.Pages -}}
+          {{- $anchorTitle := delimit (split (.Title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+          <li><a href="#{{ $anchorTitle }}">{{ .Title | markdownify }}</a></li>
+        {{- end -}}
+      {{- end -}}
+
+      {{- /* Add list items */ -}}
+      {{- if $hasListItems -}}
+        {{ range .Pages.GroupByDate "2006" }}
+          {{- $anchorTitle := delimit (split .Key " ") "-" | lower -}}
+          <li><a href="#{{ $anchorTitle }}">{{ .Key }}</a></li>
+        {{- end -}}
+      {{- end -}}
+
+      {{- /* Add portfolio section headings */ -}}
+      {{- if $hasPortfolio -}}
+        {{- range $data.portfolioitems -}}
+          {{- $anchorTitle := delimit (split (.title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+          <li><a href="#{{ $anchorTitle }}">{{ .title | markdownify }}</a></li>
+          <ul>
+            {{- range $i, $p := .portfolioitem -}}
+              {{- $anchorName := delimit (split (.name | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+              <li><a href="#{{ $anchorName }}">{{ .name | markdownify }}</a></li>
+            {{- end -}}
+          </ul>
+        {{- end -}}
+      {{- end -}}
+
+      {{- /* Add series section */ -}}
+      {{- if $hasSeries -}}
+        <li>
+          <a href="#posts-in-series"
+            >{{ i18n "series_posts" (dict "Title" (replace (index .Params.series 0) "-" " " | title)) | default "Posts in Series" }}</a
+          >
+        </li>
+      {{- end -}}
+
+      {{- /* Add related posts section */ -}}
+      {{- if $hasRelated -}}
+        <li><a href="#related-posts">{{ i18n "related" | default "Related Posts" }}</a></li>
+      {{- end -}}
+
+      {{- /* Add comments section */ -}}
+      {{- if $hasComments -}}
+        <li><a href="#comment">{{ i18n "comments" | default "Comments" }}</a></li>
+      {{- end -}}
+    </ul>
+  </nav>
+{{- end -}}

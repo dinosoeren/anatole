@@ -118,25 +118,19 @@
         </div>
       {{ end }}
       <div class="post__content">
+        {{ $titleClass := "upper" }}
         {{ if (eq .Site.Params.disableTitleCapitalization true) }}
-          <h3>
-            <a href="{{ $postUrl }}" target="{{ $target }}">
-              {{ if .Params.redirectUrl }}
-                <i class="fas fa-external-link-alt" aria-label="External link"></i>
-              {{ end }}
-              {{ .Title }}
-            </a>
-          </h3>
-        {{ else }}
-          <h3 class="upper">
-            <a href="{{ $postUrl }}" target="{{ $target }}">
-              {{ if .Params.redirectUrl }}
-                <i class="fas fa-external-link-alt" aria-label="External link"></i>
-              {{ end }}
-              {{ .Title }}
-            </a>
-          </h3>
+          {{ $titleClass = "" }}
         {{ end }}
+        {{- $headerAnchor := delimit (split (.Title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+        <h3 id="{{ $headerAnchor }}" class="{{ $titleClass }}">
+          <a href="{{ $postUrl }}" target="{{ $target }}">
+            {{ if .Params.redirectUrl }}
+              <i class="fas fa-external-link-alt" aria-label="External link"></i>
+            {{ end }}
+            {{ .Title }}
+          </a>
+        </h3>
         {{ if .Site.Params.fullPostContent }}
           <p>{{ .Content | safeHTML | plainify }}</p>
         {{ else }}

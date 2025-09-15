@@ -10,9 +10,7 @@
     {{- $pageTitle = printf "%sPosts" $pageNumber -}}
   {{- end -}}
 
-  {{- /* Desktop TOC (for sidebar) - only show on desktop */ -}}
-  <div class="toc-wrapper desktop-toc">
-    <div class="toc-title">{{ $pageTitle }}</div>
-    {{ $toc }}
-  </div>
+
+  <div class="toc-title-mobile">{{ $pageTitle }}</div>
+  {{ $toc }}
 {{- end -}}

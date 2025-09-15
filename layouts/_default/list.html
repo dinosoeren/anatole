@@ -8,7 +8,8 @@
       {{ end }}"
     >
       {{ range .Pages.GroupByDate "2006" }}
-        <div class="archive__heading">{{ .Key }}</div>
+        {{- $headerAnchor := delimit (split .Key " ") "-" | lower -}}
+        <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Key }}</h2>
         {{ range $index, $page := .Pages }}
           <ul class="archive__list">
             {{ $postClass := "" }}
@@ -146,8 +147,8 @@
             animated fadeInDown
           {{ end }}"
         >
-          {{ $anchorTitle := delimit (split .title " ") "" }}
-          <h2 class="portfolio__title" id="{{ $anchorTitle | lower }}">{{ title .title }}</h2>
+          {{ $anchorTitle := delimit (split (.title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower }}
+          <h2 class="portfolio__title" id="{{ $anchorTitle }}">{{ title .title }}</h2>
           {{ if .description }}
             <p>{{ .description | markdownify }}</p>
           {{ end }}
@@ -183,7 +184,8 @@
                     portfolio__description--right
                   {{ end }}"
                 >
-                  <h3 class="portfolio__name">{{ .name | markdownify }}</h3>
+                  {{ $anchorName := delimit (split (.name | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower }}
+                  <h3 id="{{ $anchorName }}" class="portfolio__name">{{ .name | markdownify }}</h3>
                   <ul class="portfolio__meta">
                     {{ if .start }}
                       <li class="portfolio__meta-item">

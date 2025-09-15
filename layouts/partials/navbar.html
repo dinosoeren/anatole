@@ -5,11 +5,36 @@
     animated fadeInDown
   {{ end }}"
 >
-  <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
-    <span aria-hidden="true" class="navbar-burger__line"></span>
-    <span aria-hidden="true" class="navbar-burger__line"></span>
-    <span aria-hidden="true" class="navbar-burger__line"></span>
-  </a>
+  <div class="header-trigger-wrapper">
+    {{- /* Mobile TOC trigger */ -}}
+    <div class="toc-container-mobile">
+      <a
+        class="toc-trigger-mobile navbar-trigger"
+        role="button"
+        aria-label="Toggle Table of Contents"
+        aria-expanded="false"
+      >
+        <i class="fas fa-list"></i>
+      </a>
+    </div>
+
+    <div class="search" data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}">
+      <div class="searchbox">
+        <label class="fas fa-search" for="header__search-text" aria-label="Search"></label>
+        <input id="header__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
+      </div>
+      <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden"></div>
+    </div>
+
+    <a role="button" class="navbar-burger navbar-trigger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true" class="navbar-burger__line"></span>
+      <span aria-hidden="true" class="navbar-burger__line"></span>
+      <span aria-hidden="true" class="navbar-burger__line"></span>
+    </a>
+  </div>
+  <div class="toc-wrapper-mobile">
+    {{- partial "toc-mobile.html" . -}}
+  </div>
   <nav class="nav">
     <ul class="nav__list" id="navMenu">
       {{ $url := .RelPermalink }}

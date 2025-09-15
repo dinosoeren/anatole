@@ -1,7 +1,9 @@
 {{ $related := where .Site.Pages ".Params.series" "intersect" .Params.series }}
 
 
-<h2>{{ i18n "series_posts" (dict "Title" (replace (index .Params.series 0) "-" " " | title)) }}</h2>
+<h2 id="posts-in-series">
+  {{ i18n "series_posts" (dict "Title" (replace (index .Params.series 0) "-" " " | title)) }}
+</h2>
 <ul>
   {{ range $related }}
     <li><a href="{{ .Page.RelPermalink }}">{{ title .Page.Title }}</a></li>

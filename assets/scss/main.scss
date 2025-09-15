@@ -7,6 +7,7 @@
 @use 'partials/layout/body';
 @use 'partials/layout/header';
 @use 'partials/layout/nav';
+@use 'partials/components/toc';
 @use 'partials/components/animated';
 @use 'partials/components/category';
 @use 'partials/components/tag';
@@ -15,7 +16,7 @@
 @use 'partials/components/search';
 @use 'partials/components/footer';
 @use 'partials/components/pagination';
-@use 'partials/components/navbarburger';
+@use 'partials/components/navbartrigger';
 @use 'partials/components/comment';
 @use 'partials/components/optionswitch';
 @use 'partials/components/post';

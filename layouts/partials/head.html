@@ -190,6 +190,15 @@
     crossorigin="anonymous"
   ></script>
 
+  {{ $tocJs := resources.Get "js/toc.js" }}
+  {{ $secureTocJs := $tocJs |  resources.Minify | resources.Fingerprint }}
+  <script
+    type="text/javascript"
+    src="{{ $secureTocJs.RelPermalink }}"
+    integrity="{{ $secureTocJs.Data.Integrity }}"
+    crossorigin="anonymous"
+  ></script>
+
   {{ if not .Site.Params.disableThemeSwitcher }}
     {{ $anatoleThemeSwitcher := resources.Get "js/anatole-theme-switcher.js" }}
     {{ $secureThemeSwitcherJS := $anatoleThemeSwitcher |  resources.Minify | resources.Fingerprint }}

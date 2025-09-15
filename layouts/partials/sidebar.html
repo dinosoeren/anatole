@@ -42,13 +42,19 @@
         </li>
       {{ end }}
     </ul>
-    <div class="search">
+
+    <div class="search" data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}">
       <div class="searchbox">
-        <label class="fas fa-search" for="search__text" aria-label="Search"></label>
-        <input id="search__text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
+        <label class="fas fa-search" for="sidebar__search-text" aria-label="Search"></label>
+        <input id="sidebar__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
       </div>
-      <div id="search__suggestions" class="search__suggestions--hidden"></div>
+      <div id="sidebar__search-suggestions" class="search__suggestions search__suggestions--hidden"></div>
     </div>
+
+    {{- /* Include TOC for desktop */ -}}
+    {{- partial "toc.html" . -}}
+
+
     <div class="sidebar__posts">
       {{ range $section := .Site.Params.postSections }}
         {{ $sectionPage := site.GetPage (printf "section/%s" $section) }}

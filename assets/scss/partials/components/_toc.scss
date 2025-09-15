@@ -1,0 +1,257 @@
+@use 'modules/color_theme' as color;
+@use 'modules/config' as conf;
+
+/* Table of Contents Styles */
+.toc-wrapper {
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+
+.toc-title {
+  font-weight: 400;
+  text-align: center;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+  padding: 0 1rem;
+}
+
+.toc-wrapper .table-of-contents {
+  line-height: 1.4;
+  max-height: 20svh;
+  overflow-y: auto;
+}
+
+.toc-wrapper .table-of-contents::-webkit-scrollbar {
+  display: none;
+}
+
+.toc-wrapper .table-of-contents ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-wrapper .table-of-contents li {
+  margin: 0;
+}
+
+.toc-wrapper .table-of-contents a {
+  display: block;
+  padding: 0.875rem 1rem;
+  text-decoration: none;
+  line-height: 1.1em;
+  border-left: 3px solid rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  @include color.themed() {
+    color: color.t('primary');
+  }
+}
+
+.toc-wrapper .table-of-contents a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.toc-wrapper .table-of-contents a.toc-active {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-left: 3px solid #3b82f6;
+  font-weight: 500;
+
+  @include color.themed() {
+    color: color.t('info');
+  }
+}
+
+/* Nested TOC items */
+.toc-wrapper .table-of-contents ul ul {
+  position: relative;
+}
+
+.toc-wrapper .table-of-contents ul ul a {
+  font-size: 0.8em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.5rem;
+}
+
+.toc-wrapper .table-of-contents ul ul a.toc-active {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .toc-wrapper {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+
+  .toc-title {
+    padding: 0 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .toc-wrapper .table-of-contents a {
+    padding: 0.3rem 0.75rem;
+    margin: 0 0.25rem;
+  }
+
+  .toc-wrapper .table-of-contents ul ul {
+    margin-left: 0.5rem;
+  }
+
+  .toc-wrapper .table-of-contents ul ul a {
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Mobile TOC Styles */
+@media (max-width: 960px) {
+  /* Hide desktop TOC wrapper on mobile */
+  .toc-wrapper {
+    display: none !important;
+  }
+
+  .header-trigger-wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Mobile TOC Trigger Icon */
+  .toc-trigger-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 0;
+
+    &[disabled] {
+      opacity: 0;
+      cursor: default;
+    }
+  }
+
+  .toc-trigger-mobile i {
+    font-size: 1.5rem;
+  }
+
+  /* Mobile TOC Wrapper - Hidden by default */
+  .toc-wrapper-mobile {
+    top: 44px;
+    left: 0;
+    width: calc(100svw - 2rem);
+    max-height: 40svh;
+    padding: 1rem;
+    display: none;
+    transform: translateX(-20px) scale(0.95);
+    overflow-y: auto;
+  }
+
+  /* Show TOC wrapper when expanded */
+  .expanded .toc-wrapper-mobile {
+    display: block;
+    transform: translateX(0) scale(1);
+  }
+
+  .nav--active + .toc-wrapper-mobile {
+    display: none;
+  }
+
+  /* Mobile TOC Title */
+  .toc-title-mobile {
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Mobile TOC Navigation */
+  .toc-wrapper-mobile .table-of-contents {
+    line-height: 1.4;
+  }
+
+  .toc-wrapper-mobile .table-of-contents ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-wrapper-mobile .table-of-contents li {
+    margin: 0;
+  }
+
+  .toc-wrapper-mobile .table-of-contents a {
+    color: inherit;
+    display: block;
+    padding: 1rem 0.75rem;
+    text-decoration: none;
+    line-height: 1.1em;
+    border-left: 3px solid rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    position: relative;
+
+    @include color.themed() {
+      color: color.t('primary');
+    }
+  }
+
+  .toc-wrapper-mobile .table-of-contents a:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .toc-wrapper-mobile .table-of-contents a.toc-active {
+    background-color: rgba(59, 130, 246, 0.2);
+    border-left: 3px solid #3b82f6;
+    font-weight: 500;
+
+    @include color.themed() {
+      color: color.t('info');
+    }
+  }
+
+  /* Nested TOC items in mobile */
+  .toc-wrapper-mobile .table-of-contents ul ul {
+    position: relative;
+  }
+
+  .toc-wrapper-mobile .table-of-contents ul ul a {
+    font-size: 0.8em;
+    padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .toc-wrapper-mobile .table-of-contents ul ul a.toc-active {
+    background-color: rgba(59, 130, 246, 0.15);
+  }
+
+  /* Animation improvements */
+  .toc-wrapper-mobile::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .toc-wrapper-mobile::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+  }
+
+  .toc-wrapper-mobile::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.6);
+    border-radius: 2px;
+  }
+
+  .toc-wrapper-mobile::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.8);
+  }
+}
+
+/* Ensure mobile TOC doesn't appear on desktop */
+@media (min-width: 961px) {
+  .toc-container-mobile,
+  .toc-wrapper-mobile {
+    display: none !important;
+  }
+}
