@@ -71,7 +71,6 @@
 
         @include color.themed() {
           color: color.t('primary');
-          border-left: 3px solid color.t('border');
 
           &:hover {
             background-color: adjust-color(color.t('primary-lighter'), $alpha: -0.5);
@@ -107,12 +106,12 @@
     width: calc(100svw - 2rem);
     max-height: 40svh;
     padding: 1rem;
-    transform: translateX(-20px) scale(0.95);
     overflow-y: auto;
 
-    .expanded & {
+    .expanded &,
+    .header:not(.toc-loaded) .header-trigger-wrapper:has(.toc-trigger-mobile:hover) + &,
+    .header:not(.toc-loaded) &:hover {
       display: block;
-      transform: translateX(0) scale(1);
     }
 
     .nav--active + & {

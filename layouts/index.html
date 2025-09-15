@@ -42,7 +42,9 @@
       {{ $target = "_blank" }}
       {{ $postClass = "external" }}
     {{ end }}
+    {{- $headerAnchor := delimit (split (.Title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
     <div
+      id="{{ $headerAnchor }}"
       class="post {{ $postClass }} {{ with .Site.Params.doNotLoadAnimations }}
         .
       {{ else }}
@@ -122,8 +124,7 @@
         {{ if (eq .Site.Params.disableTitleCapitalization true) }}
           {{ $titleClass = "" }}
         {{ end }}
-        {{- $headerAnchor := delimit (split (.Title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
-        <h3 id="{{ $headerAnchor }}" class="{{ $titleClass }}">
+        <h3 class="{{ $titleClass }}">
           <a href="{{ $postUrl }}" target="{{ $target }}">
             {{ if .Params.redirectUrl }}
               <i class="fas fa-external-link-alt" aria-label="External link"></i>

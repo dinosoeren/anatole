@@ -67,7 +67,9 @@
     }
   }
 
-  &--active {
+  &--active,
+  .header:not(.nav-loaded) .header-trigger-wrapper:has(.navbar-burger:hover) ~ &,
+  .header:not(.nav-loaded) &:hover {
     display: block;
   }
 }

@@ -154,7 +154,8 @@
           {{ end }}
           <div class="portfolio-section">
             {{ range $i, $p := .portfolioitem }}
-              <div class="portfolio" data-tags="{{ delimit .tags "," }}">
+              {{ $anchorName := delimit (split (.name | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower }}
+              <div id="{{ $anchorName }}" class="portfolio" data-tags="{{ delimit .tags "," }}">
                 {{ if .image }}
                   <div
                     class="portfolio__image-wrapper {{ if (modBool $i 2) }}
@@ -184,8 +185,7 @@
                     portfolio__description--right
                   {{ end }}"
                 >
-                  {{ $anchorName := delimit (split (.name | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower }}
-                  <h3 id="{{ $anchorName }}" class="portfolio__name">{{ .name | markdownify }}</h3>
+                  <h3 class="portfolio__name">{{ .name | markdownify }}</h3>
                   <ul class="portfolio__meta">
                     {{ if .start }}
                       <li class="portfolio__meta-item">

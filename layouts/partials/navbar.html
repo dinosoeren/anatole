@@ -23,7 +23,9 @@
         <label class="fas fa-search" for="header__search-text" aria-label="Search"></label>
         <input id="header__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
       </div>
-      <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden"></div>
+      <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">
+        <div class="search__no-results">Loading...</div>
+      </div>
     </div>
 
     <a role="button" class="navbar-burger navbar-trigger" data-target="navMenu" aria-label="menu" aria-expanded="false">
@@ -35,8 +37,8 @@
   <div class="toc-wrapper-mobile">
     {{- partial "toc-mobile.html" . -}}
   </div>
-  <nav class="nav">
-    <ul class="nav__list" id="navMenu">
+  <nav class="nav" id="navMenu">
+    <ul class="nav__list">
       {{ $url := .RelPermalink }}
       {{ range $menuId, $menuItem := .Site.Menus.main }}
         {{ $active := eq $url $menuItem.URL }}

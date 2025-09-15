@@ -62,10 +62,11 @@
   }
 
   &__no-results {
-    padding: 5px;
+    padding: 10px 0 5px 0;
     text-align: center;
 
     @include conf.desktop {
+      padding: 5px;
       text-align: left;
     }
   }
@@ -130,6 +131,11 @@
       display: none;
     }
 
+    .sidebar .search:not(.active) .searchbox:has(input[type='search']:focus) + &,
+    .header:not(.expanded) .search:not(.active) .searchbox:has(input[type='search']:focus) + & {
+      display: block;
+    }
+
     &-item {
       display: flex;
       align-items: center;
@@ -158,6 +164,7 @@
         height: 40px;
         object-fit: cover;
         border-radius: 4px;
+        flex-shrink: 0;
       }
     }
 

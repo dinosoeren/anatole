@@ -65,6 +65,8 @@ function setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrapper) {
       header.classList.remove('expanded');
     }
   });
+
+  header.classList.add('toc-loaded');
 }
 
 function initScrollHighlighting() {

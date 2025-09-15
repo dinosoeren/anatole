@@ -132,12 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderSelectedTags();
       applyFilter();
       updateURL();
-      const firstVisibleSection = document.querySelector('.post:not(.hidden)');
+      const firstVisibleSection = document.querySelector('.portfolio-section:not(.hidden)');
       if (firstVisibleSection) {
         // Use a small timeout to ensure the DOM is updated before scrolling
         setTimeout(() => {
-          const portfolioTop = firstVisibleSection.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({ top: portfolioTop, behavior: 'smooth' });
+          firstVisibleSection.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
         }, 100);
       }
     }
@@ -185,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
           visibleItems++;
         }
       });
+      section.classList.toggle('hidden', visibleItems === 0);
       section.parentElement.classList.toggle('hidden', visibleItems === 0);
     });
     updateDropdown();

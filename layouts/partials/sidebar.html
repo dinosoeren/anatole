@@ -48,7 +48,9 @@
         <label class="fas fa-search" for="sidebar__search-text" aria-label="Search"></label>
         <input id="sidebar__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
       </div>
-      <div id="sidebar__search-suggestions" class="search__suggestions search__suggestions--hidden"></div>
+      <div id="sidebar__search-suggestions" class="search__suggestions search__suggestions--hidden">
+        <div class="search__no-results">Loading...</div>
+      </div>
     </div>
 
     {{- /* Include TOC for desktop */ -}}

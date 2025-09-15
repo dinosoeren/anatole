@@ -50,6 +50,11 @@ function initSearch(container) {
 
   if (searchInput == null || suggestions == null) return;
 
+  // Remove all existing suggestions (e.g. 'Loading')
+  while (suggestions.firstChild) {
+    suggestions.removeChild(suggestions.lastChild);
+  }
+
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === '/') {
       // Focus search bar with CTRL + /
@@ -105,10 +110,10 @@ function initSearch(container) {
     }
   });
 
-  searchInput.addEventListener('input', function () {
+  function executeSearch() {
     // Run search
     const maxResultsCount = Number(container.dataset.maxResults || 5);
-    const searchText = this.value;
+    const searchText = searchInput.value;
     const searchResults = flexSearchIndex.search({
       query: searchText,
       limit: maxResultsCount,
@@ -145,6 +150,7 @@ function initSearch(container) {
       if (searchResult.thumbnail) {
         thumbnail.src = searchResult.thumbnail;
         thumbnail.alt = searchResult.title;
+        thumbnail.width = 40;
         thumbnail.classList.add('search__suggestions-thumbnail');
         suggestion.appendChild(thumbnail);
       }
@@ -169,5 +175,9 @@ function initSearch(container) {
 
       if (suggestions.childElementCount === maxResultsCount) break;
     }
-  });
+  }
+
+  searchInput.addEventListener('input', executeSearch);
+  // Execute search if user typed something before js loaded
+  if (searchInput.value) executeSearch();
 }

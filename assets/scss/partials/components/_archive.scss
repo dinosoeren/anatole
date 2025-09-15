@@ -1,4 +1,5 @@
 @use 'modules/color_theme' as color;
+@use 'modules/config' as conf;
 
 .archive {
   margin: 30px;
@@ -7,6 +8,11 @@
     font-size: 2.4rem;
     font-weight: 600;
     line-height: 2.2em;
+    scroll-margin-top: 70px;
+
+    @include conf.desktop {
+      scroll-margin-top: 90px;
+    }
 
     @include color.themed() {
       color: color.t('primary');
