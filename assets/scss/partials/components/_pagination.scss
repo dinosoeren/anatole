@@ -12,7 +12,7 @@
     height: 13px;
 
     &-item {
-      margin: 0 2px;
+      margin: 0 4px;
       display: inline;
       line-height: 1;
       text-decoration: none;
@@ -37,10 +37,6 @@
         &:focus {
           box-shadow: none;
         }
-      }
-
-      &:first-child a.page-link {
-        padding-right: 2px;
       }
     }
   }
