@@ -22,4 +22,13 @@
   @include conf.print {
     display: none;
   }
+
+  &-trigger-wrapper {
+    display: flex;
+    justify-content: space-between;
+
+    @include conf.desktop {
+      display: none;
+    }
+  }
 }

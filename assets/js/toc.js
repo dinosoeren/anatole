@@ -171,8 +171,10 @@ function initScrollHighlighting() {
         Math.abs(window.scrollY - Number(header.dataset.scrollingTo)) < sectionHighlightOffsetY) ||
       (window.scrollY || window.pageYOffset) + window.innerHeight >= document.documentElement.scrollHeight - 1
     ) {
-      header.classList.remove('expanded');
       header.dataset.scrollingTo = '';
+      setTimeout(() => {
+        header.classList.remove('expanded');
+      }, 100);
     }
 
     let currentSection = orderedSections[0][1]; // Default to first section
@@ -242,6 +244,5 @@ function initScrollHighlighting() {
   window.addEventListener('resize', detectMobile);
 
   // Highlight current section on page load
-  const isSinglePost = document.querySelectorAll('.post__content').length === 1;
-  setTimeout(() => highlightCurrentSection(), isSinglePost ? 10 : 2000);
+  setTimeout(() => highlightCurrentSection(), 10);
 }
