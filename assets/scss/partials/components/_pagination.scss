@@ -12,13 +12,35 @@
     height: 13px;
 
     &-item {
-      margin: 0 2px 0 2px;
+      margin: 0 2px;
       display: inline;
       line-height: 1;
       text-decoration: none;
 
       @include color.themed() {
         color: color.t('primary');
+      }
+
+      a.page-link {
+        padding: 5px 6px 4px 6px;
+        border-radius: 4px;
+        transition: box-shadow 0.2s ease;
+
+        @include color.themed() {
+          box-shadow: 0 0 2px color.t('primary-light');
+        }
+
+        &:hover {
+          box-shadow: 0 0 4px color.t('info');
+        }
+
+        &:focus {
+          box-shadow: none;
+        }
+      }
+
+      &:first-child a.page-link {
+        padding-right: 2px;
       }
     }
   }

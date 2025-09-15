@@ -73,6 +73,20 @@
   #sib-form {
     .sib-form-block {
       padding: 8px 16px;
+      position: relative;
+
+      img {
+        position: absolute;
+        top: -85px;
+        right: -85px;
+        display: block;
+        margin: 16px auto;
+        width: 150px;
+        height: 150px;
+        border-radius: 75px;
+        border: 1px solid #c0ccd9;
+        backdrop-filter: blur(20px);
+      }
 
       .sib-text-form-block {
         @include color.themed() {
@@ -187,21 +201,41 @@
   margin: 60px 0;
 }
 
-@media screen and (max-width: 400px) {
+.post__content .newsletter:not(:has(+ .contact-form)) .sib-form:has(img),
+.post + .newsletter:not(:has(+ .contact-form)) .sib-form:has(img) {
+  margin-top: 96px;
+}
+
+.newsletter:has(+ .contact-form) .sib-form-block img {
+  display: none;
+}
+
+@media screen and (max-width: 480px) {
   .sib-form #sib-container {
-    padding: 16px 0;
+    padding: 16px 9px;
   }
   // Title block
   .newsletter .sib-form #sib-form > div:nth-of-type(1) > .sib-form-block {
     font-size: 28px;
   }
-}
-
-@media screen and (max-width: 500px) {
   .post__content .sib-form {
     margin: 30px 0;
   }
-  .sib-form #sib-container {
-    padding: 16px 9px;
+}
+
+@media (max-width: 1135px) {
+  .newsletter:not(:has(+ .contact-form)) .sib-form:has(img) {
+    margin-top: 106px;
+  }
+  .post__content .newsletter:not(:has(+ .contact-form)) .sib-form:has(img),
+  .post + .newsletter:not(:has(+ .contact-form)) .sib-form:has(img) {
+    margin-top: 146px;
+  }
+  .newsletter .sib-form #sib-form .sib-form-block img {
+    top: -135px;
+    left: unset;
+    right: unset;
+    position: relative;
+    margin-bottom: -125px;
   }
 }
