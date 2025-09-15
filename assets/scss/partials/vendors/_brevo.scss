@@ -206,7 +206,7 @@
   margin-top: 96px;
 }
 
-.newsletter:has(+ .contact-form) .sib-form-block img {
+.newsletter:has(+ .contact-form) .sib-form #sib-form .sib-form-block img {
   display: none;
 }
 
