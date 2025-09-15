@@ -135,10 +135,8 @@ function initScrollHighlighting() {
             behavior: 'smooth',
           });
 
-          // Update URL hash for single posts
-          if (isSinglePost) {
-            window.history.pushState(null, null, href);
-          }
+          // Update URL hash
+          window.history.pushState(null, null, href);
 
           // Hide mobile TOC after clicking
           const header = document.querySelector('header.header');
