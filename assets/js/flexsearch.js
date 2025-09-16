@@ -46,7 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
 /*! FlexSearch logic adapted from Gruvbox theme | MIT license | https://github.com/schnerring/hugo-theme-gruvbox/blob/e37181494ba57cde994384fac8ef1becd3265fd0/assets/js/flexsearch.js */
 function initSearch(container) {
   const searchInput = container.querySelector("input[type='search']");
-  const suggestions = container.querySelector('.search__suggestions');
+  let suggestions = container.querySelector('.search__suggestions');
+  if (suggestions == null && container.dataset.suggestionsTarget) {
+    suggestions = document.getElementById(container.dataset.suggestionsTarget);
+  }
 
   if (searchInput == null || suggestions == null) return;
 

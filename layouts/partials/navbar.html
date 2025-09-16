@@ -18,13 +18,14 @@
       </a>
     </div>
 
-    <div class="search" data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}">
+    <div
+      class="search"
+      data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}"
+      data-suggestions-target="header__search-suggestions"
+    >
       <div class="searchbox">
         <label class="fas fa-search" for="header__search-text" aria-label="Search"></label>
         <input id="header__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
-      </div>
-      <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">
-        <div class="search__no-results">Loading...</div>
       </div>
     </div>
 
@@ -33,6 +34,9 @@
       <span aria-hidden="true" class="navbar-burger__line"></span>
       <span aria-hidden="true" class="navbar-burger__line"></span>
     </a>
+  </div>
+  <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">
+    <div class="search__no-results">Loading...</div>
   </div>
   <div class="toc-wrapper-mobile">
     {{- partial "toc-mobile.html" . -}}
