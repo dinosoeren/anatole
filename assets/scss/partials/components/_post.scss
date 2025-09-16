@@ -350,6 +350,19 @@
           left: unset;
         }
       }
+
+      a {
+        padding: 2px 0;
+
+        @include color.themed() {
+          color: color.t('primary-dark');
+          border-bottom: 2px solid color.t('primary');
+        }
+
+        &:hover {
+          border-color: transparent;
+        }
+      }
     }
 
     figure {
