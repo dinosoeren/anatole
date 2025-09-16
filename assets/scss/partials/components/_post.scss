@@ -168,11 +168,7 @@
     }
 
     .chroma {
-      @include color.themed() {
-        background-color: color.t('primary-lighter');
-        display: block;
-        border-bottom: 1px solid color.t('primary-lighter');
-      }
+      display: block;
     }
 
     .upper {
@@ -222,10 +218,6 @@
       padding: 5px;
       overflow-x: auto;
       position: relative;
-
-      @include color.themed() {
-        background-color: color.t('primary-lighter');
-      }
 
       @include conf.mobile {
         width: calc(100% + 50px);
