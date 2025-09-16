@@ -63,7 +63,7 @@
 
     @include color.themed() {
       color: color.t('primary');
-      background-color: color.t('shadow-color');
+      background-color: adjust-color(color.t('primary-light'), $alpha: -0.8);
     }
 
     &:hover {
