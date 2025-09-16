@@ -180,8 +180,33 @@
     }
 
     hr {
-      @include color.themed() {
-        border-color: mix(color.t('primary-lighter'), rgba(255, 255, 255, 0.3));
+      height: 5px;
+      margin: 3.5em 0;
+      position: relative;
+      overflow: visible;
+      border: 0;
+      border-bottom: 1px solid adjust-color(color.t('primary-light'), $alpha: -0.9);
+
+      @include conf.mobile {
+        left: -30px;
+        width: calc(100% + 60px);
+      }
+
+      &::after {
+        content: ' ';
+        display: block;
+        height: 3px;
+        width: 10%;
+        margin: 0 auto;
+        position: relative;
+        top: 3px;
+        border-radius: 2px;
+
+        @include color.themed() {
+          background: color.t('accent');
+          border: 1px solid adjust-color(color.t('primary-light'), $alpha: -0.8);
+          box-shadow: 0 0 5px adjust-color(color.t('shadow-color'), $alpha: -0.1);
+        }
       }
     }
 
@@ -423,7 +448,7 @@
     padding: 0 0 12px 0;
 
     @include color.themed() {
-      border-bottom: color.t('border');
+      border-bottom: 1px solid adjust-color(color.t('primary-light'), $alpha: -0.9);
     }
 
     &-date {
