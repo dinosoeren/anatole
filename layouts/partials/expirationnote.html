@@ -24,8 +24,10 @@
   {{- if and (gt $ageDays $duration) (ne $duration 0) -}}
     <div class="alert">
       <div class="alert__indicator">!</div>
-      {{- $durationInYears := div $duration 365 -}}
-      {{ i18n "old_content_warning" (dict "Count" $durationInYears) }}
+      <div>
+        {{- $durationInYears := div $duration 365 -}}
+        {{ i18n "old_content_warning" (dict "Count" $durationInYears) | markdownify }}
+      </div>
     </div>
   {{- end -}}
 

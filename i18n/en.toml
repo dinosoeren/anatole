@@ -9,8 +9,8 @@ one = "1m read"
 other = "{{ .Count }}m read"
 
 [old_content_warning]
-one = "Warning: This post is over {{ .Count }} year old. The information may be out of date."
-other = "Warning: This post is over {{ .Count }} years old. The information may be out of date."
+one = "**Warning**: This post is over {{ .Count }} year old. The information may be out of date."
+other = "**Warning**: This post is over {{ .Count }} years old. The information may be out of date."
 
 [page_not_found]
 other = "Page Not Found"
