@@ -143,7 +143,7 @@
 
     @include color.themed() {
       border: color.t('border');
-      background: mix(color.t('primary-lighter'), rgba(0, 0, 0, 0));
+      background: adjust-color(color.t('shadow-color'), $alpha: -0.2);
       box-shadow: 0 5px 10px adjust-color(color.t('shadow-color'), $alpha: -0.15);
     }
 
@@ -154,7 +154,7 @@
     &--left,
     &--right {
       padding-top: 16px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
 
       @include color.themed() {
         border-bottom: color.t('border');
