@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (date instanceof Date) {
       dateObj = date;
     } else if (typeof date === 'number' || typeof date === 'string') {
-      num = parseInt(date);
+      const num = parseInt(date);
       if (!isNaN(num)) {
         // Handle both Unix seconds and milliseconds
         dateObj = new Date(num < 10000000000 ? num * 1000 : num);
