@@ -1,0 +1,26 @@
+{{ $emojiClass := dict
+  "✅" "success"
+  "❌" "failure"
+  "ℹ️" "info"
+  "⚠️" "warning"
+  "📣" "disclaimer"
+  "💡" "tip"
+}}
+
+{{ $content := strings.TrimSpace (.Text | plainify) }}
+{{ $firstChar := substr $content 0 1 }}
+{{ $class := index $emojiClass $firstChar }}
+{{ if not $class }}
+  {{/* Try the first two characters (some emojis are 2 chars) */}}
+  {{ $firstChar = substr $content 0 2 }}
+  {{ $class = index $emojiClass $firstChar }}
+  {{ if not $class }}
+    {{ $class = "info" }}
+    {{ $firstChar = "ℹ️" }}
+  {{ end }}
+{{ end }}
+
+
+<blockquote class="{{ $class }}">
+  {{ .Text | safeHTML }}
+</blockquote>

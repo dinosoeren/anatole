@@ -85,25 +85,7 @@
 
       {{- partial "expirationnote.html" . -}}
 
-      {{ $emojiMapping := dict
-        "✅" "success"
-        "❌" "failure"
-        "ℹ️" "info"
-        "⚠️" "warning"
-        "📣" "disclaimer"
-        "💡" "tip"
-      }}
-
-      {{ $content := .Content }}
-      {{ range $emoji, $class := $emojiMapping }}
-        {{ $blockquote := printf "<blockquote>\n<p>%s" $emoji }}
-        {{ $replacement := printf "<blockquote class=\"%s\">\n<p>%s" $class $emoji }}
-        {{ $content = replace $content $blockquote $replacement }}
-      {{ end }}
-
-      {{ $content = replace $content "<blockquote>" "<blockquote class=\"info\">" }}
-
-      {{ $content | safeHTML }}
+      {{ .Content | safeHTML }}
 
       {{- if isset .Params "series" -}}
         {{- partial "series.html" . -}}
