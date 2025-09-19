@@ -29,6 +29,8 @@
 }
 
 .post__meta .share-buttons {
+  margin-left: -4px;
+
   a {
     padding: 2px 5px 0 5px;
     background-color: unset;
@@ -54,7 +56,7 @@
   margin-top: 2rem;
 
   a {
-    margin-right: 0;
+    margin-right: 6px;
     margin-bottom: 10px;
     font-size: 1.1em;
     padding: 12px 16px 8px 16px;
