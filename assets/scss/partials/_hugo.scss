@@ -43,10 +43,20 @@ blockquote {
   p:not(:first-of-type) {
     margin-left: 2.2em;
   }
+  svg {
+    position: relative;
+    top: 5px;
+    left: -3px;
+    height: 1.2em;
+    width: 1.2em;
+  }
   &.success {
     @include color.themed() {
       background: oklch(from color.t('success') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('success');
+      svg {
+        color: color.t('success');
+      }
     }
   }
   &.failure {
@@ -54,11 +64,17 @@ blockquote {
       background: oklch(from color.t('danger') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('danger');
     }
+    svg {
+      color: color.t('danger');
+    }
   }
   &.warning {
     @include color.themed() {
       background: oklch(from color.t('warning') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('warning');
+    }
+    svg {
+      color: color.t('warning');
     }
   }
   &.disclaimer {
@@ -66,11 +82,17 @@ blockquote {
       background: oklch(from color.t('disclaimer') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('disclaimer');
     }
+    svg {
+      color: color.t('disclaimer');
+    }
   }
   &.tip {
     @include color.themed() {
       background: oklch(from color.t('tip') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('tip');
+    }
+    svg {
+      color: color.t('tip');
     }
   }
 }
