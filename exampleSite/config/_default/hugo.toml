@@ -6,12 +6,11 @@ title = "Website of Jane Doe"
 # theme as hugo module
 #theme = "github.com/lxndrblz/anatole"
 # theme as git submodule
-theme = "anatole"
+# theme = "anatole"
 
 summarylength = 10
 enableEmoji = true
 enableRobotsTXT = true
-
 
 
 # Syntax highlighting
@@ -66,3 +65,13 @@ localizedDates = false
 # Google Analytics
   [services.googleAnalytics]
     #ID = 'G-MEASUREMENT_ID'
+
+
+[module]
+  # uncomment line below for temporary local development of module
+  # replacements = "github.com/dinosoeren/anatole -> ../../anatole"
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/dinosoeren/anatole@gomod
+    path = "github.com/dinosoeren/anatole"
+    disable = false
