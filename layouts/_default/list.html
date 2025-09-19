@@ -47,7 +47,7 @@
                   />
                 {{ end }}
                 {{ if .Params.redirectUrl }}
-                  <i class="fas fa-external-link-alt" aria-label="External link"></i>
+                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "archive__list-icon") }}
                 {{ end }}
                 {{ .Title }}</a
               >
@@ -118,7 +118,7 @@
           <div class="dropdown hidden" id="tag-dropdown"></div>
         </div>
         <button class="portfolio-filter-clear" title="Clear" aria-label="Clear">
-          <i class="fas fa-close"></i>
+          {{ partial "icons/icon" (dict "vendor" "fas" "name" "xmark" "className" "portfolio__icon") }}
         </button>
       </div>
       {{ range $index, $elemen:= $data.portfolioitems }}
@@ -171,7 +171,7 @@
                   <ul class="portfolio__meta">
                     {{ if .start }}
                       <li class="portfolio__meta-item">
-                        <em class="fas fa-calendar-alt"></em>
+                        {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-days" "className" "portfolio__icon") }}
                         <span
                           >{{ .start }}{{ if and .end (not (eq .end .start)) }}&nbsp;-&nbsp;{{ .end }}{{ end }}</span
                         >
@@ -179,20 +179,24 @@
                     {{ end }}
                     {{ if .venue }}
                       <li class="portfolio__meta-item">
-                        <em class="fas fa-map-marker-alt"></em>
+                        {{ partial "icons/icon" (dict "vendor" "fas" "name" "location-dot" "className" "portfolio__icon") }}
+
+
                         <span>{{ .venue }}</span>
                       </li>
                     {{ end }}
                     {{ if .status }}
                       <li class="portfolio__meta-item">
-                        <em class="fas fa-flag-checkered"></em>
+                        {{ partial "icons/icon" (dict "vendor" "fas" "name" "flag-checkered" "className" "portfolio__icon") }}
+
+
                         <span>{{ .status }}</span>
                       </li>
                     {{ end }}
                     {{ if .authors }}
                       {{ range .authors }}
                         <li class="portfolio__meta-item">
-                          <em class="fas fa-at"></em>
+                          {{ partial "icons/icon" (dict "vendor" "fas" "name" "at" "className" "portfolio__icon") }}
                           <span>{{ . }}</span>
                         </li>
                       {{ end }}
@@ -210,9 +214,9 @@
                         {{ end }}
                       >
                         {{ if strings.HasPrefix .link "http" }}
-                          <em class="fas fa-external-link-alt"></em>
+                          {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "portfolio__icon") }}
                         {{ else }}
-                          <em class="fas fa-arrow-right"></em>
+                          {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-right" "className" "portfolio__icon") }}
                         {{ end }}
                         {{- if .linktext -}}
                           {{ .linktext | markdownify }}

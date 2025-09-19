@@ -22,6 +22,11 @@
     }
   }
 
+  &__icon {
+    position: relative;
+    top: 2px;
+  }
+
   &.post__content {
     padding: 2px 48px 36px 48px;
 

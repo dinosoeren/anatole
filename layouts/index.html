@@ -69,7 +69,7 @@
           <div class="post__thumbnail-overlay">
             <div class="left">
               <div>
-                <em class="fas fa-calendar-day"></em>
+                {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__thumbnail-overlay-icon") }}
                 <span class="post__footer-date"
                   >{{ if isset .Site.Params "indexdateformat" }}
                     {{ if .Site.Params.localizedDates }}
@@ -90,7 +90,7 @@
               </div>
               {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
                 <div>
-                  <em class="fas fa-edit"></em>
+                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__thumbnail-overlay-icon") }}
                   <span class="post__footer-date" data-humanize-date="{{ .Lastmod.Unix }}">
                     {{ partial "humanize-date.html" (time .Lastmod) }}
                   </span>
@@ -98,7 +98,7 @@
               {{ end }}
               {{ if .Params.attr }}
                 <div>
-                  <em class="fas fa-camera"></em>
+                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "camera" "className" "post__thumbnail-overlay-icon") }}
                   <span class="post__footer-date">
                     Image:
                     {{ if .Params.attrLink }}
@@ -127,7 +127,7 @@
         <h3 class="{{ $titleClass }}">
           <a href="{{ $postUrl }}" target="{{ $target }}">
             {{ if .Params.redirectUrl }}
-              <i class="fas fa-external-link-alt" aria-label="External link"></i>
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "post__content-icon") }}
             {{ end }}
             {{ .Title }}
           </a>

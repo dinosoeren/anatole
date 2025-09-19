@@ -12,7 +12,9 @@
   }
 
   &-burger {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &__line {
       display: block;

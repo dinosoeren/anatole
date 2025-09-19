@@ -13,34 +13,38 @@
     data-share-title="{{ .Title }}"
     data-share-text="{{ .Summary }}"
   >
-    <em class="fas fa-share-alt"></em
-  ></a>
+    {{ partial "icons/icon" (dict "vendor" "fas" "name" "share-nodes") }}
+  </a>
   <a
     href="https://www.facebook.com/sharer/sharer.php?u={{ $link }}"
     target="_blank"
     rel="noopener noreferrer"
     title="Share on Facebook"
-    ><em class="fab fa-facebook"></em
-  ></a>
+  >
+    {{ partial "icons/icon" (dict "vendor" "fab" "name" "facebook") }}
+  </a>
   <a
     href="https://x.com/intent/post/?url={{ $link }}&text={{ .Title | urlquery }}"
     target="_blank"
     rel="noopener noreferrer"
     title="Share on X"
-    ><em class="fab fa-twitter"></em
-  ></a>
+  >
+    {{ partial "icons/icon" (dict "vendor" "fab" "name" "twitter") }}
+  </a>
   <a
     href="https://www.linkedin.com/shareArticle?mini=true&url={{ $link }}&title={{ .Title | urlquery }}&source={{ .Site.Title | urlquery }}"
     target="_blank"
     rel="noopener noreferrer"
     title="Share on LinkedIn"
-    ><em class="fab fa-linkedin"></em
-  ></a>
+  >
+    {{ partial "icons/icon" (dict "vendor" "fab" "name" "linkedin") }}
+  </a>
   <a
     href="mailto:?subject={{ .Title | urlquery }}&body={{ $link }}"
     target="_blank"
     rel="noopener noreferrer"
     title="Share via Email"
-    ><em class="fas fa-envelope"></em
-  ></a>
+  >
+    {{ partial "icons/icon" (dict "vendor" "fas" "name" "envelope") }}
+  </a>
 </div>

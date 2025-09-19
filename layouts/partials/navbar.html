@@ -14,7 +14,7 @@
         aria-label="Toggle Table of Contents"
         aria-expanded="false"
       >
-        <i class="fas fa-list"></i>
+        {{ partial "icons/icon" (dict "vendor" "fas" "name" "bars-staggered") }}
       </a>
     </div>
 
@@ -24,15 +24,15 @@
       data-suggestions-target="header__search-suggestions"
     >
       <div class="searchbox">
-        <label class="fas fa-search" for="header__search-text" aria-label="Search"></label>
+        <label for="header__search-text" aria-label="Search">
+          {{ partial "icons/icon" (dict "vendor" "fas" "name" "magnifying-glass") }}
+        </label>
         <input id="header__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
       </div>
     </div>
 
     <a role="button" class="navbar-burger navbar-trigger" data-target="navMenu" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true" class="navbar-burger__line"></span>
-      <span aria-hidden="true" class="navbar-burger__line"></span>
-      <span aria-hidden="true" class="navbar-burger__line"></span>
+      {{ partial "icons/icon" (dict "vendor" "fas" "name" "ellipsis-vertical") }}
     </a>
   </div>
   <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">

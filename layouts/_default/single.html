@@ -33,7 +33,7 @@
       {{ if $isPostSection }}
         <ul class="post__meta">
           <li class="post__meta-item">
-            <em class="fas fa-calendar-day post__meta-icon"></em>
+            {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__meta-icon") }}
             <span class="post__meta-text"
               >{{ if isset .Site.Params "singledateformat" }}
                 {{ if .Site.Params.localizedDates }}
@@ -54,19 +54,19 @@
           </li>
           {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
             <li class="post__meta-item">
-              <em class="fas fa-edit post__meta-icon"></em>
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__meta-icon") }}
               <span class="post__meta-text" data-humanize-date="{{ .Lastmod.Unix }}">
                 {{ partial "humanize-date.html" (time .Lastmod) }}
               </span>
             </li>
           {{ end }}
           <li class="post__meta-item">
-            <em class="fas fa-stopwatch post__meta-icon"></em>
+            {{ partial "icons/icon" (dict "vendor" "fas" "name" "stopwatch" "className" "post__meta-icon") }}
             <span class="post__meta-text">{{ i18n "reading_time" .ReadingTime }}</span>
           </li>
           {{ if .Params.attr }}
             <li class="post__meta-item">
-              <em class="fas fa-camera post__meta-icon"></em>
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "camera" "className" "post__meta-icon") }}
               <span class="post__meta-text">
                 Image:
                 {{ if .Params.attrLink }}

@@ -30,6 +30,11 @@
       align-items: center;
     }
 
+    &-icon {
+      position: relative;
+      top: 2px;
+    }
+
     &-date {
       text-align: right;
 

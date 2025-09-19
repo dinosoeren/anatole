@@ -37,7 +37,7 @@
             aria-label="{{ $item.title }}"
             title="{{ $item.title }}"
           >
-            <i class="{{ $item.icon }} fa-2x" aria-hidden="true"></i>
+            {{ partial "icons/icon" (dict "vendor" "fab" "name" $item.icon "width" "2em" "height" "2em") }}
           </a>
         </li>
       {{ end }}
@@ -45,7 +45,9 @@
 
     <div class="search" data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}">
       <div class="searchbox">
-        <label class="fas fa-search" for="sidebar__search-text" aria-label="Search"></label>
+        <label for="sidebar__search-text" aria-label="Search">
+          {{ partial "icons/icon" (dict "vendor" "fas" "name" "magnifying-glass") }}
+        </label>
         <input id="sidebar__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
       </div>
       <div id="sidebar__search-suggestions" class="search__suggestions search__suggestions--hidden">
