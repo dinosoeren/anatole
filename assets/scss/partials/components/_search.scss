@@ -62,7 +62,7 @@
   }
 
   &__no-results {
-    padding: 10px 0 5px 0;
+    padding: 10px 0;
     text-align: center;
 
     @include conf.desktop {
@@ -131,7 +131,7 @@
     }
 
     .sidebar .search:not(.active) .searchbox:has(input[type='search']:focus) + &,
-    .header:not(.expanded) .search:not(.active) .searchbox:has(input[type='search']:focus) + & {
+    .header:not(.expanded) .header-trigger-wrapper:has(.search:not(.active)):has(input[type='search']:focus) ~ & {
       display: block;
     }
 

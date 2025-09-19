@@ -109,7 +109,7 @@
     overflow-y: auto;
 
     .expanded &,
-    .header:not(.toc-loaded) .header-trigger-wrapper:has(.toc-trigger-mobile:hover) + &,
+    .header:not(.toc-loaded) .header-trigger-wrapper:has(.toc-trigger-mobile:hover) ~ &,
     .header:not(.toc-loaded) &:hover {
       display: block;
     }
