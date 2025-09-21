@@ -38,6 +38,9 @@
       text-transform: uppercase;
       text-align: center;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       @include conf.desktop {
         padding-top: 0;

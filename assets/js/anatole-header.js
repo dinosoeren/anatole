@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const header = document.querySelector('header.header');
   const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-  const navMap = new Map();
-
   if (navbarBurgers.length < 1) return;
+
+  const navMap = new Map();
 
   navbarBurgers.forEach((navbarBurger, i) => {
     let nav = null;
@@ -37,5 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchend', clickAnywhere);
   document.addEventListener('mouseup', clickAnywhere);
 
-  header.classList.add('nav-loaded');
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 960) {
+      navbarBurgers.forEach((navbarBurger, i) => {
+        if (navMap.has(i)) {
+          const nav = navMap.get(i);
+          navbarBurger.classList.remove('nav--active');
+          nav.classList.remove('nav--active');
+        }
+      });
+    }
+  });
+
+  const header = document.querySelector('header.header');
+  if (header) header.classList.add('nav-loaded');
 });
