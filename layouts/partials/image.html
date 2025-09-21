@@ -113,14 +113,15 @@
           {{ $sizes = $sizes | append (printf "(max-width: %dpx) %dpx" $maxWidth $width) }}
         {{ end }}
         {{ $isWebP := eq "webp" $image.MediaType.SubType }}
-        <!-- Hugo does not support resizing animated WebP -->
-        {{ $isAnimatedWebP := and $isWebP $image.Content (findRE "ANIM" $image.Content) }}
-        {{ if not $isAnimatedWebP }}
+        {{ $isGif := eq "gif" $image.MediaType.SubType }}
+        <!-- Hugo does not support resizing animated Gifs, WebP, etc -->
+        {{ $isAnimated := or $isGif (and $isWebP $image.Content (findRE "ANIM" $image.Content)) }}
+        {{ if not $isAnimated }}
           {{ $resized := $image.Resize (printf "%dx" $width) }}
           {{ $srcSet = $srcSet | append (printf "%s %dw" $resized.RelPermalink $resized.Width) }}
         {{ end }}
-        {{ if not $isWebP }}
-          <!-- If image format is not WebP, add conversions -->
+        {{ if and (not $isGif) (not $isWebP) }}
+          <!-- If image format is not Gif or WebP, add conversions -->
           {{ $webp := $image.Resize (printf "%dx webp" $width) }}
           {{ $webpSrcSet = $webpSrcSet | append (printf "%s %dw" $webp.RelPermalink $webp.Width) }}
         {{ end }}
