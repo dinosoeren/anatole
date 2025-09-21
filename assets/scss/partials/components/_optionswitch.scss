@@ -11,6 +11,10 @@
     align-items: start;
     justify-content: center;
 
+    &.nav__link--active {
+      margin-bottom: -24px;
+    }
+
     .icon {
       margin-left: 2px;
       top: 0;
