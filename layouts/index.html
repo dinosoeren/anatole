@@ -158,7 +158,7 @@
     {{ partial "pagination.html" . }}
   </div>
   {{ if .Site.Params.brevoFormAction }}
-    <div class="newsletter">
+    <div id="join-newsletter" class="newsletter">
       {{ partial "brevo.html" . }}
     </div>
   {{ end }}

@@ -92,7 +92,7 @@
       {{- end -}}
 
       {{ if and .Site.Params.brevoFormAction (ne .Params.noNewsletter true) }}
-        <div class="newsletter">
+        <div id="join-newsletter" class="newsletter">
           {{ partial "brevo.html" . }}
         </div>
       {{ end }}

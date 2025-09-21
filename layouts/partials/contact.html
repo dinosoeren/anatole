@@ -1,5 +1,10 @@
 
 <div class="contact-form" id="contact-form">
+  {{ if .Site.Params.contactFormTitle }}
+  <h2>{{ .Site.Params.contactFormTitle }}</h2>
+  {{ else }}
+  <h2>{{ i18n "contact" }}</h2>
+  {{ end }}
   <form class="form-style" method="POST" action="{{ .Site.Params.contactFormAction }}" data-toggle="validator">
     <ul>
       <li>

@@ -43,22 +43,25 @@
     <div id="sib-container" class="sib-container--large sib-container--vertical">
       <form id="sib-form" method="POST" action="{{ .Site.Params.brevoFormAction }}" data-type="subscription">
         <div>
-          <div class="sib-form-block">
-            {{ $title := "Join my Newsletter" }}
+          <div class="sib-form-block title">
+            {{ if and .Site.Params.brevoFormImg (ne .Params.contact true) }}
+              <img class="sib-form-block__img" src="{{ .Site.Params.brevoFormImg }}" alt="Newsletter" />
+            {{ end }}
+            {{ $title := i18n "newsletter" }}
             {{ if .Site.Params.brevoFormTitle }}
               {{ $title = .Site.Params.brevoFormTitle }}
             {{ end }}
-            <p>{{ $title | safeHTML }}</p>
+            <h2>{{ $title | markdownify | safeHTML }}</h2>
           </div>
         </div>
         <div>
-          <div class="sib-form-block">
+          <div class="sib-form-block subtitle">
             <div class="sib-text-form-block">
               {{ $subtitle := "Subscribe to my newsletter to stay updated when I post something new." }}
               {{ if .Site.Params.brevoFormSubtitle }}
                 {{ $subtitle = .Site.Params.brevoFormSubtitle }}
               {{ end }}
-              <p>{{ $subtitle | safeHTML }}</p>
+              <p>{{ $subtitle | markdownify | safeHTML }}</p>
             </div>
           </div>
         </div>
@@ -105,7 +108,7 @@
                       {{ if .Site.Params.brevoFormOptin }}
                         {{ $optin = .Site.Params.brevoFormOptin }}
                       {{ end }}
-                      <p>{{ $optin | safeHTML }}</p></span
+                      <p>{{ $optin | markdownify | safeHTML }}</p></span
                     >
                   </label>
                 </div>
@@ -116,7 +119,7 @@
                 {{ if .Site.Params.brevoFormUnsub }}
                   {{ $unsub = .Site.Params.brevoFormUnsub }}
                 {{ end }}
-                {{ $unsub  | safeHTML }}
+                {{ $unsub | markdownify  | safeHTML }}
               </label>
             </div>
           </div>
@@ -133,7 +136,7 @@
               {{ if .Site.Params.brevoFormCTA }}
                 {{ $action = .Site.Params.brevoFormCTA }}
               {{ end }}
-              {{ $action }}
+              {{ $action | markdownify | safeHTML }}
             </button>
           </div>
         </div>
@@ -161,7 +164,7 @@
                 {{ $declaration = .Site.Params.brevoFormDeclaration }}
               {{ end }}
               <p>
-                {{ $declaration | safeHTML }}
+                {{ $declaration | markdownify | safeHTML }}
               </p>
             </div>
           </div>

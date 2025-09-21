@@ -2,6 +2,8 @@
 {{- $isHome := eq .Kind "home" -}}
 {{- $isSinglePost := eq .Kind "page" -}}
 {{- $tocItems := slice -}}
+{{- $hasContact := and $isSinglePost (eq .Params.contact true) -}}
+{{- $hasNewsletter := and $isSinglePost .Site.Params.brevoFormAction (ne .Params.noNewsletter true) -}}
 
 {{- /* Use Hugo's built-in TableOfContents for content headings */ -}}
 {{- $builtInTOC := .TableOfContents -}}
@@ -44,7 +46,7 @@
 {{- end -}}
 
 {{- /* Only generate TOC if we have content */ -}}
-{{- if or $isHome $hasContentTOC $hasListItems $hasPortfolio $hasSeries $hasRelated $hasComments -}}
+{{- if or $isHome $hasContact $hasNewsletter $hasContentTOC $hasListItems $hasPortfolio $hasSeries $hasRelated $hasComments -}}
   <nav class="table-of-contents">
     {{- /* Add content TOC items */ -}}
     {{- if $hasContentTOC -}}
@@ -90,6 +92,16 @@
             >{{ i18n "series_posts" (dict "Title" (replace (index .Params.series 0) "-" " " | title)) | default "Posts in Series" }}</a
           >
         </li>
+      {{- end -}}
+
+      {{- /* Add newsletter section */ -}}
+      {{- if $hasNewsletter -}}
+        <li><a href="#join-newsletter">{{ .Site.Params.brevoFormTitle | default (i18n "newsletter") }}</a></li>
+      {{- end -}}
+
+      {{- /* Add contact section */ -}}
+      {{- if $hasContact -}}
+        <li><a href="#contact-form">{{ .Site.Params.contactFormTitle | default (i18n "contact") }}</a></li>
       {{- end -}}
 
       {{- /* Add related posts section */ -}}
