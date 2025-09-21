@@ -1,4 +1,5 @@
 @use 'modules/color_theme' as color;
+@use 'modules/config' as conf;
 
 .newsletter {
   &:has(.sib-form-block__img) {
@@ -21,19 +22,16 @@
 
     #sib-container input:-ms-input-placeholder {
       text-align: left;
-      font-family: Helvetica, sans-serif;
       color: #c0ccda;
     }
 
     #sib-container input::placeholder {
       text-align: left;
-      font-family: Helvetica, sans-serif;
       color: #c0ccda;
     }
 
     #sib-container textarea::placeholder {
       text-align: left;
-      font-family: Helvetica, sans-serif;
       color: #c0ccda;
     }
 
@@ -45,7 +43,6 @@
     #error-message {
       font-size: 16px;
       text-align: left;
-      font-family: Helvetica, sans-serif;
       color: #661d1d;
       background-color: #ffeded;
       border-radius: 3px;
@@ -56,7 +53,6 @@
     #success-message {
       font-size: 16px;
       text-align: left;
-      font-family: Helvetica, sans-serif;
       color: #085229;
       background-color: #e7faf0;
       border-radius: 3px;
@@ -87,15 +83,18 @@
         background-color: transparent;
 
         &.title {
-          font-size: 32px;
+          text-align: center;
 
           h2 {
+            font-size: 3.2rem;
+            font-weight: 400;
             margin-top: 8px;
             margin-bottom: 0;
           }
         }
 
         &.subtitle {
+          text-align: center;
           font-size: 16px;
         }
 
@@ -120,10 +119,10 @@
       }
 
       .entry__label {
-        font-weight: 700;
+        font-weight: 600;
         text-align: left;
         font-size: 16px;
-        font-family: Helvetica, sans-serif;
+        margin-bottom: 8px;
       }
 
       .entry__error {
@@ -131,7 +130,6 @@
         line-height: 1.2em;
         font-size: 16px;
         text-align: left;
-        font-family: Helvetica, sans-serif;
         color: #661d1d;
         background-color: #ffeded;
         border-radius: 3px;
@@ -141,13 +139,12 @@
       .entry__specification {
         font-size: 12px;
         text-align: left;
-        font-family: Helvetica, sans-serif;
+        margin-top: 4px;
       }
 
       .checkbox__label {
         font-size: 14px;
         text-align: left;
-        font-family: Helvetica, sans-serif;
         background-color: transparent;
       }
 
@@ -160,7 +157,6 @@
         font-size: 16px;
         text-align: center;
         font-weight: 700;
-        font-family: Helvetica, sans-serif;
         text-transform: uppercase;
         color: #ffffff;
         background-color: #3e4857;
@@ -197,7 +193,6 @@
         }
         font-size: 14px;
         text-align: left;
-        font-family: Helvetica, sans-serif;
         background-color: transparent;
       }
     }
