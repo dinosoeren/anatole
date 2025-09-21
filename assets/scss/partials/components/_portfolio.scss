@@ -4,10 +4,9 @@
 .portfolio {
   position: relative;
   padding: 0;
-  scroll-margin-top: 125px;
+  scroll-margin-top: 97px;
 
   @include conf.desktop {
-    scroll-margin-top: 145px;
     padding: 36px 48px;
   }
 

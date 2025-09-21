@@ -69,7 +69,7 @@ function setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrapper) {
 }
 
 function initScrollHighlighting() {
-  const sectionHighlightOffsetY = 50;
+  const scrollYErrorMargin = 30;
   const header = document.querySelector('header.header');
   const stickyFilter = document.querySelector('.portfolio-filter-tags');
 
@@ -80,7 +80,7 @@ function initScrollHighlighting() {
     isMobile = window.innerWidth <= 960;
     fixedHeaderHeight = isMobile ? 70 : 90;
     if (header) {
-      fixedHeaderHeight = header.getBoundingClientRect().height + 30;
+      fixedHeaderHeight = header.getBoundingClientRect().height;
     }
     if (stickyFilter) {
       fixedHeaderHeight += stickyFilter.getBoundingClientRect().height;
@@ -117,22 +117,10 @@ function initScrollHighlighting() {
         e.preventDefault();
         const section = document.getElementById(sectionId);
         if (section) {
-          let sectionTop = section.getBoundingClientRect().top + window.scrollY;
+          const sectionTop = computeSectionTop(section, fixedHeaderHeight);
 
-          // Adjust for thumbnail wrapper if present (for non-single posts)
-          const isSinglePost = document.querySelectorAll('.post__content').length === 1;
-          if (
-            !isSinglePost &&
-            section.parentNode.previousElementSibling &&
-            (section.parentNode.previousElementSibling.classList.contains('post__thumbnail-wrapper') ||
-              section.parentNode.previousElementSibling.classList.contains('portfolio__image-wrapper'))
-          ) {
-            sectionTop = section.parentNode.previousElementSibling.getBoundingClientRect().top + window.scrollY;
-          }
-
-          const scrollPosition = sectionTop - fixedHeaderHeight;
           window.scrollTo({
-            top: scrollPosition,
+            top: sectionTop,
             behavior: 'smooth',
           });
 
@@ -140,9 +128,8 @@ function initScrollHighlighting() {
           window.history.pushState(null, null, href);
 
           // Hide mobile TOC after clicking
-          const header = document.querySelector('header.header');
           if (header && header.classList.contains('expanded')) {
-            header.dataset.scrollingTo = scrollPosition;
+            header.dataset.scrollingTo = sectionTop;
             setTimeout(() => {
               if (header.dataset.scrollingTo) {
                 header.classList.remove('expanded');
@@ -161,14 +148,14 @@ function initScrollHighlighting() {
 
   // Function to highlight the current section in TOC
   function highlightCurrentSection() {
-    const scrollPosition = window.scrollY + fixedHeaderHeight + sectionHighlightOffsetY;
+    const scrollPosition = window.scrollY || window.pageYOffset;
 
     // Handle auto-hide after scroll to element or bottom of page
     if (
       (header &&
         header.dataset.scrollingTo &&
-        Math.abs(window.scrollY - Number(header.dataset.scrollingTo)) < sectionHighlightOffsetY) ||
-      (window.scrollY || window.pageYOffset) + window.innerHeight >= document.documentElement.scrollHeight - 1
+        Math.abs(scrollPosition - Number(header.dataset.scrollingTo)) < scrollYErrorMargin) ||
+      scrollPosition + window.innerHeight >= document.documentElement.scrollHeight - 1
     ) {
       header.dataset.scrollingTo = '';
       setTimeout(() => {
@@ -184,20 +171,8 @@ function initScrollHighlighting() {
       if (section.element.classList.contains('hidden') || section.element.parentElement.classList.contains('hidden'))
         continue;
 
-      let sectionTop = section.element.getBoundingClientRect().top + window.scrollY;
-
-      // Adjust for thumbnail wrapper if present
-      const isSinglePost = document.querySelectorAll('.post__content').length === 1;
-      if (
-        !isSinglePost &&
-        section.element.parentNode.previousElementSibling &&
-        (section.element.parentNode.previousElementSibling.classList.contains('post__thumbnail-wrapper') ||
-          section.element.parentNode.previousElementSibling.classList.contains('portfolio__image-wrapper'))
-      ) {
-        sectionTop = section.element.parentNode.previousElementSibling.getBoundingClientRect().top + window.scrollY;
-      }
-
-      if (sectionTop > 0 && scrollPosition >= sectionTop) {
+      const sectionTop = computeSectionTop(section.element, fixedHeaderHeight);
+      if (sectionTop > 0 && sectionTop - scrollPosition < scrollYErrorMargin) {
         currentSection = section;
         break;
       }
@@ -247,4 +222,20 @@ function initScrollHighlighting() {
 
   // Highlight current section on page load
   setTimeout(() => highlightCurrentSection(), 10);
+}
+
+function computeSectionTop(section, fixedHeaderHeight) {
+  const scrollPosition = window.scrollY || window.pageYOffset;
+  if (!section) return scrollPosition;
+
+  let sectionTop = section.getBoundingClientRect().top + scrollPosition;
+  const computedStyle = window.getComputedStyle(section);
+  const marginTop = parseFloat(computedStyle.scrollMarginTop) || 0;
+  if (!isNaN(marginTop) && marginTop > 0) {
+    sectionTop -= marginTop;
+  } else {
+    sectionTop -= fixedHeaderHeight;
+  }
+
+  return sectionTop;
 }
