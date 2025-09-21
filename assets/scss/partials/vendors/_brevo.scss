@@ -2,6 +2,8 @@
 @use 'modules/config' as conf;
 
 .newsletter {
+  scroll-margin-top: 75px;
+
   &:has(.sib-form-block__img) {
     scroll-margin-top: 170px;
   }
