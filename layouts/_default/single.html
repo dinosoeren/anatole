@@ -8,13 +8,16 @@
   >
     {{ if .Params.thumbnail }}
       <div class="post__thumbnail-wrapper">
-        <img
-          class="post__thumbnail"
-          src="{{ .Params.thumbnail | relURL }}"
-          alt="Thumbnail image"
-          fetchpriority="high"
-          {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
-        />
+        {{ $imageOpts := dict
+          "src" .Params.thumbnail
+          "hdSrc" .Params.thumbnailHd
+          "alt" "Thumbnail image"
+          "page" .Page
+          "loading" "eager"
+          "fetchpriority" "high"
+          "class" "post__thumbnail"
+        }}
+        {{ partial "image.html" $imageOpts }}
       </div>
     {{ end }}
     <div class="post__content">

@@ -7,10 +7,12 @@
         animated fadeInDown
       {{ end }}"
     >
+      {{ $listIdx := 0 }}
       {{ range .Pages.GroupByDate "2006" }}
         {{- $headerAnchor := delimit (split .Key " ") "-" | lower -}}
         <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Key }}</h2>
         {{ range $index, $page := .Pages }}
+          {{ $listIdx = add $listIdx 1 }}
           <ul class="archive__list">
             {{ $postClass := "" }}
             {{ $external := false }}
@@ -34,17 +36,22 @@
                 {{ end }}
               >
                 {{ if .Params.thumbnail }}
-                  <img
-                    class="archive__list-image"
-                    src="{{ .Params.thumbnail | relURL }}"
-                    width="48"
-                    alt="Thumbnail image"
-                    {{ if le $index 5 }}
-                      fetchpriority="high"
-                    {{ else }}
-                      loading="lazy"
-                    {{ end }}
-                  />
+                  {{ $loading := "lazy" }}
+                  {{ $fetchpriority := "low" }}
+                  {{ if le $listIdx 5 }}
+                    {{ $loading = "eager" }}
+                    {{ $fetchpriority = "high" }}
+                  {{ end }}
+                  {{ $imageOpts := dict
+                    "src" .Params.thumbnail
+                    "alt" "Thumbnail image"
+                    "page" $page
+                    "loading" $loading
+                    "fetchpriority" $fetchpriority
+                    "width" "48"
+                    "class" "archive__list-image"
+                  }}
+                  {{ partial "image.html" $imageOpts }}
                 {{ end }}
                 {{ if .Params.redirectUrl }}
                   {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "archive__list-icon") }}
@@ -146,18 +153,19 @@
                       portfolio__image-wrapper--left
                     {{ end }}"
                   >
-                    {{ if .link }}
-                      <a
-                        href="{{ .link | safeURL }}"
-                        {{ if strings.HasPrefix .link "http" }}
-                          target="_blank" rel="noopener"
-                        {{ end }}
-                      >
-                        <img class="portfolio__image" src="{{ .image | relURL }}" alt="{{ .name | markdownify }}" />
-                      </a>
-                    {{ else }}
-                      <img class="portfolio__image" src="{{ .image | relURL }}" alt="{{ .name | markdownify }}" />
+                    {{ $loading := "lazy" }}
+                    {{ if and (eq $index 0) (or (eq $i 0) (eq $i 1)) }}
+                      {{ $loading = "eager" }}
                     {{ end }}
+                    {{ $imageOpts := dict
+                      "src" .image
+                      "alt" .name
+                      "page" .
+                      "link" .link
+                      "loading" $loading
+                      "class" "portfolio__image"
+                    }}
+                    {{ partial "image.html" $imageOpts }}
                   </div>
                 {{ end }}
                 <div

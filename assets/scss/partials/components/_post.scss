@@ -66,7 +66,7 @@
     // HD loading state
     &.hd-loading {
       // Subtle visual indication that HD is loading
-      filter: brightness(0.98);
+      opacity: 0.98;
     }
 
     &-wrapper {
@@ -320,6 +320,7 @@
       margin-left: auto;
       margin-right: auto;
       max-width: 100%;
+      object-fit: contain;
       transition: opacity 0.2s ease;
       position: relative;
 

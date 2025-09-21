@@ -33,11 +33,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const hdSrc = img.getAttribute('data-hd-src');
     if (!hdSrc || loadingImages.has(img)) return;
 
-    // Skip images with fetchpriority="high" to avoid LCP interference
-    // if (img.getAttribute('fetchpriority') === 'high') {
-    //   console.log('Skipping HD load for high-priority image to protect LCP');
-    //   return;
-    // }
+    // Skip images with client size too small to benefit from HD swap,
+    // or with intrinsic size already bigger than rendered client size.
+    if (
+      img.clientWidth < 100 ||
+      img.clientHeight < 100 ||
+      img.naturalWidth >= img.clientWidth * 1.1 ||
+      img.naturalHeight >= img.clientHeight * 1.1
+    ) {
+      img.removeAttribute('data-hd-src');
+      return;
+    }
 
     // Don't load HD image if the original image is still loading
     if (!img.complete) {
@@ -64,13 +70,9 @@ document.addEventListener('DOMContentLoaded', function () {
       const minDelay = 50; // Minimum 50ms delay
 
       const performSwap = () => {
-        // Use a smooth transition to prevent jarring swaps
-        img.style.opacity = '0.95';
-
         // Small delay to ensure smooth transition
         requestAnimationFrame(() => {
           img.src = hdSrc;
-          img.style.opacity = '1';
           img.removeAttribute('data-hd-src');
 
           // Clean up any loading states

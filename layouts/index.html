@@ -53,19 +53,25 @@
     >
       {{ if .Params.thumbnail }}
         <div class="post__thumbnail-wrapper">
-          <a href="{{ $postUrl }}" target="{{ $target }}">
-            <img
-              class="post__thumbnail"
-              src="{{ .Params.thumbnail | relURL }}"
-              alt="Thumbnail image"
-              {{ if le $index 1 }}
-                fetchpriority="high"
-              {{ else }}
-                loading="lazy"
-              {{ end }}
-              {{ if .Params.thumbnailHd }}data-hd-src="{{ .Params.thumbnailHd | relURL }}"{{ end }}
-            />
-          </a>
+          {{ $loading := "lazy" }}
+          {{ $fetchpriority := "low" }}
+          {{ if le $index 1 }}
+            {{ $loading = "eager" }}
+            {{ $fetchpriority = "high" }}
+          {{ end }}
+          {{ $imageOpts := dict
+            "src" .Params.thumbnail
+            "hdSrc" .Params.thumbnailHd
+            "alt" "Thumbnail image"
+            "link" $postUrl
+            "target" $target
+            "rel" (cond (eq $target "_blank") "noopener noreferrer" "")
+            "page" $page
+            "loading" $loading
+            "fetchpriority" $fetchpriority
+            "class" "post__thumbnail"
+          }}
+          {{ partial "image.html" $imageOpts }}
           <div class="post__thumbnail-overlay">
             <div class="left">
               <div>
