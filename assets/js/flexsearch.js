@@ -178,6 +178,7 @@ function initSearch(container) {
       return;
     }
 
+    let resultsAdded = 0;
     for (const [permalink, searchResult] of searchResultsMap) {
       const suggestion = document.createElement('a');
       suggestion.href = permalink;
@@ -235,7 +236,8 @@ function initSearch(container) {
       dateunix.classList.add('search__suggestions-lastmod');
       title.appendChild(dateunix);
 
-      if (suggestions.childElementCount === maxResultsCount) break;
+      resultsAdded++;
+      if (resultsAdded === maxResultsCount) break;
     }
   }
 
