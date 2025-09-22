@@ -351,9 +351,12 @@
       }
 
       img {
+        margin-bottom: 1em;
+
         @include conf.mobile {
-          width: 100%;
+          max-width: calc(100% - 2.2em);
           left: unset;
+          margin-left: 2.2em;
         }
       }
 
