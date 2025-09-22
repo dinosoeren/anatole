@@ -26,7 +26,23 @@ function fetchAndBuildIndex() {
     })
     .then(function (data) {
       data.forEach(function (item) {
-        flexSearchIndex.add(item);
+        const wordFreq = item.content?.topWords ?? {};
+        // Repeat words based on their frequency to improve search relevance
+        const words = Object.keys(wordFreq).reduce((arr, word) => {
+          arr.push(...Array(wordFreq[word]).fill(word));
+          return arr;
+        }, []);
+        const doc = {
+          ...item,
+          content: [
+            item.content?.plain ?? '',
+            (words ?? []).join(' '),
+            (item.content?.headings ?? []).join(' '),
+            (item.content?.sentences ?? []).join(' '),
+            (item.content?.paragraphWords ?? []).join(' '),
+          ].join(' '),
+        };
+        flexSearchIndex.add(doc);
       });
     });
 }
