@@ -15,7 +15,7 @@ const flexSearchIndex = FlexSearch.Document({
         encode: false,
       },
     ],
-    store: ['title', 'summary', 'date', 'dateunix', 'permalink', 'thumbnail'],
+    store: ['title', 'summary', 'date', 'dateunix', 'permalink', 'thumbnailImg', 'thumbnailUrl'],
   },
 });
 
@@ -166,8 +166,32 @@ function initSearch(container) {
       suggestions.appendChild(suggestion);
 
       const thumbnail = document.createElement('img');
-      if (searchResult.thumbnail) {
-        thumbnail.src = searchResult.thumbnail;
+      if (searchResult.thumbnailImg && Object.keys(searchResult.thumbnailImg).length > 0) {
+        // Reconstruct img element from extracted attributes
+        if (searchResult.thumbnailImg.src) {
+          thumbnail.src = searchResult.thumbnailImg.src;
+        }
+        if (searchResult.thumbnailImg.srcset) {
+          thumbnail.srcset = searchResult.thumbnailImg.srcset;
+        }
+        if (searchResult.thumbnailImg.sizes) {
+          thumbnail.sizes = searchResult.thumbnailImg.sizes;
+        }
+        if (searchResult.thumbnailImg.alt) {
+          thumbnail.alt = searchResult.thumbnailImg.alt;
+        }
+        if (searchResult.thumbnailImg.class) {
+          thumbnail.className = searchResult.thumbnailImg.class;
+        }
+        if (searchResult.thumbnailImg.width) {
+          thumbnail.width = searchResult.thumbnailImg.width;
+        }
+        if (searchResult.thumbnailImg.height) {
+          thumbnail.height = searchResult.thumbnailImg.height;
+        }
+        suggestion.appendChild(thumbnail);
+      } else if (searchResult.thumbnailUrl) {
+        thumbnail.src = searchResult.thumbnailUrl;
         thumbnail.alt = searchResult.title;
         thumbnail.width = 40;
         thumbnail.classList.add('search__suggestions-thumbnail');

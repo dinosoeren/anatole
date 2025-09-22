@@ -156,6 +156,54 @@
     -}}
   {{- end -}}
 
+  {{- /* Prepare thumbnail options for partial */ -}}
+  {{- $thumbnailOpts := dict
+    "src" (.Params.thumbnail | default "")
+    "alt" .Title
+    "page" $element
+    "class" "search__suggestions-thumbnail"
+    "loading" "lazy"
+    "width" "40"
+    "height" "40"
+  -}}
+
+  {{- /* Extract image attributes instead of full HTML */ -}}
+  {{- $thumbnailImg := dict -}}
+  {{- if .Params.thumbnail -}}
+    {{- /* Generate the image HTML to extract attributes from */ -}}
+    {{- $imageHTML := partial "image.html" $thumbnailOpts -}}
+    {{- /* Parse the HTML to extract attributes */ -}}
+    {{- $srcMatch := findRE `src="([^"]*)"` $imageHTML 1 -}}
+    {{- $srcsetMatch := findRE `srcset="([^"]*)"` $imageHTML 1 -}}
+    {{- $sizesMatch := findRE `sizes="([^"]*)"` $imageHTML 1 -}}
+    {{- $altMatch := findRE `alt="([^"]*)"` $imageHTML 1 -}}
+    {{- $classMatch := findRE `class="([^"]*)"` $imageHTML 1 -}}
+    {{- $widthMatch := findRE `width="([^"]*)"` $imageHTML 1 -}}
+    {{- $heightMatch := findRE `height="([^"]*)"` $imageHTML 1 -}}
+
+    {{- if $srcMatch -}}
+      {{- $thumbnailImg = merge $thumbnailImg (dict "src" (index (split (index $srcMatch 0) `"`) 1)) -}}
+    {{- end -}}
+    {{- if $srcsetMatch -}}
+      {{- $thumbnailImg = merge $thumbnailImg (dict "srcset" (index (split (index $srcsetMatch 0) `"`) 1)) -}}
+    {{- end -}}
+    {{- if $sizesMatch -}}
+      {{- $thumbnailImg = merge $thumbnailImg (dict "sizes" (index (split (index $sizesMatch 0) `"`) 1)) -}}
+    {{- end -}}
+    {{- if $altMatch -}}
+      {{- $thumbnailImg = merge $thumbnailImg (dict "alt" (index (split (index $altMatch 0) `"`) 1)) -}}
+    {{- end -}}
+    {{- if $classMatch -}}
+      {{- $thumbnailImg = merge $thumbnailImg (dict "class" (index (split (index $classMatch 0) `"`) 1)) -}}
+    {{- end -}}
+    {{- if $widthMatch -}}
+      {{- $thumbnailImg = merge $thumbnailImg (dict "width" (index (split (index $widthMatch 0) `"`) 1)) -}}
+    {{- end -}}
+    {{- if $heightMatch -}}
+      {{- $thumbnailImg = merge $thumbnailImg (dict "height" (index (split (index $heightMatch 0) `"`) 1)) -}}
+    {{- end -}}
+  {{- end -}}
+
   {{- $searchIndex = $searchIndex | append
     (dict
       "id" $index
@@ -163,7 +211,8 @@
       "date" (.Date.Format "2006-01-02")
       "dateunix" .Date.Unix
       "permalink" .RelPermalink
-      "thumbnail" (.Params.thumbnail | default "")
+      "thumbnailImg" $thumbnailImg
+      "thumbnailUrl" (.Params.thumbnail | default "")
       "tags" (.Params.tags | default slice)
       "content" $content
       "summary" (htmlUnescape .Summary | plainify)
