@@ -62,6 +62,14 @@ reversepagetitle = true # When set to 'true', the Window Title will be reversed 
 # max = 900
 # increment = 200
 
+[flexSearch]
+# optimizeContent = true   # set to false to index full post content
+# topWordsCount = 50
+# keySentencesCount = 2
+# paragraphWordsCount = -1 # disable paragraph word indexing when -1
+# paragraphWordsLimit = -1 # disable paragraph word limit when -1
+# indexHeadings = true
+
 ## Social links
 # use 'fa-brands' when brand icons, use 'fas' when standard solid icons.
 [[socialIcons]]

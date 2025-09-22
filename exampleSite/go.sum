@@ -1,9 +1,5 @@
-github.com/dinosoeren/anatole v0.0.0-20250919083608-113b2e7f0d31 h1:HVKRQbHC692qMV4VdzqlcoGqOsB91rhOxc/H8twxP0E=
-github.com/dinosoeren/anatole v0.0.0-20250919083608-113b2e7f0d31/go.mod h1:WOEDMSMefv/IjxXB+kZH6oYcpZHhTBNML9pX6y1BWt8=
-github.com/dinosoeren/anatole v0.0.0-20250920010336-306ac8d4e654 h1:V7RZ6no7adZ2uW0x4B/a658hxAohbX1fJcp4EAl+H40=
-github.com/dinosoeren/anatole v0.0.0-20250920010336-306ac8d4e654/go.mod h1:L6+IHft5Ccc1UmwbYCvxaVy8svZ0+ci/bj/H2eMEJQo=
-github.com/dinosoeren/anatole v0.0.0-20250921084522-b0f3c878e5b3 h1:U0N9T6DzpYqX8aEqgBX2TodQrLo/Ggd9RUOVm6858Uc=
-github.com/dinosoeren/anatole v0.0.0-20250921084522-b0f3c878e5b3/go.mod h1:L6+IHft5Ccc1UmwbYCvxaVy8svZ0+ci/bj/H2eMEJQo=
+github.com/dinosoeren/anatole v0.0.0-20250922040758-888e936e22c2 h1:VbXmnVXpDEJxg/A8Lgm6JSBbqwDhsqA04uNe/btUDhA=
+github.com/dinosoeren/anatole v0.0.0-20250922040758-888e936e22c2/go.mod h1:L6+IHft5Ccc1UmwbYCvxaVy8svZ0+ci/bj/H2eMEJQo=
 github.com/hugomods/font-awesome v6.7.1+incompatible/go.mod h1:C2wW6xDvHkcMlJMVTPQ+Npt+rO0OGv13xT1iyll2z2Q=
 github.com/hugomods/icons v0.6.6 h1:gGlafcBDRP7sSID+tgLcWdog+s/QBj8DIfU+h9tZj1U=
 github.com/hugomods/icons v0.6.6/go.mod h1:cIkSvK6W0q6N4U6n9KGz+QfRWQXAW0INd+1P31gPNGg=
