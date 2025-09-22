@@ -69,9 +69,10 @@ function initSearch(container) {
 
   if (searchInput == null || suggestions == null) return;
 
-  // Remove all existing suggestions (e.g. 'Loading')
-  while (suggestions.firstChild) {
-    suggestions.removeChild(suggestions.lastChild);
+  // Remove existing no results suggestion (e.g. 'Loading') if present
+  const preExistingMessage = suggestions.querySelector('.search__no-results');
+  if (preExistingMessage) {
+    preExistingMessage.parentNode?.removeChild(preExistingMessage);
   }
 
   document.addEventListener('keydown', (e) => {
@@ -147,15 +148,33 @@ function initSearch(container) {
       searchResultsMap.set(searchResult.doc.permalink, searchResult.doc);
     }
 
-    // Display results
-    suggestions.innerHTML = '';
+    requestAnimationFrame(() => renderSearchResults(searchText, searchResultsMap, maxResultsCount));
+  }
+
+  function renderSearchResults(searchText, searchResultsMap, maxResultsCount) {
+    if (!suggestions) return;
+    // Clear old results before rendering new ones
+    const oldResults = suggestions.querySelectorAll('.search__suggestions-item:not(.related), .search__no-results');
+    oldResults.forEach((item) => item.parentNode?.removeChild(item));
+
+    // Hide or unhide related posts (if any) based on whether we have search results or not
+    const related = suggestions.querySelectorAll('.search__suggestions-item.related');
+    if (searchResultsMap.size === 0) {
+      related.forEach((item) => item.classList.remove('hidden'));
+    } else {
+      related.forEach((item) => item.classList.add('hidden'));
+    }
     suggestions.classList.remove('search__suggestions--hidden');
 
     if (searchResultsMap.size === 0 && searchText) {
       const noResultsMessage = document.createElement('div');
       noResultsMessage.innerHTML = `No results for "<strong>${searchText}</strong>"`;
       noResultsMessage.classList.add('search__no-results');
-      suggestions.appendChild(noResultsMessage);
+      if (related && related.length > 0) {
+        suggestions.insertBefore(noResultsMessage, related[0]);
+      } else {
+        suggestions.appendChild(noResultsMessage);
+      }
       return;
     }
 
