@@ -2308,6 +2308,9 @@ body {
   will-change: transform;
 }
 
+.newsletter {
+  scroll-margin-top: 75px;
+}
 .newsletter:has(.sib-form-block__img) {
   scroll-margin-top: 170px;
 }
@@ -2325,17 +2328,14 @@ body {
 }
 .newsletter .sib-form #sib-container input:-ms-input-placeholder {
   text-align: left;
-  font-family: Helvetica, sans-serif;
   color: #c0ccda;
 }
 .newsletter .sib-form #sib-container input::placeholder {
   text-align: left;
-  font-family: Helvetica, sans-serif;
   color: #c0ccda;
 }
 .newsletter .sib-form #sib-container textarea::placeholder {
   text-align: left;
-  font-family: Helvetica, sans-serif;
   color: #c0ccda;
 }
 .newsletter .sib-form #sib-container a {
@@ -2345,7 +2345,6 @@ body {
 .newsletter .sib-form #error-message {
   font-size: 16px;
   text-align: left;
-  font-family: Helvetica, sans-serif;
   color: #661d1d;
   background-color: #ffeded;
   border-radius: 3px;
@@ -2355,7 +2354,6 @@ body {
 .newsletter .sib-form #success-message {
   font-size: 16px;
   text-align: left;
-  font-family: Helvetica, sans-serif;
   color: #085229;
   background-color: #e7faf0;
   border-radius: 3px;
@@ -2385,13 +2383,21 @@ body {
   background-color: transparent;
 }
 .newsletter .sib-form #sib-form .sib-form-block.title {
-  font-size: 32px;
+  text-align: center;
 }
 .newsletter .sib-form #sib-form .sib-form-block.title h2 {
+  font-size: 3.2rem;
+  font-weight: 400;
   margin-top: 8px;
   margin-bottom: 0;
 }
+@media screen and (max-width: 480px) {
+  .newsletter .sib-form #sib-form .sib-form-block.title h2 {
+    font-size: 2.8rem;
+  }
+}
 .newsletter .sib-form #sib-form .sib-form-block.subtitle {
+  text-align: center;
   font-size: 16px;
 }
 .newsletter .sib-form #sib-form .sib-form-block__img {
@@ -2413,17 +2419,16 @@ body {
   color: #9f9f9f;
 }
 .newsletter .sib-form #sib-form .entry__label {
-  font-weight: 700;
+  font-weight: 600;
   text-align: left;
   font-size: 16px;
-  font-family: Helvetica, sans-serif;
+  margin-bottom: 8px;
 }
 .newsletter .sib-form #sib-form .entry__error {
   padding: 10px;
   line-height: 1.2em;
   font-size: 16px;
   text-align: left;
-  font-family: Helvetica, sans-serif;
   color: #661d1d;
   background-color: #ffeded;
   border-radius: 3px;
@@ -2432,12 +2437,11 @@ body {
 .newsletter .sib-form #sib-form .entry__specification {
   font-size: 12px;
   text-align: left;
-  font-family: Helvetica, sans-serif;
+  margin-top: 4px;
 }
 .newsletter .sib-form #sib-form .checkbox__label {
   font-size: 14px;
   text-align: left;
-  font-family: Helvetica, sans-serif;
   background-color: transparent;
 }
 .newsletter .sib-form #sib-form > div:nth-of-type(4) > .sib-form-block {
@@ -2447,7 +2451,6 @@ body {
   font-size: 16px;
   text-align: center;
   font-weight: 700;
-  font-family: Helvetica, sans-serif;
   text-transform: uppercase;
   color: #ffffff;
   background-color: #3e4857;
@@ -2474,7 +2477,6 @@ body {
 .newsletter .sib-form #sib-form .sib-form__declaration {
   font-size: 14px;
   text-align: left;
-  font-family: Helvetica, sans-serif;
   background-color: transparent;
 }
 .theme--light .newsletter .sib-form #sib-form .sib-form__declaration {
