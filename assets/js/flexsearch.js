@@ -130,6 +130,8 @@ function initSearch(container) {
     }
   });
 
+  // Throttled search input handler for better performance
+  let typing = false;
   function executeSearch() {
     // Run search
     const maxResultsCount = Number(container.dataset.maxResults || 5);
@@ -148,7 +150,13 @@ function initSearch(container) {
       searchResultsMap.set(searchResult.doc.permalink, searchResult.doc);
     }
 
-    requestAnimationFrame(() => renderSearchResults(searchText, searchResultsMap, maxResultsCount));
+    if (!typing) {
+      requestAnimationFrame(() => {
+        renderSearchResults(searchText, searchResultsMap, maxResultsCount);
+        typing = false;
+      });
+      typing = true;
+    }
   }
 
   function renderSearchResults(searchText, searchResultsMap, maxResultsCount) {
@@ -171,6 +179,7 @@ function initSearch(container) {
       noResultsMessage.innerHTML = `No results for "<strong>${searchText}</strong>"`;
       noResultsMessage.classList.add('search__no-results');
       if (related && related.length > 0) {
+        noResultsMessage.innerHTML += '. Related posts:';
         suggestions.insertBefore(noResultsMessage, related[0]);
       } else {
         suggestions.appendChild(noResultsMessage);
