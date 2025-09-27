@@ -335,6 +335,13 @@
         height: auto;
         left: -30px;
       }
+
+      &.inline {
+        display: inline-block;
+        max-width: 100%;
+        width: revert-layer;
+        left: 0;
+      }
     }
 
     &-icon {
