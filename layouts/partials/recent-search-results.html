@@ -1,5 +1,5 @@
 {{- /* Get recent posts from mainSections when no search results and not on a page */ -}}
-{{- if and (not (eq .Site.Params.flexSearch.showRecentPostsWhenNoSearchResults false)) (ne .Kind "page") -}}
+{{- if and (not (eq .Site.Params.flexSearch.suggestRecentPostsWhenNoResults false)) (ne .Kind "page") -}}
   {{- $maxCount := .Site.Params.flexSearch.noResultsSuggestionCount | default 3 -}}
   {{- $mainSections := .Site.Params.mainSections | default (slice "post") -}}
 
