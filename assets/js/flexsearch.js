@@ -69,11 +69,30 @@ function initSearch(container) {
 
   if (searchInput == null || suggestions == null) return;
 
-  // Remove existing no results suggestion (e.g. 'Loading') if present
-  const preExistingMessage = suggestions.querySelector('.search__no-results');
-  if (preExistingMessage) {
-    preExistingMessage.parentNode?.removeChild(preExistingMessage);
-  }
+  const maxResultsCount = Number(container.dataset.maxResults || 5);
+  const feelingLuckyText = container.dataset.feelingLucky || 'Feeling lucky?';
+  const trySuggestionsText = container.dataset.trySuggestions || 'You might like these...';
+  const noResultsFullText = container.dataset.noResults || 'No results for "XX."';
+  const noResultsBeforeText = noResultsFullText.split('XX')[0].trim();
+  const noResultsAfterText = noResultsFullText.split('XX')[1]?.trim() || '';
+
+  requestAnimationFrame(() => {
+    // Replace or remove existing message (e.g. 'Loading') if present
+    const preExistingMessage = suggestions.querySelector('.search__no-results');
+    if (preExistingMessage) {
+      const related = suggestions.querySelectorAll('.search__suggestions-item.related');
+      if (related && related.length > 0) {
+        // Replace existing message content
+        preExistingMessage.textContent = '';
+        const strongEl = document.createElement('strong');
+        strongEl.textContent = feelingLuckyText;
+        preExistingMessage.appendChild(strongEl);
+        preExistingMessage.appendChild(document.createTextNode(` ${trySuggestionsText}`));
+      } else {
+        preExistingMessage.parentNode?.removeChild(preExistingMessage);
+      }
+    }
+  });
 
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === '/') {
@@ -134,7 +153,6 @@ function initSearch(container) {
   let typing = false;
   function executeSearch() {
     // Run search
-    const maxResultsCount = Number(container.dataset.maxResults || 5);
     const searchText = searchInput.value;
     const searchResults = flexSearchIndex.search({
       query: searchText,
@@ -152,14 +170,14 @@ function initSearch(container) {
 
     if (!typing) {
       requestAnimationFrame(() => {
-        renderSearchResults(searchText, searchResultsMap, maxResultsCount);
+        renderSearchResults(searchText, searchResultsMap);
         typing = false;
       });
       typing = true;
     }
   }
 
-  function renderSearchResults(searchText, searchResultsMap, maxResultsCount) {
+  function renderSearchResults(searchText, searchResultsMap) {
     if (!suggestions) return;
     // Clear old results before rendering new ones
     const oldResults = suggestions.querySelectorAll('.search__suggestions-item:not(.related), .search__no-results');
@@ -174,14 +192,24 @@ function initSearch(container) {
     }
     suggestions.classList.remove('search__suggestions--hidden');
 
-    if (searchResultsMap.size === 0 && searchText) {
+    if (searchResultsMap.size === 0) {
       const noResultsMessage = document.createElement('div');
-      noResultsMessage.innerHTML = `No results for "<strong>${searchText}</strong>"`;
+      if (searchText.trim().length > 0) {
+        noResultsMessage.appendChild(document.createTextNode(noResultsBeforeText));
+        const strongEl = document.createElement('strong');
+        strongEl.textContent = searchText.trim();
+        noResultsMessage.appendChild(strongEl);
+        noResultsMessage.appendChild(document.createTextNode(noResultsAfterText));
+      } else if (related && related.length > 0) {
+        const strongEl = document.createElement('strong');
+        strongEl.textContent = feelingLuckyText;
+        noResultsMessage.appendChild(strongEl);
+      }
       noResultsMessage.classList.add('search__no-results');
       if (related && related.length > 0) {
-        noResultsMessage.innerHTML += '. Related posts:';
+        noResultsMessage.appendChild(document.createTextNode(` ${trySuggestionsText}`));
         suggestions.insertBefore(noResultsMessage, related[0]);
-      } else {
+      } else if (noResultsMessage.textContent.length > 0) {
         suggestions.appendChild(noResultsMessage);
       }
       return;

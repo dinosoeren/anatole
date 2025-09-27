@@ -89,3 +89,18 @@ other = "Send me a message"
 
 [newsletter]
 other = "Join me Newsletter"
+
+[loading]
+other = "Loading..."
+
+[while_you_wait]
+other = "While you wait, try these..."
+
+[no_results]
+other = "No results for \"{{ . }}.\""
+
+[feeling_lucky]
+other = "Feeling lucky?"
+
+[try_suggestions]
+other = "You might like these..."

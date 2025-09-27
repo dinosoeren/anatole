@@ -21,6 +21,9 @@
     <div
       class="search"
       data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}"
+      data-no-results="{{ (i18n "no_results" "XX") | default "No results for \"XX.\"" }}"
+      data-feeling-lucky="{{ i18n "feeling_lucky" | default "Feeling lucky?" }}"
+      data-try-suggestions="{{ i18n "try_suggestions" | default "You might like these..." }}"
       data-suggestions-target="header__search-suggestions"
     >
       <div class="searchbox">
@@ -36,7 +39,10 @@
     </a>
   </div>
   <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">
-    <div class="search__no-results">Loading...</div>
+    <div class="search__no-results">
+      <strong>{{ i18n "loading" | default "Loading..." }}</strong>
+      {{ i18n "while_you_wait" | default "While you wait, try these..." }}
+    </div>
     {{ if eq .Kind "page" }}
       {{- partial "related-search-results.html" . -}}
     {{ else }}
