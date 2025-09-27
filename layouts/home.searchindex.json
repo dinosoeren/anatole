@@ -1,3 +1,17 @@
+
+{{- $minWordLength := int (math.Max (.Site.Params.flexSearch.minWordLength | default 3) 1) -}}
+{{- $topWordsCount := int (math.Max (.Site.Params.flexSearch.topWordsCount | default 50) 0) -}}
+{{- $keySentencesCount := int (math.Max (.Site.Params.flexSearch.keySentencesCount | default 2) 0) -}}
+{{- $paragraphWordsCount := int (math.Max (.Site.Params.flexSearch.paragraphWordsCount | default 3) 0) -}}
+{{- $paragraphWordsLimit := int (math.Max (.Site.Params.flexSearch.paragraphWordsLimit | default 50) 0) -}}
+{{- $indexHeadings := .Site.Params.flexSearch.indexHeadings | default true -}}
+
+{{- $commonWords := slice "the" "and" "or" "but" "in" "on" "no" "not" "into" "onto" "at" "to" "for" "from" "of" "with" "by" "is" "are" "was" "were" "be" "been" "have" "has" "had" "do" "dont" "does" "doesnt" "did" "will" "would" "wouldve" "could" "couldve" "should" "shouldve" "may" "might" "can" "must" "shall" "a" "an" "then" "this" "that" "these" "those" "what" "how" "why" "when" "where" "i" "id" "ive" "you" "youd" "youve" "he" "hed" "she" "it" "we" "they" "me" "him" "her" "us" "them" "my" "your" "his" "her" "its" "our" "their" "there" "theyre" -}}
+{{- with .Site.Params.flexSearch.commonWords -}}
+  {{- $commonWords = append $commonWords . -}}
+{{- end -}}
+
+{{- /* Index pages from main sections */ -}}
 {{- $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
 {{- $searchIndex := slice -}}
 {{- range $index, $element := $pages -}}
@@ -10,20 +24,9 @@
   -}}
 
   {{- if not (eq .Site.Params.flexSearch.optimizeContent false) -}}
-    {{- /* Get configuration parameters with defaults */ -}}
-    {{- $minWordLength := int (math.Max (.Site.Params.flexSearch.minWordLength | default 3) 1) -}}
-    {{- $topWordsCount := int (math.Max (.Site.Params.flexSearch.topWordsCount | default 50) 0) -}}
-    {{- $keySentencesCount := int (math.Max (.Site.Params.flexSearch.keySentencesCount | default 2) 0) -}}
-    {{- $paragraphWordsCount := int (math.Max (.Site.Params.flexSearch.paragraphWordsCount | default 3) 0) -}}
-    {{- $paragraphWordsLimit := int (math.Max (.Site.Params.flexSearch.paragraphWordsLimit | default 50) 0) -}}
-    {{- $indexHeadings := .Site.Params.flexSearch.indexHeadings | default true -}}
-
-    {{- $commonWords := slice "the" "and" "or" "but" "in" "on" "no" "not" "into" "onto" "at" "to" "for" "from" "of" "with" "by" "is" "are" "was" "were" "be" "been" "have" "has" "had" "do" "dont" "does" "doesnt" "did" "will" "would" "wouldve" "could" "couldve" "should" "shouldve" "may" "might" "can" "must" "shall" "a" "an" "then" "this" "that" "these" "those" "what" "how" "why" "when" "where" "i" "id" "ive" "you" "youd" "youve" "he" "hed" "she" "it" "we" "they" "me" "him" "her" "us" "them" "my" "your" "his" "her" "its" "our" "their" "there" "theyre" -}}
-    {{- with .Site.Params.flexSearch.commonWords -}}
-      {{- $commonWords = append $commonWords . -}}
-    {{- end -}}
+    {{- $lowerTags := slice -}}
     {{- range .Params.tags | default slice -}}
-      {{- $commonWords = $commonWords | append (lower .) -}}
+      {{- $lowerTags = $lowerTags | append (lower .) -}}
     {{- end -}}
 
     {{- /* Extract headings from raw markdown content if enabled */ -}}
@@ -86,7 +89,7 @@
         {{- range $words -}}
           {{- $word := trim . " \t\n\r" -}}
           {{- $word = replaceRE `[^\p{L}\p{N}\p{M}]` "" $word -}}
-          {{- if and (ne $word "") (ge (len $word) $minWordLength) (not (in $commonWords $word)) -}}
+          {{- if and (ne $word "") (ge (len $word) $minWordLength) (not (in $commonWords $word)) (not (in $lowerTags $word)) -}}
             {{- $cleanWords = $cleanWords | append $word -}}
           {{- end -}}
         {{- end -}}
@@ -135,7 +138,7 @@
     {{- range $allWords -}}
       {{- $word := trim . " \t\n\r" -}}
       {{- $word = replaceRE `[^\p{L}\p{N}\p{M}]` "" $word -}}
-      {{- if and (ne $word "") (ge (len $word) $minWordLength) (not (in $commonWords $word)) -}}
+      {{- if and (ne $word "") (ge (len $word) $minWordLength) (not (in $commonWords $word)) (not (in $lowerTags $word)) -}}
         {{- $count := add (index $wordFreq $word | default 0) 1 -}}
         {{- $wordFreq = merge $wordFreq (dict $word $count) -}}
       {{- end -}}
