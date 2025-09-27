@@ -1,18 +1,24 @@
-{{- $toc := partial "toc-generator.html" . -}}
+{{- $toc := partial "toc-generator.html" .page -}}
 {{- if $toc -}}
-  {{- $isHome := eq .Kind "home" -}}
-  {{- $pageTitle := "Table of Contents" -}}
+  {{- $isHome := eq .page.Kind "home" -}}
+  {{- $pageTitle := i18n "toc" | default "Table of contents" -}}
   {{- if $isHome -}}
-    {{- $pageNumber := "" -}}
+    {{- $pageNumber := 1 -}}
     {{- if .Paginator -}}
-      {{- $pageNumber = printf "Page %d " .Paginator.PageNumber -}}
+      {{- $pageNumber = .page.Paginator.PageNumber -}}
     {{- end -}}
-    {{- $pageTitle = printf "%sPosts" $pageNumber -}}
+    {{- $pageTitle = i18n "page_num_posts" $pageNumber | default (printf "Page %d posts" $pageNumber) -}}
   {{- end -}}
 
   {{- /* Desktop TOC (for sidebar) - only show on desktop */ -}}
-  <div class="toc-wrapper desktop-toc">
-    <div class="toc-title">{{ $pageTitle }}</div>
+  {{- $wrapperClassName := "toc-wrapper" -}}
+  {{- $titleClassName := "toc-title" -}}
+  {{- if eq .size "mobile" -}}
+    {{- $wrapperClassName = "toc-wrapper-mobile" -}}
+    {{- $titleClassName = "toc-title-mobile" -}}
+  {{- end -}}
+  <div class="{{ $wrapperClassName }}">
+    <div class="{{ $titleClassName }}">{{ $pageTitle }}</div>
     {{ $toc }}
   </div>
 {{- end -}}

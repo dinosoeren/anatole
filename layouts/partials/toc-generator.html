@@ -58,7 +58,7 @@
       {{- if $isHome -}}
         {{- $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
         {{- range $index, $page := $paginator.Pages -}}
-          {{- $anchorTitle := delimit (split (.Title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+          {{- $anchorTitle := .Title | urlize -}}
           <li><a href="#{{ $anchorTitle }}">{{ .Title | markdownify }}</a></li>
         {{- end -}}
       {{- end -}}
@@ -66,7 +66,7 @@
       {{- /* Add list items */ -}}
       {{- if $hasListItems -}}
         {{ range .Pages.GroupByDate "2006" }}
-          {{- $anchorTitle := delimit (split .Key " ") "-" | lower -}}
+          {{- $anchorTitle := .Key | urlize -}}
           <li><a href="#{{ $anchorTitle }}">{{ .Key }}</a></li>
         {{- end -}}
       {{- end -}}
@@ -74,11 +74,11 @@
       {{- /* Add portfolio section headings */ -}}
       {{- if $hasPortfolio -}}
         {{- range $data.portfolioitems -}}
-          {{- $anchorTitle := delimit (split (.title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+          {{- $anchorTitle := .title | urlize -}}
           <li><a href="#{{ $anchorTitle }}">{{ .title | markdownify }}</a></li>
           <ul>
             {{- range $i, $p := .portfolioitem -}}
-              {{- $anchorName := delimit (split (.name | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+              {{- $anchorName := .name | urlize -}}
               <li><a href="#{{ $anchorName }}">{{ .name | markdownify }}</a></li>
             {{- end -}}
           </ul>

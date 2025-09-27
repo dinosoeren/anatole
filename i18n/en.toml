@@ -84,6 +84,9 @@ other = "Related Posts"
 [toc]
 other = "Table of contents"
 
+[page_num_posts]
+other = "Page {{ . }} posts"
+
 [contact]
 other = "Send me a message"
 

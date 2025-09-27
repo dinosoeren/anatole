@@ -49,9 +49,11 @@
       {{- partial "recent-search-results.html" . -}}
     {{ end }}
   </div>
-  <div class="toc-wrapper-mobile">
-    {{- partial "toc-mobile.html" . -}}
-  </div>
+
+  {{- /* Include TOC for mobile */ -}}
+  {{- partial "toc.html" (dict "page" . "size" "mobile") -}}
+
+
   <nav class="nav" id="navMenu">
     <ul class="nav__list">
       {{ $url := .RelPermalink }}

@@ -136,14 +136,14 @@
             animated fadeInDown
           {{ end }}"
         >
-          {{ $anchorTitle := delimit (split (.title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower }}
+          {{ $anchorTitle := .title | urlize }}
           <h2 class="portfolio__title" id="{{ $anchorTitle }}">{{ title .title }}</h2>
           {{ if .description }}
             <p>{{ .description | markdownify }}</p>
           {{ end }}
           <div class="portfolio-section">
             {{ range $i, $p := .portfolioitem }}
-              {{ $anchorName := delimit (split (.name | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower }}
+              {{ $anchorName := .name | urlize }}
               <div id="{{ $anchorName }}" class="portfolio" data-tags="{{ delimit .tags "," }}">
                 {{ if .image }}
                   <div

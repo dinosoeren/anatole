@@ -42,7 +42,7 @@
       {{ $target = "_blank" }}
       {{ $postClass = "external" }}
     {{ end }}
-    {{- $headerAnchor := delimit (split (.Title | replaceRE `[^0-9A-Za-z\s]*` "") " ") "-" | lower -}}
+    {{- $headerAnchor := .Title | urlize -}}
     <div
       id="{{ $headerAnchor }}"
       class="post {{ $postClass }} {{ with .Site.Params.doNotLoadAnimations }}

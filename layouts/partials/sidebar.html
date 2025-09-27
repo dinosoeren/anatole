@@ -71,7 +71,7 @@
     </div>
 
     {{- /* Include TOC for desktop */ -}}
-    {{- partial "toc.html" . -}}
+    {{- partial "toc.html" (dict "page" . "size" "desktop") -}}
 
 
     <div class="sidebar__posts">
