@@ -37,8 +37,10 @@
   </div>
   <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">
     <div class="search__no-results">Loading...</div>
-    {{ if not (eq .Site.Params.flexsearch.showRelatedPostsWhenNoSearchResults false) }}
+    {{ if eq .Kind "page" }}
       {{- partial "related-search-results.html" . -}}
+    {{ else }}
+      {{- partial "recent-search-results.html" . -}}
     {{ end }}
   </div>
   <div class="toc-wrapper-mobile">
