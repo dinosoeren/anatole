@@ -43,7 +43,7 @@
       <strong>{{ i18n "loading" | default "Loading..." }}</strong>
       {{ i18n "while_you_wait" | default "While you wait, try these..." }}
     </div>
-    {{ if eq .Kind "page" }}
+    {{ if gt (len (.Site.RegularPages.Related .)) 0 }}
       {{- partial "related-search-results.html" . -}}
     {{ else }}
       {{- partial "recent-search-results.html" . -}}
