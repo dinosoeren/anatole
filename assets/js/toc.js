@@ -128,12 +128,12 @@ function initScrollHighlighting() {
           window.history.pushState(null, null, href);
 
           // Hide mobile TOC after clicking
-          if (header && header.classList.contains('expanded')) {
+          if (header) {
             header.dataset.scrollingTo = sectionTop;
+            header.dataset.scrollingTarget = sectionId;
             setTimeout(() => {
-              if (header.dataset.scrollingTo) {
+              if (header.dataset.scrollingTarget) {
                 header.classList.remove('expanded');
-                header.dataset.scrollingTo = '';
               }
             }, 2000);
           }
@@ -151,16 +151,21 @@ function initScrollHighlighting() {
     const scrollPosition = window.scrollY || window.pageYOffset;
 
     // Handle auto-hide after scroll to element or bottom of page
-    if (
-      (header &&
-        header.dataset.scrollingTo &&
-        Math.abs(scrollPosition - Number(header.dataset.scrollingTo)) < scrollYErrorMargin) ||
-      scrollPosition + window.innerHeight >= document.documentElement.scrollHeight - 1
-    ) {
-      header.dataset.scrollingTo = '';
-      setTimeout(() => {
-        header.classList.remove('expanded');
-      }, 100);
+    if (header && header.dataset.scrollingTarget) {
+      const targetSection = document.getElementById(header.dataset.scrollingTarget);
+      if (targetSection) {
+        const sectionTop = computeSectionTop(targetSection, fixedHeaderHeight);
+        if (
+          Math.abs(scrollPosition - sectionTop) < scrollYErrorMargin ||
+          scrollPosition + window.innerHeight >= document.documentElement.scrollHeight - 1
+        ) {
+          header.dataset.scrollingTo = '';
+          header.dataset.scrollingTarget = '';
+          setTimeout(() => {
+            header.classList.remove('expanded');
+          }, 100);
+        }
+      }
     }
 
     let currentSection = orderedSections[0][1]; // Default to first section
@@ -204,15 +209,31 @@ function initScrollHighlighting() {
   }
 
   // Throttled scroll handler for better performance
-  let ticking = false;
+  let scrollTimeout;
   function onScroll() {
-    if (!ticking) {
+    if (scrollTimeout) {
+      return;
+    }
+    scrollTimeout = setTimeout(() => {
+      // First check if we need to correct the scroll after any elements shifted
+      if (header && header.dataset.scrollingTarget && header.dataset.scrollingTo) {
+        const targetSection = document.getElementById(header.dataset.scrollingTarget);
+        if (targetSection) {
+          const sectionTop = computeSectionTop(targetSection, fixedHeaderHeight);
+          if (parseFloat(header.dataset.scrollingTo) != sectionTop) {
+            header.dataset.scrollingTo = sectionTop;
+            window.scrollTo({
+              top: sectionTop,
+              behavior: 'smooth',
+            });
+          }
+        }
+      }
       requestAnimationFrame(() => {
         highlightCurrentSection();
-        ticking = false;
+        scrollTimeout = undefined;
       });
-      ticking = true;
-    }
+    }, 100);
   }
 
   window.addEventListener('scroll', onScroll);
