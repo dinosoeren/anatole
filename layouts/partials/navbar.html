@@ -41,7 +41,9 @@
   <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">
     <div class="search__no-results">
       <strong>{{ i18n "loading" | default "Loading..." }}</strong>
-      {{ i18n "while_you_wait" | default "While you wait, try these..." }}
+      {{ if or (and (gt (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRelatedPostsWhenNoResults false)) (and (eq (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRecentPostsWhenNoResults false)) }}
+        {{ i18n "while_you_wait" | default "While you wait, try these..." }}
+      {{ end }}
     </div>
     {{ if gt (len (.Site.RegularPages.Related .)) 0 }}
       {{- partial "related-search-results.html" . -}}

@@ -1,5 +1,5 @@
 {{- /* Get related posts similar to related.html partial */ -}}
-{{ if not (eq .Site.Params.flexsearch.suggestRelatedPostsWhenNoResults false) }}
+{{ if ne .Site.Params.flexsearch.suggestRelatedPostsWhenNoResults false }}
   {{- $maxCount := (.Site.Params.flexSearch.noResultsSuggestionCount | default .Site.Params.numberOfRelatedPosts) | default 3 -}}
   {{- $related := .Site.RegularPages.Related . | first $maxCount -}}
   {{- with $related -}}
