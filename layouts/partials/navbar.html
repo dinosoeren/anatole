@@ -149,7 +149,7 @@
       {{ if not .Site.Params.disableThemeSwitcher }}
         <li class="nav__list-item">
           <div class="themeswitch">
-            <a title="Switch Theme"
+            <a role="button" title="Switch Theme" aria-label="Switch theme"
               >{{ partial "icons/icon" (dict "vendor" "fas" "name" "circle-half-stroke" "className" "icon") }}</a
             >
           </div>
