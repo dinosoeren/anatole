@@ -89,6 +89,10 @@
     flex-wrap: wrap;
     gap: 0.5em;
     justify-content: center;
+
+    & + & {
+      margin-top: 0.5em;
+    }
   }
 
   &__post-link {
@@ -111,7 +115,8 @@
     @include color.themed() {
       $pastels: color.t('pastels');
       @for $i from 1 through length($pastels) {
-        &:nth-child(#{$i}) {
+        &:nth-child(#{$i}n),
+        &.taxon:nth-child(#{$i % 2}n) {
           background: color.t('accent');
           border: 1px solid nth($pastels, $i);
 
