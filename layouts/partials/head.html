@@ -22,7 +22,11 @@
   <meta name="author" content="{{ .Site.Params.author }}" />
   <meta
     name="description"
-    content="{{ if .Params.description }}
+    content="{{ if .Summary }}
+      {{- .Summary | plainify | htmlUnescape -}}
+    {{ else if .Params.summary }}
+      {{- .Params.summary | plainify | htmlUnescape -}}
+    {{ else if .Params.description }}
       {{- .Params.description -}}
     {{ else }}
       {{- .Site.Params.description -}}
