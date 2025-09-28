@@ -62,11 +62,15 @@
   }
 
   &__no-results {
-    padding: 10px 0;
     text-align: center;
+    padding: 0.2rem 1rem;
+    font-size: 0.9em;
+
+    @include color.themed() {
+      color: color.t('primary-light');
+    }
 
     @include conf.desktop {
-      padding: 5px;
       text-align: left;
     }
   }
@@ -111,6 +115,10 @@
   }
 
   &__suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
     border-radius: 0.2rem;
 
     @include conf.desktop {
@@ -132,13 +140,13 @@
 
     .sidebar .search:not(.active) .searchbox:has(input[type='search']:focus) + &,
     .header:not(.expanded) .header-trigger-wrapper:has(.search:not(.active)):has(input[type='search']:focus) ~ & {
-      display: block;
+      display: flex;
     }
 
     &-item {
       display: flex;
       align-items: center;
-      padding: 1rem;
+      padding: 0 1rem;
       gap: 1rem;
 
       @include color.themed() {
@@ -206,12 +214,6 @@
     &::after {
       content: '';
       padding: 0;
-    }
-  }
-
-  &__suggestions {
-    &:has(.search__suggestions-item) {
-      padding: 0 10px;
     }
   }
 }
