@@ -76,7 +76,7 @@ one = "{{ .Count }}y ago"
 other = "{{ .Count }}y ago"
 
 [series_posts]
-other = "Posts in {{ .Title }} series"
+other = "Posts in this series"
 
 [related_posts]
 other = "Related Posts"
