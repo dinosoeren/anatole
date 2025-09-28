@@ -99,17 +99,22 @@
         {{ $taxonomyName := .Data.Plural }}
         {{ $taxonomy := cond (isset $.Site.Taxonomies $taxonomyName) (index $.Site.Taxonomies $taxonomyName) (slice) }}
         {{ $taxonomyPage := $taxonomy.Page }}
-        {{ $taxonomyTitle := cond (and $taxonomyPage $taxonomyPage.Title) $taxonomyPage.Title (title $taxonomyName) }}
-        {{ $postCount := len $taxonomy }}
-        {{ $isCurrentTaxonomy := eq $.Kind "taxonomy" }}
-        {{ $highlightCurrentTaxonomy := $.Site.Params.highlightCurrentTaxonomy | default true }}
-        {{ $classModifier := cond (and $isCurrentTaxonomy $highlightCurrentTaxonomy) "current" "" }}
-        <a href="{{ $taxonomyPage.Permalink }}" class="sidebar__post-link taxon {{ $classModifier }}">
-          {{ if and $isCurrentTaxonomy $highlightCurrentTaxonomy }}
-            {{ partial "icons/icon" (dict "vendor" "fas" "name" "chevron-right" "className" "sidebar__post-link-icon") }}
+        {{ if $taxonomyPage }}
+          {{ $taxonomyTitle := title $taxonomyName }}
+          {{ if $taxonomyPage.Title }}
+            {{ $taxonomyTitle = $taxonomyPage.Title }}
           {{ end }}
-          {{ $taxonomyTitle }} <span class="sidebar__post-link-count">({{ $postCount }})</span>
-        </a>
+          {{ $postCount := len $taxonomy }}
+          {{ $isCurrentTaxonomy := eq $.Kind "taxonomy" }}
+          {{ $highlightCurrentTaxonomy := $.Site.Params.highlightCurrentTaxonomy | default true }}
+          {{ $classModifier := cond (and $isCurrentTaxonomy $highlightCurrentTaxonomy) "current" "" }}
+          <a href="{{ $taxonomyPage.Permalink }}" class="sidebar__post-link taxon {{ $classModifier }}">
+            {{ if and $isCurrentTaxonomy $highlightCurrentTaxonomy }}
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "chevron-right" "className" "sidebar__post-link-icon") }}
+            {{ end }}
+            {{ $taxonomyTitle }} <span class="sidebar__post-link-count">({{ $postCount }})</span>
+          </a>
+        {{ end }}
         {{ if eq .Kind "term" }}
           {{ $termName := $.Title }}
           {{ $postCount := len $.Pages }}
