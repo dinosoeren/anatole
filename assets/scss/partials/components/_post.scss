@@ -19,24 +19,22 @@
     flex-wrap: wrap;
     list-style: none;
     padding: 0;
+    gap: 1em;
+
+    .post__content & {
+      line-height: 1.1em;
+    }
 
     &-item {
-      &:not(:last-child) {
-        margin-right: 1.25rem;
-      }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.4em;
     }
 
     &-icon {
       position: relative;
-      top: 2px;
-
-      @include conf.ltr {
-        margin-right: 2px;
-      }
-
-      @include conf.rtl {
-        margin-left: 2px;
-      }
+      top: -2px;
     }
 
     &-text {
