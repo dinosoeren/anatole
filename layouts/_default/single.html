@@ -81,7 +81,9 @@
             </li>
           {{ end }}
           {{ if not (eq .Params.noShare true) }}
-            {{ partial "share.html" . }}
+            <li class="post__meta-item">
+              {{ partial "share.html" . }}
+            </li>
           {{ end }}
         </ul>
       {{ end }}

@@ -5,46 +5,34 @@
 
 
 <div class="share-buttons">
-  <a
-    role="button"
-    title="Copy Link"
-    class="share-button"
-    data-share-url="{{ $link }}"
-    data-share-title="{{ .Title }}"
-    data-share-text="{{ .Summary }}"
-  >
-    {{ partial "icons/icon" (dict "vendor" "fas" "name" "share-nodes") }}
-  </a>
-  <a
-    href="https://www.facebook.com/sharer/sharer.php?u={{ $link }}"
-    target="_blank"
-    rel="noopener noreferrer"
-    title="Share on Facebook"
-  >
-    {{ partial "icons/icon" (dict "vendor" "fab" "name" "facebook") }}
-  </a>
-  <a
-    href="https://x.com/intent/post/?url={{ $link }}&text={{ .Title | urlquery }}"
-    target="_blank"
-    rel="noopener noreferrer"
-    title="Share on X"
-  >
-    {{ partial "icons/icon" (dict "vendor" "fab" "name" "twitter") }}
-  </a>
-  <a
-    href="https://www.linkedin.com/shareArticle?mini=true&url={{ $link }}&title={{ .Title | urlquery }}&source={{ .Site.Title | urlquery }}"
-    target="_blank"
-    rel="noopener noreferrer"
-    title="Share on LinkedIn"
-  >
-    {{ partial "icons/icon" (dict "vendor" "fab" "name" "linkedin") }}
-  </a>
-  <a
-    href="mailto:?subject={{ .Title | urlquery }}&body={{ $link }}"
-    target="_blank"
-    rel="noopener noreferrer"
-    title="Share via Email"
-  >
-    {{ partial "icons/icon" (dict "vendor" "fas" "name" "envelope") }}
-  </a>
+  {{ range $index, $icon := .Site.Params.shareIcons }}
+    {{ $attrs := newScratch }}
+    {{ if hasPrefix $icon.name "share" }}
+      {{ $attrs.Set "role" "button" }}
+      {{ $attrs.Set "class" "share-button" }}
+      {{ $attrs.Set "data-share-url" $link }}
+      {{ $attrs.Set "data-share-title" $.Title }}
+      {{ $attrs.Set "data-share-text" $.Summary }}
+    {{ else }}
+      {{ $url := $icon.url }}
+      {{ $url = replace $url ":url" ($link | urlquery) }}
+      {{ $url = replace $url ":title" ($.Title | urlquery) }}
+      {{ $url = replace $url ":summary" ($.Summary | urlquery) }}
+      {{ $url = replace $url ":source" ($.Site.Title | urlquery) }}
+      {{ $attrs.Set "href" $url }}
+      {{ $attrs.Set "target" "_blank" }}
+      {{ $attrs.Set "rel" "noopener noreferrer" }}
+    {{ end }}
+
+
+    <a
+      title="{{ $icon.title }}"
+      {{ with $icon.colorIndex }}data-color-index="{{ . }}"{{ end }}
+      {{ range $key, $value := $attrs.Values }}
+        {{ printf `%s="%s"` $key $value | safeHTMLAttr }}
+      {{ end }}
+    >
+      {{ partial "icons/icon" (dict "vendor" $icon.vendor "name" $icon.icon) }}
+    </a>
+  {{ end }}
 </div>

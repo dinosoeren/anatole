@@ -147,9 +147,47 @@
         {{- if and (.Truncated) (.Site.Params.readMore) -}}
           <a href="{{ .RelPermalink }}">{{ i18n "read_more" }}</a>
         {{- end -}}
+
+        {{ if not .Params.thumbnail }}
+          <ul class="post__meta">
+            <li class="post__meta-item">
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__meta-icon") }}
+              <span class="post__meta-text"
+                >{{ if isset .Site.Params "singledateformat" }}
+                  {{ if .Site.Params.localizedDates }}
+                    {{ time.Format .Site.Params.singleDateFormat .Date }}
+                  {{ else }}
+                    {{ .Date.Format .Site.Params.singleDateFormat }}
+                  {{ end }}
+
+                {{ else }}
+                  {{ if .Site.Params.localizedDates }}
+                    {{ time.Format "Mon, Jan 2, 2006" .Date }}
+                  {{ else }}
+                    {{ .Date.Format "Mon, Jan 2, 2006" }}
+                  {{ end }}
+
+                {{ end }}
+              </span>
+            </li>
+            {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
+              <li class="post__meta-item">
+                {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__meta-icon") }}
+                <span class="post__meta-text" data-humanize-date="{{ .Lastmod.Unix }}">
+                  {{ partial "humanize-date.html" (time .Lastmod) }}
+                </span>
+              </li>
+            {{ end }}
+            {{ if not (eq .Params.noShare true) }}
+              <li class="post__meta-item">
+                {{ partial "share.html" . }}
+              </li>
+            {{ end }}
+          </ul>
+        {{ end }}
       </div>
 
-      <!--  -->
+      <!-- Footer with categories and tags -->
       <div class="post__footer">
         {{ with .Page.Params.Categories }}
           {{ partial "taxonomy/categories.html" . }}
