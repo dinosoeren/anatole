@@ -196,9 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
     tocLinks.forEach((link) => {
       const href = link.getAttribute('href');
       if (href && href.startsWith('#')) {
-        const sectionId = href.substring(1);
+        const sectionId = decodeURIComponent(href.substring(1));
         const section = document.getElementById(sectionId);
-        if (section.classList.contains('hidden') || section.parentElement.classList.contains('hidden')) {
+        if (!section) {
+          console.error('No section found for ID:', sectionId);
+        } else if (section.classList.contains('hidden') || section.parentElement.classList.contains('hidden')) {
           link.classList.add('hidden');
         } else {
           link.classList.remove('hidden');
