@@ -18,31 +18,6 @@
     padding: 0 20px;
     margin: 30px 0;
 
-    #sib-container input {
-      color: #333;
-      padding: 0.25rem;
-    }
-
-    #sib-container input:-ms-input-placeholder {
-      text-align: left;
-      color: #c0ccda;
-    }
-
-    #sib-container input::placeholder {
-      text-align: left;
-      color: #c0ccda;
-    }
-
-    #sib-container textarea::placeholder {
-      text-align: left;
-      color: #c0ccda;
-    }
-
-    #sib-container a {
-      text-decoration: underline;
-      color: #2bb2fc;
-    }
-
     #error-message {
       font-size: 16px;
       text-align: left;
@@ -75,6 +50,11 @@
 
       @include color.themed() {
         box-shadow: color.t('shadow');
+      }
+
+      a {
+        text-decoration: underline;
+        color: #2bb2fc;
       }
     }
 
@@ -126,6 +106,42 @@
 
         .clickable__icon {
           vertical-align: middle;
+        }
+
+        .svgIcon-sphere {
+          width: 63px;
+          height: 63px;
+        }
+
+        input[type^='checkbox'],
+        textarea,
+        input:first-child,
+        input:last-child {
+          padding: 0.5rem 0.75rem;
+          outline: none;
+          background: transparent;
+          height: auto;
+
+          @include color.themed() {
+            color: color.t('primary');
+          }
+
+          &::placeholder,
+          &:-ms-input-placeholder,
+          &::-ms-input-placeholder,
+          &::-webkit-input-placeholder,
+          &::-moz-placeholder,
+          &:-moz-placeholder {
+            text-align: left;
+          }
+        }
+      }
+
+      .entry__field {
+        background: transparent;
+
+        @include color.themed() {
+          border: 1px solid color.t('primary-lighter');
         }
       }
 

@@ -85,12 +85,12 @@
                 </div>
               </div>
 
-              <label class="entry__error entry__error--primary"> </label>
+              <span class="entry__error entry__error--primary"> </span>
               {{ $hint := "Provide your email address to subscribe. For e.g abc@xyz.com" }}
               {{ if .Site.Params.brevoFormHint }}
                 {{ $hint = .Site.Params.brevoFormHint }}
               {{ end }}
-              <label class="entry__specification">{{ $hint | safeHTML }}</label>
+              <span class="entry__specification">{{ $hint | safeHTML }}</span>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@
                   </symbol>
                 </defs>
               </svg>
-              <svg class="svgIcon-sphere" style="width:63px; height:63px;">
+              <svg class="svgIcon-sphere">
                 <use xlink:href="#svgIcon-sphere"></use>
               </svg>
             </div>
