@@ -47,8 +47,8 @@
     "url": "git+https://github.com/lxndrblz/anatole.git"
   },
   "scripts": {
-    "build": "hugo --source=exampleSite && shx rm -rf ./resources && shx cp -r ./exampleSite/resources ./resources && shx echo Done building resources.",
-    "dev": "hugo serve --source=exampleSite",
+    "build": "hugo --themesDir=. --source=exampleSite && shx rm -rf ./resources && shx cp -r ./exampleSite/resources ./resources && shx echo Done building resources.",
+    "dev": "hugo --themesDir=. serve --source=exampleSite",
     "prepare": "husky",
     "prettier": "npx prettier --write .",
     "release": "release-it",

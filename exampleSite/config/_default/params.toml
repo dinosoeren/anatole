@@ -28,7 +28,7 @@ listDateFormat = "2/1/2006"
 # Read More links for truncated summaries
 # readMore = true
 postSectionName = "blog"  # Deprecated: use postSections instead
-postSections = ["post", "blog", "articles"]  # List of post sections that support comments and post features
+postSections = ["post", "blog"]  # List of post sections that support comments and post features
 # relatedPosts = true
 # numberOfRelatedPosts = 3
 
@@ -43,6 +43,12 @@ reversepagetitle = true # When set to 'true', the Window Title will be reversed 
 
 # Sidebar/Content Ratio
 # contentratio = 0.6
+
+# centerTocInSidebar = false
+# showPostSectionsInSidebar = true
+# highlightCurrentSection = true
+# showCurrentTaxonomyInSidebar = true
+# highlightCurrentTaxonomy = true
 
 [simpleAnalytics]
 # enable = true
@@ -63,34 +69,85 @@ reversepagetitle = true # When set to 'true', the Window Title will be reversed 
 # increment = 200
 
 [flexSearch]
-# optimizeContent = true   # set to false to index full post content
-# topWordsCount = 50
-# keySentencesCount = 2
-# paragraphWordsCount = -1 # disable paragraph word indexing when -1
-# paragraphWordsLimit = -1 # disable paragraph word limit when -1
-# indexHeadings = true
+# maxResultsCount = 5
+# suggestRecentPostsWhenNoResults = true
+# suggestRelatedPostsWhenNoResults = true
+# noResultsSuggestionCount = 3
+# optimizeContent = true   # set to false to index full post content (data-intensive)
+
+## these are only used if optimizeContent = true (disable any by setting to -1)
+# indexHeadings = true     # index all the headings of the post
+# minWordLength = 3        # words under this length won't be indexed
+# topWordsCount = 50       # index the top N words from the post
+# keySentencesCount = 2    # index first and last N sentences of the post
+# paragraphWordsCount = 3  # index first and last N words of each paragraph
+# paragraphWordsLimit = -1 # disable paragraph word indexing when -1
+# commonWords = []         # add words to exclude them from indexing
 
 ## Social links
 # use 'fa-brands' when brand icons, use 'fas' when standard solid icons.
 [[socialIcons]]
+vendor = "fab"
 icon = "linkedin"
 title = "Linkedin"
 url = "https://de.linkedin.com/"
 
 [[socialIcons]]
+vendor = "fab"
 icon = "github"
 title = "GitHub"
 url = "https://github.com/lxndrblz/anatole/"
 
 [[socialIcons]]
+vendor = "fab"
 icon = "instagram"
 title = "instagram"
 url = "https://www.instagram.com/"
 
 [[socialIcons]]
-icon = "signal-messenger"
+vendor = "fas"
+icon = "envelope"
 title = "e-mail"
 url = "mailto:mail@example.com"
 
 [mermaid]
 # enable = true
+
+[[shareIcons]]
+name = "share"
+vendor = "fas"
+icon = "share-nodes"
+title = "Copy Link"
+colorIndex = 4
+
+[[shareIcons]]
+name = "facebook"
+vendor = "fab"
+icon = "facebook"
+url = "https://www.facebook.com/sharer/sharer.php?u=:url"
+title = "Share on Facebook"
+colorIndex = 1
+
+[[shareIcons]]
+name = "twitter"
+vendor = "fab"
+icon = "twitter"
+url = "https://x.com/intent/post/?url=:url&text=:title"
+title = "Share on X"
+colorIndex = 2
+
+[[shareIcons]]
+name = "linkedin"
+vendor = "fab"
+icon = "linkedin"
+url = "https://www.linkedin.com/shareArticle?mini=true&url=:url&title=:title&source=:source"
+title = "Share on LinkedIn"
+colorIndex = 5
+
+[[shareIcons]]
+name = "email"
+vendor = "fas"
+icon = "envelope"
+url = "mailto:?subject=:title&body=:url"
+title = "Share via Email"
+colorIndex = 3

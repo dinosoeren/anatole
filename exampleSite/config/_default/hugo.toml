@@ -4,7 +4,7 @@ DefaultContentLanguage = "en"
 title = "Website of Jane Doe"
 
 # theme as hugo module
-#theme = "github.com/lxndrblz/anatole"
+# theme = "github.com/dinosoeren/anatole"
 # theme as git submodule
 # theme = "anatole"
 
@@ -23,12 +23,25 @@ localizedDates = false
 
 [module]
   # uncomment line below for temporary local development of module
-  # replacements = "github.com/dinosoeren/anatole -> ../../anatole"
+  # replacements = "github.com/dinosoeren/anatole -> ../"
   [[module.imports]]
     # upgrade with:
     # hugo mod get github.com/dinosoeren/anatole@gomod
     path = "github.com/dinosoeren/anatole"
     disable = false
+  # Note: sites importing the theme as a hugo module don't need to import the
+  # icon modules directly. This is only needed for exampleSite local dev.
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/hugomods/icons
+    path = 'github.com/hugomods/icons'
+    disable = false
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/hugomods/icons/vendors/font-awesome
+    path = 'github.com/hugomods/icons/vendors/font-awesome'
+    disable = false
+
 
 [outputs]
   home = ["html", "rss", "searchIndex"]
