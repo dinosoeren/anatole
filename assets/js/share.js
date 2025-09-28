@@ -42,7 +42,7 @@ function copyToClipboard(text) {
         notif.classList.remove('visible');
       }, 5000);
       setTimeout(() => {
-        document.body.removeChild(notif);
+        overlay.removeChild(notif);
       }, 6000);
     })
     .catch((err) => {

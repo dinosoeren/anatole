@@ -116,7 +116,8 @@
     opacity: 0;
     border-radius: 4px;
     color: color.t('primary');
-    background-color: color.t('primary-lighter');
+    background-color: adjust-color(color.t('primary-lighter'), $alpha: -0.3);
+    backdrop-filter: blur(5px);
     padding: 8px;
     min-width: max-content;
     max-width: calc(50svw - 50px);
