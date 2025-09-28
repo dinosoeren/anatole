@@ -21,6 +21,15 @@
     }
   }
 
+  &__description,
+  &-section__description {
+    a {
+      @include color.themed() {
+        color: color.t('info');
+      }
+    }
+  }
+
   &__icon {
     position: relative;
     top: 2px;
@@ -133,7 +142,7 @@
     }
   }
 
-  &__image-wrapper + &__description {
+  &__image-wrapper + &__details {
     margin-top: -30px;
 
     @include conf.desktop {
@@ -141,7 +150,7 @@
     }
   }
 
-  &__description {
+  &__details {
     padding: 32px;
     position: relative;
     border-radius: 0.5em;

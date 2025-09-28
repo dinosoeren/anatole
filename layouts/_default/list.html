@@ -139,7 +139,7 @@
           {{ $anchorTitle := .title | urlize }}
           <h2 class="portfolio__title" id="{{ $anchorTitle }}">{{ title .title }}</h2>
           {{ if .description }}
-            <p>{{ .description | markdownify }}</p>
+            <p class="portfolio-section__description">{{ .description | markdownify }}</p>
           {{ end }}
           <div class="portfolio-section">
             {{ range $i, $p := .portfolioitem }}
@@ -169,10 +169,10 @@
                   </div>
                 {{ end }}
                 <div
-                  class="portfolio__description {{ if (modBool $i 2) }}
-                    portfolio__description--left
+                  class="portfolio__details {{ if (modBool $i 2) }}
+                    portfolio__details--left
                   {{ else }}
-                    portfolio__description--right
+                    portfolio__details--right
                   {{ end }}"
                 >
                   <h3 class="portfolio__name">{{ .name | markdownify }}</h3>
@@ -211,7 +211,7 @@
 
                     {{ end }}
                   </ul>
-                  <p>{{ .description | markdownify }}</p>
+                  <p class="portfolio__description">{{ .description | markdownify }}</p>
                   {{ if .link }}
                     <div class="portfolio__button-wrapper">
                       <a
