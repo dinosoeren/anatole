@@ -117,7 +117,7 @@
   &__suggestions {
     display: flex;
     flex-direction: column;
-    border-radius: 0.2rem;
+    border-radius: 0.3rem;
 
     @include conf.desktop {
       left: 3rem;
@@ -125,10 +125,11 @@
       position: absolute;
       width: calc(100% - 3rem);
       z-index: 1000;
+      backdrop-filter: blur(5px);
 
       @include color.themed() {
-        background: color.t('accent');
-        box-shadow: 0 0.5rem 1rem color.t('primary-lighter');
+        background: adjust-color(color.t('accent'), $alpha: -0.3);
+        box-shadow: 0 0.5rem 1rem color.t('shadow-color');
         border: 1px solid color.t('primary-lighter');
       }
     }
@@ -141,6 +142,10 @@
     .sidebar .search:not(.active) .searchbox:has(input[type='search']:focus) + &,
     .header:not(.expanded) .header-trigger-wrapper:has(.search:not(.active)):has(input[type='search']:focus) ~ & {
       display: flex;
+    }
+
+    &:has(.search__suggestions-item) {
+      padding: 0 0 0.5rem 0;
     }
 
     &-item {
@@ -166,10 +171,21 @@
         }
       }
 
+      img,
       picture {
         width: 40px;
         height: 40px;
         flex-shrink: 0;
+
+        @include conf.desktop {
+          width: 30px;
+          height: 30px;
+        }
+
+        @include conf.midscreen {
+          width: 40px;
+          height: 40px;
+        }
       }
 
       img {
@@ -189,6 +205,14 @@
         &:last-of-type {
           font-size: 0.75em;
         }
+      }
+
+      @include conf.desktop {
+        font-size: 1.3rem;
+      }
+
+      @include conf.midscreen {
+        font-size: 1.6rem;
       }
     }
   }
@@ -217,6 +241,12 @@
     &::after {
       content: '';
       padding: 0;
+    }
+  }
+
+  &__suggestions {
+    @include conf.desktop {
+      display: none;
     }
   }
 }

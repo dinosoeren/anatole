@@ -12,6 +12,12 @@
   }
 }
 
+@mixin midscreen {
+  @media screen and (min-width: 1210px) {
+    @content;
+  }
+}
+
 @mixin widescreen {
   @media screen and (min-width: 1921px) {
     @content;
