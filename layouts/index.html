@@ -130,7 +130,7 @@
         {{ if (eq .Site.Params.disableTitleCapitalization true) }}
           {{ $titleClass = "" }}
         {{ end }}
-        <h3 class="{{ $titleClass }}">
+        <h3 class="post__content-title {{ $titleClass }}">
           <a href="{{ $postUrl }}" target="{{ $target }}">
             {{ if .Params.redirectUrl }}
               {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "post__content-icon") }}
