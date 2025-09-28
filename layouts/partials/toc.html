@@ -13,11 +13,12 @@
   {{- /* Desktop TOC (for sidebar) - only show on desktop */ -}}
   {{- $wrapperClassName := "toc-wrapper" -}}
   {{- $titleClassName := "toc-title" -}}
+  {{- $classModifier := cond (and (eq .size "desktop") (eq .page.Site.Params.centerTocInSidebar true)) "center" "" -}}
   {{- if eq .size "mobile" -}}
     {{- $wrapperClassName = "toc-wrapper-mobile" -}}
     {{- $titleClassName = "toc-title-mobile" -}}
   {{- end -}}
-  <div class="{{ $wrapperClassName }}">
+  <div class="{{ $wrapperClassName }} {{ $classModifier }}">
     <div class="{{ $titleClassName }}">{{ $pageTitle }}</div>
     {{ $toc }}
   </div>

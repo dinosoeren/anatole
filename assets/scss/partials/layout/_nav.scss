@@ -23,10 +23,6 @@
       display: flex;
       padding: $py-desktop 30px;
 
-      @include color.themed() {
-        background-color: color.t('accent');
-      }
-
       &--end {
         flex-shrink: 1;
         justify-content: flex-end;

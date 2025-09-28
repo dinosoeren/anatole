@@ -8,8 +8,12 @@
 
   @include conf.desktop {
     display: block !important;
-    margin-top: 2rem;
+    margin: 1.5em 1em 0.5em 1em;
     padding-top: 1rem;
+
+    &.center {
+      text-align: center;
+    }
   }
 
   // Shared styles between desktop and mobile
