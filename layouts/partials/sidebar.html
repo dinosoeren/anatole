@@ -37,7 +37,7 @@
             aria-label="{{ $item.title }}"
             title="{{ $item.title }}"
           >
-            {{ partial "icons/icon" (dict "vendor" "fab" "name" $item.icon "width" "2em" "height" "2em") }}
+            {{ partial "icons/icon" (dict "vendor" ($item.vendor | default "fab") "name" $item.icon "width" "2em" "height" "2em") }}
           </a>
         </li>
       {{ end }}
