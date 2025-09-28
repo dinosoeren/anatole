@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'data-mapping': giscusData.dataset.mapping || 'pathname',
     'data-strict': giscusData.dataset.strict || '0',
     'data-reactions-enabled': giscusData.dataset.reactionsEnabled || '1',
+    'data-description': giscusData.dataset.description || '',
     'data-emit-metadata': giscusData.dataset.emitMetadata || '0',
     'data-input-position': giscusData.dataset.inputPosition || 'bottom',
     'data-theme': getStoredTheme(),

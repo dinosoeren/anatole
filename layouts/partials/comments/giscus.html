@@ -1,3 +1,13 @@
+{{ $description := "" }}
+{{ if .Summary }}
+  {{ $description = .Summary | plainify | htmlUnescape }}
+{{ else if .Params.description }}
+  {{ $description = .Params.description }}
+{{ else }}
+  {{ $description = .Site.Params.description }}
+{{ end }}
+
+
 <span
   id="giscus-data"
   data-repo="{{ .Site.Params.giscus.repo }}"
@@ -7,6 +17,7 @@
   data-mapping="{{ .Site.Params.giscus.mapping | default "pathname" }}"
   data-strict="{{ .Site.Params.giscus.strict | default "0" }}"
   data-reactions-enabled="{{ .Site.Params.giscus.reactionsEnabled | default "1" }}"
+  data-description="{{ $description }}"
   data-emit-metadata="{{ .Site.Params.giscus.emitMetadata | default "0" }}"
   data-input-position="{{ .Site.Params.giscus.inputPosition | default "bottom" }}"
   data-lang="{{ .Site.Params.giscus.lang | default "en" }}"
