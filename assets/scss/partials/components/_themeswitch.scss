@@ -1,4 +1,20 @@
+@use 'modules/config' as conf;
+
 .themeswitch {
-  margin-top: -5px;
+  margin-top: -10px;
   font-size: 1.75rem;
+  cursor: pointer;
+
+  @include conf.desktop {
+    margin-top: -5px;
+  }
+
+  .icon {
+    position: relative;
+    top: 2px;
+
+    @include conf.desktop {
+      top: 5px;
+    }
+  }
 }
