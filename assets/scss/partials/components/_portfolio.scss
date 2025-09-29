@@ -4,7 +4,7 @@
 .portfolio {
   position: relative;
   padding: 0;
-  scroll-margin-top: 97px;
+  scroll-margin-top: 99px;
 
   @include conf.desktop {
     padding: 36px 48px;
@@ -14,11 +14,6 @@
     display: flex;
     flex-direction: column;
     gap: 48px;
-    scroll-margin-top: 155px;
-
-    @include conf.desktop {
-      scroll-margin-top: 175px;
-    }
   }
 
   &__description,
@@ -65,7 +60,7 @@
     font-size: 2.6rem;
     line-height: 1;
     font-weight: 300;
-    scroll-margin-top: 115px;
+    scroll-margin-top: 125px;
 
     @include conf.desktop {
       scroll-margin-top: 145px;
@@ -77,11 +72,6 @@
     font-size: 2.2rem;
     line-height: 1.3em;
     font-weight: 500;
-    scroll-margin-top: 90px;
-
-    @include conf.desktop {
-      scroll-margin-top: 110px;
-    }
   }
 
   &__image {
@@ -270,7 +260,7 @@
   }
 
   @include conf.desktop {
-    top: calc(1.8rem + 50px);
+    top: calc(1.8rem + 49px);
   }
 
   .multi-select-container {
@@ -298,14 +288,16 @@
   }
 
   #tag-input {
+    $padding: calc(0.25rem + 1px);
     outline: none;
     border: none;
     background: none;
     flex: 1;
     width: 40%;
     min-width: 90px;
-    max-width: 100px;
-    padding: calc(0.25rem + 1px);
+    max-width: 110px;
+    padding: calc($padding * 1.5) $padding calc($padding * 0.5) $padding;
+    font-size: 16px;
 
     @include color.themed() {
       color: color.t('primary');
@@ -373,6 +365,13 @@
         color: color.t('accent');
         background: color.t('info');
       }
+    }
+
+    span {
+      font-family: monospace;
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin-left: 0.3em;
     }
   }
 

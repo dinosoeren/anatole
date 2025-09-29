@@ -1,7 +1,10 @@
 <div
-  class="sidebar{{ with .Site.Params.doNotLoadAnimations }}
+  class="sidebar{{ with or .Site.Params.disableSidebarAnimation .Site.Params.doNotLoadAnimations }}
     .
   {{ else }}
+    {{ with .Site.Params.disableDesktopSidebarAnimation }}
+      no-desktop-animated
+    {{ end }}
     animated fadeInDown
   {{ end }}"
 >

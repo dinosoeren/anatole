@@ -1,3 +1,5 @@
+@use 'modules/config' as conf;
+
 .animated {
   transition: top 0.8s linear;
   animation-duration: 1s;
@@ -9,6 +11,17 @@
   -moz-animation-name: fadeInDown;
   -o-animation-name: fadeInDown;
   animation-name: fadeInDown;
+
+  @include conf.desktop {
+    &.no-desktop-animated {
+      transition: none;
+      animation-duration: 0s;
+      -webkit-animation-duration: 0s;
+      -moz-animation-duration: 0s;
+      -ms-animation-duration: 0s;
+      -o-animation-duration: 0s;
+    }
+  }
 
   @-webkit-keyframes fadeInDown {
     0% {

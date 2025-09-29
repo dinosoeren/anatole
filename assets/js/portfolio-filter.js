@@ -74,11 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Only add tags that exist in our available tags
       const validTags = tagsFromURL.filter((tag) => allTags.has(tag));
       selectedTags = validTags;
-      renderSelectedTags();
       updateURL(false); // Use replaceState for initial load
     }
-    applyFilter(); // Initial filter application
-    tagDropdown.classList.add('hidden'); // Hide dropdown on-load
+    requestAnimationFrame(() => {
+      applyFilter(true); // Initial filter application
+    });
   }
 
   function getCoexistingTags() {
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return Array.from(coexistingTags).sort();
   }
 
-  function updateDropdown() {
+  function updateDropdown(hideDropdown = false) {
     tagDropdown.innerHTML = '';
     const filter = tagInput.value.toLowerCase();
     const availableTags = getCoexistingTags();
@@ -110,47 +110,62 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter((tag) => tag.toLowerCase().includes(filter))
       .forEach((tag) => {
         const option = document.createElement('div');
-        option.textContent = tag + ' (' + allTags.get(tag) + ')';
+        option.textContent = tag;
         option.classList.add('dropdown-option');
         option.addEventListener('click', () => {
           addTag(tag);
           tagInput.value = '';
-          updateDropdown();
           // Use a small timeout to ensure the DOM is updated before blurring
           setTimeout(() => {
             tagInput.blur();
           }, 100);
         });
+        const count = document.createElement('span');
+        count.textContent = '(' + allTags.get(tag) + ')';
+        option.appendChild(count);
         tagDropdown.appendChild(option);
       });
+
+    if (hideDropdown === true) {
+      tagDropdown.classList.add('hidden');
+    } else {
+      showDropdown();
+    }
+  }
+
+  function showDropdown() {
     tagDropdown.classList.toggle('hidden', tagDropdown.children.length === 0);
   }
 
   function addTag(tag) {
     if (!selectedTags.includes(tag)) {
       selectedTags.push(tag);
-      renderSelectedTags();
-      applyFilter();
       updateURL();
-      const firstVisibleSection = document.querySelector('.portfolio-section:not(.hidden)');
-      if (firstVisibleSection) {
-        // Use a small timeout to ensure the DOM is updated before scrolling
-        setTimeout(() => {
-          firstVisibleSection.previousElementSibling.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-            inline: 'nearest',
-          });
-        }, 100);
-      }
+      requestAnimationFrame(() => {
+        applyFilter(true);
+        const firstVisibleSection = document.querySelector('.portfolio-section:not(.hidden)');
+        if (firstVisibleSection) {
+          // Use a small timeout to ensure the DOM is updated before scrolling
+          setTimeout(() => {
+            let firstPostEl = firstVisibleSection.previousElementSibling;
+            while (firstPostEl && firstPostEl.previousElementSibling) {
+              firstPostEl = firstPostEl.previousElementSibling;
+            }
+            firstPostEl.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+              inline: 'nearest',
+            });
+          }, 100);
+        }
+      });
     }
   }
 
   function removeTag(tag) {
     selectedTags = selectedTags.filter((t) => t !== tag);
-    renderSelectedTags();
-    applyFilter();
     updateURL();
+    requestAnimationFrame(() => applyFilter(true));
   }
 
   function renderSelectedTags() {
@@ -178,7 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const tocLinks = document.querySelectorAll('.table-of-contents a');
 
-  function applyFilter() {
+  function applyFilter(hideDropdown = false) {
+    renderSelectedTags();
     portfolioSections.forEach((section) => {
       let visibleItems = 0;
       const portfolioItems = section.querySelectorAll('.portfolio');
@@ -207,12 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     });
-    updateDropdown();
-    renderSelectedTags();
+    updateDropdown(hideDropdown);
   }
 
-  tagInput.addEventListener('input', updateDropdown);
-  tagInput.addEventListener('focus', updateDropdown);
+  tagInput.addEventListener('input', () => requestAnimationFrame(updateDropdown));
+  tagInput.addEventListener('focus', () => requestAnimationFrame(showDropdown));
 
   tagInput.addEventListener('keydown', (e) => {
     const options = Array.from(tagDropdown.querySelectorAll('.dropdown-option'));
@@ -243,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       addTag(focusedOption.textContent);
       tagInput.value = '';
-      updateDropdown();
+      updateDropdown(true);
       tagDropdown.scrollTo({ top: 0 });
       setTimeout(() => tagInput.focus(), 100);
     } else if (e.key === 'Backspace' && tagInput.value === '' && selectedTags.length > 0) {
@@ -263,9 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   clearButton.addEventListener('click', () => {
     selectedTags = [];
-    renderSelectedTags();
-    applyFilter();
     updateURL();
+    requestAnimationFrame(applyFilter);
   });
 
   // Handle browser back/forward navigation
@@ -286,8 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedTags = [];
       }
     }
-    renderSelectedTags();
-    applyFilter();
+    requestAnimationFrame(() => applyFilter(true));
   });
 
   // Initialize from URL and apply initial filter
