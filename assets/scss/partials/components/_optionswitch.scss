@@ -10,9 +10,17 @@
     display: flex;
     align-items: start;
     justify-content: center;
+    padding: 16px 0;
+
+    @include conf.desktop {
+      padding: 0;
+    }
 
     &.nav__link--active {
-      margin-bottom: -24px;
+      @include conf.desktop {
+        padding-bottom: 24px;
+        margin-bottom: -24px;
+      }
     }
 
     .icon {
@@ -46,7 +54,6 @@
       bottom: 0;
       text-align: center;
       white-space: nowrap;
-      padding-top: 24px;
 
       @include color.themed() {
         color: color.t('primary');
@@ -56,6 +63,17 @@
         padding: 12px;
         text-align: left;
       }
+    }
+  }
+
+  &__link {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 16px 0;
+
+    @include conf.desktop {
+      padding: 0;
     }
   }
 

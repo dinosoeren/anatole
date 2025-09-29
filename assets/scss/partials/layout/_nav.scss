@@ -30,7 +30,6 @@
     }
 
     &-item {
-      padding: 16px 0;
       text-transform: uppercase;
       text-align: center;
       white-space: nowrap;
@@ -57,10 +56,20 @@
   }
 
   &__link {
-    &--active {
-      padding-bottom: $py-desktop;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 16px 0;
 
+    @include conf.desktop {
+      padding: 0;
+    }
+
+    &--active {
       @include conf.desktop {
+        padding-bottom: $py-desktop;
+        margin-bottom: -$py-desktop;
+
         @include color.themed() {
           border-bottom: 1px solid color.t('primary');
         }

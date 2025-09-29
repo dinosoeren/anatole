@@ -60,9 +60,7 @@
     <ul class="nav__list">
       {{ $url := .RelPermalink }}
       {{ range $menuId, $menuItem := .Site.Menus.main }}
-        {{ $active := eq $url $menuItem.URL }}
         {{ if $menuItem.HasChildren }}
-
           <li class="nav__list-item">
             <div class="optionswitch">
               <input class="optionswitch__picker" type="checkbox" id="{{ $menuId }}" hidden />
@@ -84,9 +82,15 @@
               <div class="optionswitch__triangle"></div>
               <ul class="optionswitch__list">
                 {{ range $menuItem.Children }}
+                  {{ $active := eq $url .URL }}
                   <li class="optionswitch__list-item">
                     {{ .Pre }}
                     <a
+                      {{ if $active }}
+                        class="optionswitch__link optionswitch__link--active"
+                      {{ else }}
+                        class="optionswitch__link"
+                      {{ end }}
                       href="{{ .URL }}"
                       {{ if strings.HasPrefix .URL "http" }}
                         target="_blank" rel="noopener noreferrer"
@@ -100,11 +104,14 @@
             </div>
           </li>
         {{ else }}
+          {{ $active := eq $url $menuItem.URL }}
           <li class="nav__list-item">
             {{ .Pre }}
             <a
               {{ if $active }}
-                class="nav__link--active"
+                class="nav__link nav__link--active"
+              {{ else }}
+                class="nav__link"
               {{ end }}
               href="{{ .URL }}"
               {{ if strings.HasPrefix .URL "http" }}

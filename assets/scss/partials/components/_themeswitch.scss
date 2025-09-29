@@ -4,9 +4,11 @@
   margin-top: -10px;
   font-size: 1.75rem;
   cursor: pointer;
+  padding: 16px 0;
 
   @include conf.desktop {
     margin-top: -5px;
+    padding: 0;
   }
 
   .icon {
