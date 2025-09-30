@@ -2,68 +2,128 @@
 document.addEventListener('DOMContentLoaded', function () {
   const header = document.querySelector('header.header');
   const mobileTocTrigger = document.querySelector('.toc-trigger-mobile');
-  const mobileTocWrapper = document.querySelector('.toc-wrapper-mobile');
+
+  // Get both possible TOC wrapper targets with multiple selectors
+  const mobileTocWrappers = {
+    above: document.querySelector('.toc-wrapper-mobile.toc--above'),
+    below: document.querySelector('.toc-wrapper-mobile.toc--below'),
+  };
 
   // Mobile TOC functionality
-  if (header && mobileTocTrigger && mobileTocWrapper) {
-    const mobileTocItems = mobileTocWrapper.querySelectorAll('li');
-    if (mobileTocItems && mobileTocItems.length > 0) {
-      setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrapper);
+  if (header && mobileTocTrigger && (mobileTocWrappers.above || mobileTocWrappers.below)) {
+    // Check if any wrapper has TOC items
+    let hasItems = false;
+    Object.values(mobileTocWrappers).forEach((wrapper) => {
+      if (wrapper) {
+        const items = wrapper.querySelectorAll('li');
+        if (items && items.length > 0) {
+          hasItems = true;
+        }
+      }
+    });
+
+    if (hasItems) {
+      setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrappers);
     } else {
+      console.debug('TOC trigger disabled - no items found');
       mobileTocTrigger.setAttribute('disabled', true);
     }
-    header.classList.add('toc-loaded');
+    requestAnimationFrame(() => {
+      header.classList.add('toc-loaded');
+    });
+  } else {
+    console.warn('TOC initialization failed');
   }
 
   // Initialize scroll highlighting for all TOC links
   initScrollHighlighting();
 });
 
-function setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrapper) {
+function setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrappers) {
   const burgerBtn = document.querySelector('header.header a.navbar-burger');
 
   let hoverTimeout;
 
+  function getCurrentNavPos() {
+    if (
+      document.documentElement.dataset.navpos === 'bottom' ||
+      document.documentElement.classList.contains('navpos--bottom')
+    ) {
+      return 'bottom';
+    }
+    return 'top';
+  }
+
+  // Get the currently active TOC wrapper based on navbar position
+  function getActiveTOCWrapper() {
+    const navPos = getCurrentNavPos();
+
+    if (navPos === 'bottom' && mobileTocWrappers.above) {
+      return mobileTocWrappers.above;
+    } else if (navPos !== 'bottom' && mobileTocWrappers.below) {
+      return mobileTocWrappers.below;
+    }
+
+    // Fallback to any available wrapper
+    return mobileTocWrappers.above || mobileTocWrappers.below;
+  }
+
   // Mouse events for desktop hover
   function showTOC() {
     clearTimeout(hoverTimeout);
-    header.classList.add('expanded');
-    if (burgerBtn) {
-      burgerBtn.classList.remove('nav--active');
-      const navMenu = burgerBtn.nextElementSibling;
-      if (navMenu) {
-        navMenu.classList.remove('nav--active');
+    requestAnimationFrame(() => {
+      header.classList.add('expanded');
+      if (burgerBtn) {
+        burgerBtn.classList.remove('nav--active');
+        const navMenu = burgerBtn.nextElementSibling;
+        if (navMenu) {
+          navMenu.classList.remove('nav--active');
+        }
       }
-    }
+    });
   }
 
   function hideTOC() {
     hoverTimeout = setTimeout(() => {
-      header.classList.remove('expanded');
+      requestAnimationFrame(() => {
+        header.classList.remove('expanded');
+      });
     }, 300); // Small delay to prevent flickering
   }
 
   mobileTocTrigger.addEventListener('mouseenter', showTOC);
-  mobileTocWrapper.addEventListener('mouseenter', showTOC);
+
+  // Add hover listeners for both possible wrappers
+  Object.values(mobileTocWrappers).forEach((wrapper) => {
+    if (wrapper) {
+      wrapper.addEventListener('mouseenter', showTOC);
+    }
+  });
+
   header.addEventListener('mouseleave', hideTOC);
 
   // Touch events for mobile devices
   mobileTocTrigger.addEventListener('touchstart', function (e) {
     e.preventDefault();
-    header.classList.toggle('expanded');
-    if (burgerBtn) {
-      burgerBtn.classList.remove('nav--active');
-      const navMenu = burgerBtn.nextElementSibling;
-      if (navMenu) {
-        navMenu.classList.remove('nav--active');
+    requestAnimationFrame(() => {
+      header.classList.toggle('expanded');
+      if (burgerBtn) {
+        burgerBtn.classList.remove('nav--active');
+        const navMenu = burgerBtn.nextElementSibling;
+        if (navMenu) {
+          navMenu.classList.remove('nav--active');
+        }
       }
-    }
+    });
   });
 
   // Close on outside tap
   document.addEventListener('touchstart', function (e) {
-    if (!mobileTocWrapper.contains(e.target) && !mobileTocTrigger.contains(e.target)) {
-      header.classList.remove('expanded');
+    const activeWrapper = getActiveTOCWrapper();
+    if (activeWrapper && !activeWrapper.contains(e.target) && !mobileTocTrigger.contains(e.target)) {
+      requestAnimationFrame(() => {
+        header.classList.remove('expanded');
+      });
     }
   });
 }
@@ -133,7 +193,9 @@ function initScrollHighlighting() {
             header.dataset.scrollingTarget = sectionId;
             setTimeout(() => {
               if (header.dataset.scrollingTarget) {
-                header.classList.remove('expanded');
+                requestAnimationFrame(() => {
+                  header.classList.remove('expanded');
+                });
               }
             }, 2000);
           }

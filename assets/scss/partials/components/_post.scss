@@ -1,13 +1,17 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
 @use 'modules/variables' as var;
+@use 'modules/navpos' as navpos;
 
 .post {
   margin: 30px;
-  scroll-margin-top: 75px;
 
-  @include conf.desktop {
-    scroll-margin-top: 100px;
+  @include navpos.navpos() {
+    scroll-margin-top: navpos.navpos('scroll-margin-mobile');
+
+    @include conf.desktop {
+      scroll-margin-top: navpos.navpos('scroll-margin-desktop');
+    }
   }
 
   @include color.themed() {
@@ -239,10 +243,12 @@
     h2,
     h3,
     h4 {
-      scroll-margin-top: 70px;
+      @include navpos.navpos() {
+        scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') - 5px);
 
-      @include conf.desktop {
-        scroll-margin-top: 90px;
+        @include conf.desktop {
+          scroll-margin-top: calc(navpos.navpos('scroll-margin-desktop') - 10px);
+        }
       }
     }
 

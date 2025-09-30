@@ -1,5 +1,6 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .nav {
   $py-desktop: 24px;
@@ -11,6 +12,33 @@
     justify-content: space-between;
     align-items: center;
     box-shadow: none;
+  }
+
+  &--active,
+  .header:not(.nav-loaded) &:hover,
+  .header:not(.nav-loaded):has(.navbar-burger:hover) & {
+    display: block;
+  }
+
+  // Show above nav only when navbar position is bottom and not desktop
+  &--above {
+    @include conf.smaller-than-desktop {
+      @include navpos.top {
+        display: none !important;
+      }
+    }
+    @include conf.desktop {
+      display: none !important;
+    }
+  }
+
+  // Show below nav only when navbar position is top or is desktop
+  &--below {
+    @include conf.smaller-than-desktop {
+      @include navpos.bottom {
+        display: none !important;
+      }
+    }
   }
 
   &__list {
@@ -75,11 +103,5 @@
         }
       }
     }
-  }
-
-  &--active,
-  .header:not(.nav-loaded) .header-trigger-wrapper:has(.navbar-burger:hover) ~ &,
-  .header:not(.nav-loaded) &:hover {
-    display: block;
   }
 }

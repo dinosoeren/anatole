@@ -1,5 +1,6 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .header {
   @include color.themed() {
@@ -8,12 +9,21 @@
   }
   backdrop-filter: blur(20px);
   width: 100%;
-  position: fixed;
   z-index: 10;
-  top: 0;
+
+  // Mobile positioning based on navpos
+  @include conf.smaller-than-desktop {
+    @include navpos.navpos() {
+      position: navpos.navpos('nav-position');
+      top: navpos.navpos('nav-top');
+      bottom: navpos.navpos('nav-bottom');
+    }
+  }
 
   @include conf.desktop {
     position: sticky;
+    top: 0;
+
     @include color.themed() {
       box-shadow: 5px 0 5px color.t('shadow-color');
     }

@@ -1,5 +1,6 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .toc-wrapper {
   display: none !important;
@@ -112,14 +113,31 @@
     padding: 1rem;
     overflow-y: auto;
 
+    // Show TOC wrapper when selected by js (expanded), and when
+    // js has not loaded + hovering on wrapper or trigger
     .expanded &,
-    .header:not(.toc-loaded) .header-trigger-wrapper:has(.toc-trigger-mobile:hover) ~ &,
-    .header:not(.toc-loaded) &:hover {
+    .header:not(.toc-loaded) &:hover,
+    .header:not(.toc-loaded):has(.toc-trigger-mobile:hover) & {
       display: block;
     }
 
-    .nav--active + & {
-      display: none;
+    // Always hide TOC wrapper below trigger when nav is on bottom
+    &.toc--below {
+      @include navpos.bottom {
+        display: none !important;
+      }
+    }
+
+    // Always hide TOC wrapper above trigger when nav is on top
+    &.toc--above {
+      @include navpos.top {
+        display: none !important;
+      }
+    }
+
+    // Always hide TOC wrapper when sibling nav menu is opened
+    &:has(+ .nav--active) {
+      display: none !important;
     }
 
     @include conf.desktop {

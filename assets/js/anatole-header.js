@@ -4,6 +4,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const navMap = new Map();
 
+  const getCurrentNavPos = () => {
+    if (
+      document.documentElement.dataset.navpos === 'bottom' ||
+      document.documentElement.classList.contains('navpos--bottom')
+    ) {
+      return 'bottom';
+    }
+    return 'top';
+  };
+
+  const getActiveNav = () => {
+    const currentPos = getCurrentNavPos();
+    if (currentPos === 'bottom') {
+      return document.querySelector('.nav--above');
+    } else {
+      return document.querySelector('.nav--below');
+    }
+  };
+
   navbarBurgers.forEach((navbarBurger, i) => {
     let nav = null;
     if (navbarBurger.dataset.target) {
@@ -13,7 +32,22 @@ document.addEventListener('DOMContentLoaded', () => {
       navMap.set(i, nav);
       navbarBurger.addEventListener('click', () => {
         navbarBurger.classList.toggle('nav--active');
-        nav.classList.toggle('nav--active');
+
+        // Toggle the correct nav based on current position
+        const activeNav = getActiveNav();
+        const inactiveNav =
+          getCurrentNavPos() === 'bottom'
+            ? document.querySelector('.nav--below')
+            : document.querySelector('.nav--above');
+
+        if (activeNav) {
+          activeNav.classList.toggle('nav--active');
+        }
+
+        // Ensure the inactive nav is hidden
+        if (inactiveNav) {
+          inactiveNav.classList.remove('nav--active');
+        }
       });
     }
   });
@@ -23,9 +57,19 @@ document.addEventListener('DOMContentLoaded', () => {
     navbarBurgers.forEach((navbarBurger, i) => {
       if (navMap.has(i)) {
         const nav = navMap.get(i);
-        if (!navbarBurger.contains(e.target) && !nav.contains(e.target)) {
+        const navAbove = document.querySelector('.nav--above');
+        const navBelow = document.querySelector('.nav--below');
+
+        if (
+          !navbarBurger.contains(e.target) &&
+          !nav.contains(e.target) &&
+          (!navAbove || !navAbove.contains(e.target)) &&
+          (!navBelow || !navBelow.contains(e.target))
+        ) {
           navbarBurger.classList.remove('nav--active');
           nav.classList.remove('nav--active');
+          if (navAbove) navAbove.classList.remove('nav--active');
+          if (navBelow) navBelow.classList.remove('nav--active');
         }
       }
     });
@@ -41,8 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
       navbarBurgers.forEach((navbarBurger, i) => {
         if (navMap.has(i)) {
           const nav = navMap.get(i);
+          const navAbove = document.querySelector('.nav--above');
+          const navBelow = document.querySelector('.nav--below');
+
           navbarBurger.classList.remove('nav--active');
           nav.classList.remove('nav--active');
+          if (navAbove) navAbove.classList.remove('nav--active');
+          if (navBelow) navBelow.classList.remove('nav--active');
         }
       });
     }

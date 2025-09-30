@@ -1,10 +1,18 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .portfolio {
   position: relative;
   padding: 0;
-  scroll-margin-top: 99px;
+
+  @include navpos.navpos() {
+    scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') + 30px);
+
+    @include conf.desktop {
+      scroll-margin-top: navpos.navpos('scroll-margin-desktop');
+    }
+  }
 
   @include conf.desktop {
     padding: 36px 48px;
@@ -60,10 +68,13 @@
     font-size: 2.6rem;
     line-height: 1;
     font-weight: 300;
-    scroll-margin-top: 125px;
 
-    @include conf.desktop {
-      scroll-margin-top: 145px;
+    @include navpos.navpos() {
+      scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') + 50px);
+
+      @include conf.desktop {
+        scroll-margin-top: calc(navpos.navpos('scroll-margin-desktop') + 45px);
+      }
     }
   }
 
@@ -249,7 +260,6 @@
   display: flex;
   align-items: stretch;
   position: sticky;
-  top: calc(3.25rem + 12px);
   z-index: 1;
   padding: 10px 30px;
   width: calc(100% - 60px);
@@ -259,8 +269,12 @@
     background: adjust-color(color.t('accent'), $alpha: -0.3);
   }
 
-  @include conf.desktop {
-    top: calc(1.8rem + 49px);
+  @include navpos.navpos() {
+    top: navpos.navpos('filter-top-mobile');
+
+    @include conf.desktop {
+      top: navpos.navpos('filter-top-desktop');
+    }
   }
 
   .multi-select-container {
@@ -288,7 +302,6 @@
   }
 
   #tag-input {
-    $padding: calc(0.25rem + 1px);
     outline: none;
     border: none;
     background: none;
@@ -296,7 +309,7 @@
     width: 40%;
     min-width: 90px;
     max-width: 110px;
-    padding: calc($padding * 1.5) $padding calc($padding * 0.5) $padding;
+    padding: calc(0.25rem + 1px);
     font-size: 16px;
 
     @include color.themed() {

@@ -1,4 +1,5 @@
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .footer {
   $font-size-footer: 1.4rem;
@@ -42,6 +43,12 @@
   &__base {
     @include conf.desktop {
       display: none;
+    }
+
+    @include conf.smaller-than-desktop {
+      @include navpos.bottom {
+        margin-bottom: 40px;
+      }
     }
   }
 }

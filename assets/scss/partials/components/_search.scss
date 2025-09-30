@@ -1,5 +1,6 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .search {
   display: flex;
@@ -139,10 +140,26 @@
       display: none;
     }
 
+    // Show suggestions when hovering, and when focused + search
+    // index has not loaded + toc is not selected (expanded)
     &:hover,
     .sidebar .search:not(.active) .searchbox:has(input[type='search']:focus) + &,
-    .header:not(.expanded) .header-trigger-wrapper:has(.search:not(.active)):has(input[type='search']:focus) ~ & {
+    .header:not(.expanded):has(.search:not(.active)):has(input[type='search']:focus) & {
       display: flex;
+    }
+
+    // Always hide Search suggestions below trigger when nav is on bottom
+    &--below {
+      @include navpos.bottom {
+        display: none !important;
+      }
+    }
+
+    // Always hide Search suggestions above trigger when nav is on top
+    &--above {
+      @include navpos.top {
+        display: none !important;
+      }
     }
 
     &:has(.search__suggestions-item) {

@@ -1,10 +1,137 @@
 <div
-  class="{{ with or .Site.Params.disableHeaderAnimation .Site.Params.doNotLoadAnimations }}
-    .
-  {{ else }}
+  class="{{ if and (ne .Site.Params.disableHeaderAnimation true) (ne .Site.Params.doNotLoadAnimations true) }}
     animated fadeInDown
   {{ end }}"
 >
+  {{- /* Search suggestions for above positioning */ -}}
+  <div
+    id="header__search-suggestions--above"
+    class="search__suggestions search__suggestions--above search__suggestions--hidden"
+  >
+    <div class="search__no-results">
+      <strong>{{ i18n "loading" | default "Loading..." }}</strong>
+      {{ if or (and (gt (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRelatedPostsWhenNoResults false)) (and (eq (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRecentPostsWhenNoResults false)) }}
+        {{ i18n "while_you_wait" | default "While you wait, try these..." }}
+      {{ end }}
+    </div>
+    {{ if gt (len (.Site.RegularPages.Related .)) 0 }}
+      {{- partial "related-search-results.html" . -}}
+    {{ else }}
+      {{- partial "recent-search-results.html" . -}}
+    {{ end }}
+  </div>
+
+  {{- /* Include TOC for mobile - above version */ -}}
+  {{- partial "toc.html" (dict "page" . "size" "mobile" "position" "above") -}}
+
+  {{- /* Navigation for bottom position (show above triggers) */ -}}
+  <nav class="nav nav--above" id="navMenuAbove">
+    <ul class="nav__list">
+      {{ $url := .RelPermalink }}
+      {{ range $menuId, $menuItem := .Site.Menus.main }}
+        {{ if $menuItem.HasChildren }}
+          <li class="nav__list-item">
+            <div class="optionswitch">
+              <input class="optionswitch__picker" type="checkbox" id="{{ $menuId }}-above" hidden />
+
+              {{ $labelClass := "optionswitch__label" }}
+              {{ range $menuItem.Children }}
+                {{ if eq $url .URL }}
+                  {{ $labelClass = "optionswitch__label nav__link--active" }}
+                {{ end }}
+              {{ end }}
+
+
+              <label class="{{ $labelClass }}" for="{{ $menuId }}-above"
+                >{{ $menuItem.Name }}
+                {{ partial "icons/icon" (dict "vendor" "fas" "name" "angle-down" "className" "icon") }}</label
+              >
+
+              <div class="optionswitch__triangle"></div>
+              <ul class="optionswitch__list">
+                {{ range $menuItem.Children }}
+                  {{ $active := eq $url .URL }}
+                  <li class="optionswitch__list-item">
+                    {{ .Pre }}
+                    <a
+                      {{ if $active }}
+                        class="optionswitch__link optionswitch__link--active"
+                      {{ else }}
+                        class="optionswitch__link"
+                      {{ end }}
+                      href="{{ .URL }}"
+                      {{ if strings.HasPrefix .URL "http" }}
+                        target="_blank" rel="noopener noreferrer"
+                      {{ end }}
+                      title="{{ .Title }}"
+                      >{{ .Name }}</a
+                    >
+                  </li>
+                {{ end }}
+              </ul>
+            </div>
+          </li>
+        {{ else }}
+          {{ $active := eq $url $menuItem.URL }}
+          <li class="nav__list-item">
+            {{ .Pre }}
+            <a
+              {{ if $active }}
+                class="nav__link nav__link--active"
+              {{ else }}
+                class="nav__link"
+              {{ end }}
+              href="{{ .URL }}"
+              {{ if strings.HasPrefix .URL "http" }}
+                target="_blank" rel="noopener noreferrer"
+              {{ end }}
+              title="{{ .Title }}"
+              >{{ $menuItem.Name }}</a
+            >
+          </li>
+        {{ end }}
+      {{ end }}
+    </ul>
+    <ul class="nav__list nav__list--end">
+      {{ if and .IsTranslated hugo.IsMultilingual }}
+        <li class="nav__list-item">
+          <div class="optionswitch">
+            <input class="optionswitch__picker" type="checkbox" id="languagepicker-above" hidden />
+            <label class="optionswitch__label" for="languagepicker-above"
+              >{{ .Site.Language.LanguageName }}
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "angle-down" "className" "icon") }}</label
+            >
+            <div class="optionswitch__triangle"></div>
+            <ul class="optionswitch__list">
+              {{ range $.Translations }}
+                <li class="optionswitch__list-item">
+                  <a href="{{ .RelPermalink }}" title="{{ .Language.LanguageName }}"
+                    ><span
+                      {{ if eq . $.Site.Language }}
+                        class="active"
+                      {{ end }}
+                      aria-label="{{ i18n "ariaLanguage" }}{{ .Language.LanguageName }}"
+                      >{{ .Language.LanguageName }}</span
+                    >
+                  </a>
+                </li>
+              {{ end }}
+            </ul>
+          </div>
+        </li>
+      {{ end }}
+      {{ if not .Site.Params.disableThemeSwitcher }}
+        <li class="nav__list-item">
+          <div class="themeswitch">
+            <a role="button" title="Switch Theme" aria-label="Switch theme"
+              >{{ partial "icons/icon" (dict "vendor" "fas" "name" "circle-half-stroke" "className" "icon") }}</a
+            >
+          </div>
+        </li>
+      {{ end }}
+    </ul>
+  </nav>
+
   <div class="header-trigger-wrapper">
     {{- /* Mobile TOC trigger */ -}}
     <div class="toc-container-mobile">
@@ -24,7 +151,8 @@
       data-no-results="{{ (i18n "no_results" "XX") | default "No results for \"XX.\"" }}"
       data-feeling-lucky="{{ i18n "feeling_lucky" | default "Feeling lucky?" }}"
       data-try-suggestions="{{ i18n "try_suggestions" | default "You might like these..." }}"
-      data-suggestions-target="header__search-suggestions"
+      data-suggestions-target-above="header__search-suggestions--above"
+      data-suggestions-target-below="header__search-suggestions--below"
     >
       <div class="searchbox">
         <label for="header__search-text" aria-label="Search">
@@ -38,7 +166,12 @@
       {{ partial "icons/icon" (dict "vendor" "fas" "name" "ellipsis-vertical") }}
     </a>
   </div>
-  <div id="header__search-suggestions" class="search__suggestions search__suggestions--hidden">
+
+  {{- /* Search suggestions for below positioning */ -}}
+  <div
+    id="header__search-suggestions--below"
+    class="search__suggestions search__suggestions--below search__suggestions--hidden"
+  >
     <div class="search__no-results">
       <strong>{{ i18n "loading" | default "Loading..." }}</strong>
       {{ if or (and (gt (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRelatedPostsWhenNoResults false)) (and (eq (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRecentPostsWhenNoResults false)) }}
@@ -52,11 +185,11 @@
     {{ end }}
   </div>
 
-  {{- /* Include TOC for mobile */ -}}
-  {{- partial "toc.html" (dict "page" . "size" "mobile") -}}
+  {{- /* Include TOC for mobile - below version */ -}}
+  {{- partial "toc.html" (dict "page" . "size" "mobile" "position" "below") -}}
 
-
-  <nav class="nav" id="navMenu">
+  {{- /* Navigation for top position (show below triggers) - default behavior */ -}}
+  <nav class="nav nav--below" id="navMenu">
     <ul class="nav__list">
       {{ $url := .RelPermalink }}
       {{ range $menuId, $menuItem := .Site.Menus.main }}

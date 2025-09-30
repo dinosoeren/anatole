@@ -1,7 +1,5 @@
 <div
-  class="sidebar{{ with or .Site.Params.disableSidebarAnimation .Site.Params.doNotLoadAnimations }}
-    .
-  {{ else }}
+  class="sidebar{{ if and (ne .Site.Params.disableSidebarAnimation true) (ne .Site.Params.doNotLoadAnimations true) }}
     {{ with .Site.Params.disableDesktopSidebarAnimation }}
       no-desktop-animated
     {{ end }}

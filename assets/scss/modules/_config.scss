@@ -12,6 +12,12 @@
   }
 }
 
+@mixin smaller-than-desktop {
+  @media screen and (max-width: 960px) {
+    @content;
+  }
+}
+
 @mixin midscreen {
   @media screen and (min-width: 1210px) {
     @content;

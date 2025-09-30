@@ -2,11 +2,20 @@
 <html
   dir="{{ .Site.Language.LanguageDirection | default "ltr" }}"
   lang="{{- site.Language.Lang -}}"
-  data-theme="{{- .Site.Params.displayMode -}}"
+  data-theme="{{- cond (eq .Site.Params.displayMode "dark") "dark" "light" -}}"
+  data-navpos="{{- cond (eq .Site.Params.defaultMobileNavPosition "bottom") "bottom" "top" -}}"
   {{ if eq .Site.Params.displayMode "dark" }}
-    class="html theme--dark"
+    {{ if eq (.Site.Params.defaultMobileNavPosition | default "top") "bottom" }}
+      class="html theme--dark navpos--bottom"
+    {{ else }}
+      class="html theme--dark navpos--top"
+    {{ end }}
   {{ else }}
-    class="html theme--light"
+    {{ if eq (.Site.Params.defaultMobileNavPosition | default "top") "bottom" }}
+      class="html theme--light navpos--bottom"
+    {{ else }}
+      class="html theme--light navpos--top"
+    {{ end }}
   {{ end }}
 >
   {{- partial "head.html" . -}}

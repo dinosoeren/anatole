@@ -17,6 +17,10 @@
   {{- if eq .size "mobile" -}}
     {{- $wrapperClassName = "toc-wrapper-mobile" -}}
     {{- $titleClassName = "toc-title-mobile" -}}
+    {{- /* Add position-specific classes for mobile TOC */ -}}
+    {{- if .position -}}
+      {{- $wrapperClassName = printf "%s toc--%s" $wrapperClassName .position -}}
+    {{- end -}}
   {{- end -}}
   <div class="{{ $wrapperClassName }} {{ $classModifier }}">
     <div class="{{ $titleClassName }}">{{ $pageTitle }}</div>

@@ -1,9 +1,16 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .sidebar {
   margin-top: 40px;
   padding-top: 16px;
+
+  @include conf.smaller-than-desktop {
+    @include navpos.bottom {
+      margin-top: 0;
+    }
+  }
 
   @include conf.desktop {
     z-index: 2;

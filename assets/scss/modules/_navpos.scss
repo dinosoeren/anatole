@@ -1,0 +1,58 @@
+@use 'sass:map';
+
+$navpos-configs: (
+  top: (
+    nav-position: fixed,
+    nav-top: 0,
+    nav-bottom: auto,
+    scroll-margin-mobile: 75px,
+    scroll-margin-desktop: 100px,
+    filter-top-mobile: calc(3.25rem + 12px),
+    filter-top-desktop: calc(1.8rem + 49px),
+  ),
+  bottom: (
+    nav-position: fixed,
+    nav-top: auto,
+    nav-bottom: 0,
+    scroll-margin-mobile: 25px,
+    scroll-margin-desktop: 100px,
+    filter-top-mobile: 0,
+    filter-top-desktop: calc(1.8rem + 49px),
+  ),
+);
+
+$navpos-map: ();
+
+@mixin navpos() {
+  @each $position, $map in $navpos-configs {
+    .navpos--#{$position} & {
+      @each $key, $submap in $map {
+        $value: map.get(map.get($navpos-configs, $position), '#{$key}');
+        $navpos-map: map.merge(
+          $navpos-map,
+          (
+            $key: $value,
+          )
+        ) !global;
+      }
+      @content;
+      $navpos-map: ();
+    }
+  }
+}
+
+@mixin top {
+  .navpos--top & {
+    @content;
+  }
+}
+
+@mixin bottom {
+  .navpos--bottom & {
+    @content;
+  }
+}
+
+@function navpos($key) {
+  @return map.get($navpos-map, $key);
+}

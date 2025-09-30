@@ -62,12 +62,58 @@ document.addEventListener('DOMContentLoaded', () => {
 /*! FlexSearch logic adapted from Gruvbox theme | MIT license | https://github.com/schnerring/hugo-theme-gruvbox/blob/e37181494ba57cde994384fac8ef1becd3265fd0/assets/js/flexsearch.js */
 function initSearch(container) {
   const searchInput = container.querySelector("input[type='search']");
-  let suggestions = container.querySelector('.search__suggestions');
-  if (suggestions == null && container.dataset.suggestionsTarget) {
-    suggestions = document.getElementById(container.dataset.suggestionsTarget);
+
+  // Get suggestion targets from dataset attributes
+  const suggestionTargets = {
+    above: container.dataset.suggestionsTargetAbove
+      ? document.getElementById(container.dataset.suggestionsTargetAbove)
+      : null,
+    below: container.dataset.suggestionsTargetBelow
+      ? document.getElementById(container.dataset.suggestionsTargetBelow)
+      : null,
+  };
+
+  // Fallback to single target if above/below not specified
+  if (!suggestionTargets.above && !suggestionTargets.below) {
+    let suggestions = null;
+    if (container.dataset.suggestionsTarget) {
+      suggestions = document.getElementById(container.dataset.suggestionsTarget);
+    } else {
+      suggestions = container.querySelector('.search__suggestions');
+    }
+    // Determine which target this should be based on element classes
+    if (suggestions && suggestions.classList.contains('search__suggestions--above')) {
+      suggestionTargets.above = suggestions;
+    } else {
+      suggestionTargets.below = suggestions;
+    }
   }
 
-  if (searchInput == null || suggestions == null) return;
+  function getCurrentNavPos() {
+    if (
+      document.documentElement.dataset.navpos === 'bottom' ||
+      document.documentElement.classList.contains('navpos--bottom')
+    ) {
+      return 'bottom';
+    }
+    return 'top';
+  }
+
+  // Function to get the currently active suggestions target based on navbar position
+  function getActiveSuggestions() {
+    const navPos = getCurrentNavPos();
+
+    if (navPos === 'bottom' && suggestionTargets.above) {
+      return suggestionTargets.above;
+    } else if (navPos !== 'bottom' && suggestionTargets.below) {
+      return suggestionTargets.below;
+    }
+
+    // Fallback to any available target
+    return suggestionTargets.above || suggestionTargets.below;
+  }
+
+  if (searchInput == null || getActiveSuggestions() == null) return;
 
   const maxResultsCount = Number(container.dataset.maxResults || 5);
   const feelingLuckyText = container.dataset.feelingLucky || 'Feeling lucky?';
@@ -77,21 +123,25 @@ function initSearch(container) {
   const noResultsAfterText = noResultsFullText.split('XX')[1]?.trim() || '';
 
   requestAnimationFrame(() => {
-    // Replace or remove existing message (e.g. 'Loading') if present
-    const preExistingMessage = suggestions.querySelector('.search__no-results');
-    if (preExistingMessage) {
-      const related = suggestions.querySelectorAll('.search__suggestions-item.related');
-      if (related && related.length > 0) {
-        // Replace existing message content
-        preExistingMessage.textContent = '';
-        const strongEl = document.createElement('strong');
-        strongEl.textContent = feelingLuckyText;
-        preExistingMessage.appendChild(strongEl);
-        preExistingMessage.appendChild(document.createTextNode(` ${trySuggestionsText}`));
-      } else {
-        preExistingMessage.parentNode?.removeChild(preExistingMessage);
+    // Replace or remove existing message (e.g. 'Loading') if present for all suggestion targets
+    Object.values(suggestionTargets).forEach((target) => {
+      if (target) {
+        const preExistingMessage = target.querySelector('.search__no-results');
+        if (preExistingMessage) {
+          const related = target.querySelectorAll('.search__suggestions-item.related');
+          if (related && related.length > 0) {
+            // Replace existing message content
+            preExistingMessage.textContent = '';
+            const strongEl = document.createElement('strong');
+            strongEl.textContent = feelingLuckyText;
+            preExistingMessage.appendChild(strongEl);
+            preExistingMessage.appendChild(document.createTextNode(` ${trySuggestionsText}`));
+          } else {
+            preExistingMessage.parentNode?.removeChild(preExistingMessage);
+          }
+        }
       }
-    }
+    });
   });
 
   document.addEventListener('keydown', (e) => {
@@ -102,21 +152,29 @@ function initSearch(container) {
     } else if (e.key === 'Escape') {
       // Unfocus search bar with ESC
       searchInput.blur();
-      suggestions.classList.add('search__suggestions--hidden');
+      const activeSuggestions = getActiveSuggestions();
+      if (activeSuggestions) {
+        activeSuggestions.classList.add('search__suggestions--hidden');
+      }
     }
   });
 
   searchInput.addEventListener('focus', () => {
-    suggestions.classList.remove('search__suggestions--hidden');
+    const activeSuggestions = getActiveSuggestions();
+    if (activeSuggestions) {
+      activeSuggestions.classList.remove('search__suggestions--hidden');
+    }
     container.classList.add('active');
   });
 
   function handleGlobalClick(e) {
-    if (!suggestions.contains(e.target)) {
+    const activeSuggestions = getActiveSuggestions();
+    if (activeSuggestions && !activeSuggestions.contains(e.target)) {
       if (!container.contains(e.target)) {
         // Hide search suggestions if clicking elsewhere
-        suggestions.classList.add('search__suggestions--hidden');
+        activeSuggestions.classList.add('search__suggestions--hidden');
         container.classList.remove('active');
+        searchInput.blur();
       } else {
         searchInput.focus();
       }
@@ -128,10 +186,13 @@ function initSearch(container) {
 
   /*! Adapted from: https://dev.to/shubhamprakash/trap-focus-using-javascript-6a3 */
   document.addEventListener('keydown', (e) => {
-    const suggestionsHidden = suggestions.classList.contains('search__suggestions--hidden');
+    const activeSuggestions = getActiveSuggestions();
+    if (!activeSuggestions) return;
+
+    const suggestionsHidden = activeSuggestions.classList.contains('search__suggestions--hidden');
     if (suggestionsHidden) return;
 
-    const focusableSuggestions = [...suggestions.querySelectorAll('a')];
+    const focusableSuggestions = [...activeSuggestions.querySelectorAll('a')];
     if (focusableSuggestions.length === 0) return;
 
     const currentIndex = focusableSuggestions.indexOf(document.activeElement);
@@ -178,19 +239,23 @@ function initSearch(container) {
   }
 
   function renderSearchResults(searchText, searchResultsMap) {
-    if (!suggestions) return;
+    const activeSuggestions = getActiveSuggestions();
+    if (!activeSuggestions) return;
+
     // Clear old results before rendering new ones
-    const oldResults = suggestions.querySelectorAll('.search__suggestions-item:not(.related), .search__no-results');
+    const oldResults = activeSuggestions.querySelectorAll(
+      '.search__suggestions-item:not(.related), .search__no-results',
+    );
     oldResults.forEach((item) => item.parentNode?.removeChild(item));
 
     // Hide or unhide related posts (if any) based on whether we have search results or not
-    const related = suggestions.querySelectorAll('.search__suggestions-item.related');
+    const related = activeSuggestions.querySelectorAll('.search__suggestions-item.related');
     if (searchResultsMap.size === 0) {
       related.forEach((item) => item.classList.remove('hidden'));
     } else {
       related.forEach((item) => item.classList.add('hidden'));
     }
-    suggestions.classList.remove('search__suggestions--hidden');
+    activeSuggestions.classList.remove('search__suggestions--hidden');
 
     if (searchResultsMap.size === 0) {
       const noResultsMessage = document.createElement('div');
@@ -208,9 +273,9 @@ function initSearch(container) {
       noResultsMessage.classList.add('search__no-results');
       if (related && related.length > 0) {
         noResultsMessage.appendChild(document.createTextNode(` ${trySuggestionsText}`));
-        suggestions.insertBefore(noResultsMessage, related[0]);
+        activeSuggestions.insertBefore(noResultsMessage, related[0]);
       } else if (noResultsMessage.textContent.length > 0) {
-        suggestions.appendChild(noResultsMessage);
+        activeSuggestions.appendChild(noResultsMessage);
       }
       return;
     }
@@ -220,7 +285,7 @@ function initSearch(container) {
       const suggestion = document.createElement('a');
       suggestion.href = permalink;
       suggestion.classList.add('search__suggestions-item');
-      suggestions.appendChild(suggestion);
+      activeSuggestions.appendChild(suggestion);
 
       const thumbnail = document.createElement('img');
       if (searchResult.thumbnailImg && Object.keys(searchResult.thumbnailImg).length > 0) {
