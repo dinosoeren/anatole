@@ -58,19 +58,7 @@
         </label>
         <input id="sidebar__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
       </div>
-      <div id="sidebar__search-suggestions" class="search__suggestions search__suggestions--hidden">
-        <div class="search__no-results">
-          <strong>{{ i18n "loading" | default "Loading..." }}</strong>
-          {{ if or (and (gt (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRelatedPostsWhenNoResults false)) (and (eq (len (.Site.RegularPages.Related .)) 0) (ne .Site.Params.flexsearch.suggestRecentPostsWhenNoResults false)) }}
-            {{ i18n "while_you_wait" | default "While you wait, try these..." }}
-          {{ end }}
-        </div>
-        {{ if gt (len (.Site.RegularPages.Related .)) 0 }}
-          {{- partial "related-search-results.html" . -}}
-        {{ else }}
-          {{- partial "recent-search-results.html" . -}}
-        {{ end }}
-      </div>
+      {{- partial "search-results.html" (dict "page" . "position" "sidebar") -}}
     </div>
 
     {{- /* Include TOC for desktop */ -}}
