@@ -1,0 +1,22 @@
+@use 'modules/config' as conf;
+
+.navpos-switch {
+  margin-top: -10px;
+  font-size: 1.75rem;
+  cursor: pointer;
+  padding: 16px 0;
+
+  @include conf.desktop {
+    margin-top: -5px;
+    padding: 0;
+  }
+
+  .icon {
+    position: relative;
+    top: 2px;
+
+    @include conf.desktop {
+      top: 5px;
+    }
+  }
+}

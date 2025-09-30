@@ -180,6 +180,17 @@
     ></script>
   {{ end }}
 
+  {{ if ne .Site.Params.disableNavPosSwitcher true }}
+    {{ $anatoleNavPosSwitcher := resources.Get "js/navpos-switcher.js" }}
+    {{ $secureNavPosSwitcherJS := $anatoleNavPosSwitcher |  resources.Minify | resources.Fingerprint }}
+    <script
+      type="text/javascript"
+      src="{{ $secureNavPosSwitcherJS.RelPermalink }}"
+      integrity="{{ $secureNavPosSwitcherJS.Data.Integrity }}"
+      crossorigin="anonymous"
+    ></script>
+  {{ end }}
+
   {{- $js := "" -}}
   {{- range .Site.Params.customJs -}}
     {{- if or (in . "http://") (in . "https://") -}}

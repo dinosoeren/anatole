@@ -129,6 +129,15 @@
           </div>
         </li>
       {{ end }}
+      {{ if ne .Site.Params.disableNavPosSwitcher true }}
+        <li class="nav__list-item">
+          <div class="navpos-switch">
+            <a role="button" title="Switch Navigation Position" aria-label="Switch navigation position"
+              >{{ partial "icons/icon" (dict "vendor" "fas" "name" "arrows-up-down" "className" "icon") }}</a
+            >
+          </div>
+        </li>
+      {{ end }}
     </ul>
   </nav>
 
@@ -291,6 +300,15 @@
           <div class="themeswitch">
             <a role="button" title="Switch Theme" aria-label="Switch theme"
               >{{ partial "icons/icon" (dict "vendor" "fas" "name" "circle-half-stroke" "className" "icon") }}</a
+            >
+          </div>
+        </li>
+      {{ end }}
+      {{ if ne .Site.Params.disableNavPosSwitcher true }}
+        <li class="nav__list-item">
+          <div class="navpos-switch">
+            <a role="button" title="Switch Navigation Position" aria-label="Switch navigation position"
+              >{{ partial "icons/icon" (dict "vendor" "fas" "name" "arrows-up-down" "className" "icon") }}</a
             >
           </div>
         </li>
