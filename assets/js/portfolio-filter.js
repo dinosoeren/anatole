@@ -102,7 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateDropdown(hideDropdown = false) {
-    tagDropdown.innerHTML = '';
+    while (tagDropdown.firstChild) {
+      tagDropdown.removeChild(tagDropdown.firstChild);
+    }
     const filter = tagInput.value.toLowerCase();
     const availableTags = getCoexistingTags();
 
@@ -258,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       addTag(focusedOption.textContent);
       tagInput.value = '';
-      updateDropdown(true);
+      requestAnimationFrame(() => updateDropdown(true));
       tagDropdown.scrollTo({ top: 0 });
       setTimeout(() => tagInput.focus(), 100);
     } else if (e.key === 'Backspace' && tagInput.value === '' && selectedTags.length > 0) {
