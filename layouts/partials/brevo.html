@@ -217,10 +217,10 @@
 {{- /* Keep brevo-main.js as external dependency since it's huge */ -}}
 {{- $mainJs := resources.Get "js/brevo-main.js" | resources.Minify | resources.Fingerprint -}}
 <script
-  defer
   type="text/javascript"
   src="{{ $mainJs.RelPermalink }}"
   integrity="{{ $mainJs.Data.Integrity }}"
   crossorigin="anonymous"
+  defer
 ></script>
 <!-- End Brevo Form -->
