@@ -1,213 +1,84 @@
-<!-- Image rendering adapted from Gruvbox theme | MIT license | https://github.com/schnerring/hugo-theme-gruvbox/blob/e37181494ba57cde994384fac8ef1becd3265fd0/layouts/partials/image.html -->
-<!-- prettier-ignore -->
-{{ $isFigure := or .caption .title .attr }}
-{{ if $isFigure }}
-  <figure {{ with .class }}class="{{ . }}"{{ end }}>
-{{ end }}
+{{- /* Get image data from resizer */ -}}
+{{- $imageData := partial "image-resize.html" . -}}
 
-{{ if .link }}
+{{- /* Figure logic */ -}}
+{{- $isFigure := or .caption .title .attr -}}
+{{- if $isFigure -}}
+  <figure {{ with .class }}class="{{ . }}"{{ end }}>
+{{- end -}}
+
+{{- /* Link wrapper logic */ -}}
+{{- if .link -}}
   <a
     href="{{ .link | safeURL }}"
-    {{ if strings.HasPrefix .link "http" }}
+    {{- if strings.HasPrefix .link "http" }}
       target="_blank" rel="noopener noreferrer"
-    {{ else }}
-      {{ with .target }}target="{{ . }}"{{ end }}
-      {{ with .rel }}rel="{{ . }}"{{ end }}
-    {{ end }}
+    {{- else }}
+      {{- with .target }} target="{{ . }}"{{ end }}
+      {{- with .rel }} rel="{{ . }}"{{ end }}
+    {{- end }}
   >
-{{ end }}
+{{- end -}}
 
-{{ $u := urls.Parse (or .hdSrc .src) }}
-{{ $src := $u.String }}
-{{ $image := false }}
-{{ $isAsset := false }}
-{{ if not $u.IsAbs }}
-  {{ if .page }}
-    {{ with .page.Resources.Get $u.Path }}
-      {{ $image = . }}
-      {{ $src = .RelPermalink }}
-      {{ $isAsset = true }}
-    {{ end }}
-  {{ end }}
-  {{ if not $image }}
-    {{ with resources.Get $u.Path }}
-      {{ $image = . }}
-      {{ $src = .RelPermalink }}
-      {{ $isAsset = true }}
-    {{ end }}
-  {{ end }}
-{{ end }}
-
-{{ $hdu := urls.Parse .hdSrc }}
-{{ $hdSrc := $u.String }}
-{{ $hdImg := false }}
-{{ if not $hdu.IsAbs }}
-  {{ if .page }}
-    {{ with .page.Resources.Get $hdu.Path }}
-      {{ $hdImg = . }}
-      {{ $hdSrc = .RelPermalink }}
-    {{ end }}
-  {{ end }}
-  {{ if not $hdImg }}
-    {{ with resources.Get $hdu.Path }}
-      {{ $hdImg = . }}
-      {{ $hdSrc = .RelPermalink }}
-    {{ end }}
-  {{ end }}
-{{ end }}
-
-{{ if $u.IsAbs }}
-  <!-- External image -->
-  <img
-    src="{{ $src }}"
-    alt="{{ .alt }}"
-    {{ with .hdSrc }}data-hd-src="{{ $hdSrc }}"{{ end }}
-    {{ with .caption }}title="{{ . | markdownify | plainify }}"{{ end }}
-    {{ with .loading }}loading="{{ . }}"{{ end }}
-    {{ with .fetchpriority }}fetchpriority="{{ . }}"{{ end }}
-    {{ if not $isFigure }}
-      {{ with .class }}class="{{ . }}"{{ end }}
-    {{ end }}
-    {{ with .height }}height="{{ . }}"{{ end }}
-    {{ with .width }}width="{{ . }}"{{ end }}
-  />
-{{ else if $isAsset }}
-  {{ if not $image }}
-    {{ errorf "Image '%s' not found in page bundle or assets folder" $src }}
-  {{ end }}
-  {{ if eq $image.MediaType.SubType "svg" }}
-    <!-- No processing for SVGs -->
-    <img
-      src="{{ $src }}"
-      alt="{{ .alt }}"
-      {{ with .hdSrc }}data-hd-src="{{ $hdSrc }}"{{ end }}
-      {{ with .caption }}title="{{ . | markdownify | plainify }}"{{ end }}
-      {{ with .loading }}loading="{{ . }}"{{ end }}
-      {{ with .fetchpriority }}fetchpriority="{{ . }}"{{ end }}
-      {{ if not $isFigure }}
-        {{ with .class }}class="{{ . }}"{{ end }}
-      {{ end }}
-      {{ with .height }}height="{{ . }}"{{ end }}
-      {{ with .width }}width="{{ . }}"{{ end }}
+{{- /* Render appropriate image element based on data */ -}}
+{{- if $imageData.webpSrcset -}}
+  {{- /* Responsive image with WebP support */ -}}
+  <picture>
+    <source
+      type="image/webp"
+      srcset="{{ $imageData.webpSrcset }}"
+      {{- with $imageData.sizes }} sizes="{{ . }}"{{ end }}
     />
-  {{ else }}
-    <!-- Calculate resize widths in increments of 100px -->
-    {{ $minWidth := .page.Site.Params.imageResize.min | default 300 }}
-    {{ $maxWidth := .page.Site.Params.imageResize.max | default 700 }}
-    {{ $increment := .page.Site.Params.imageResize.increment | default 200 }}
-    {{ $widths := seq $minWidth $increment $maxWidth }}
-    {{ if lt $image.Width $maxWidth }}
-      {{ $widths = $widths | append $image.Width }}
-    {{ end }}
-    {{ $widthsCount := len $widths }}
-
-    {{ $sizes := slice }}
-    {{ $srcSet := slice }}
-    {{ $webpSrcSet := slice }}
-    {{ range $i, $width := $widths }}
-      {{ if ge $image.Width $width }}
-        {{ if eq $i (sub $widthsCount 1) }}
-          {{ $sizes = $sizes | append (printf "%dpx" $width) }}
-        {{ else }}
-          {{ $maxWidth := (add $width (sub $increment 1)) }}
-          {{ $sizes = $sizes | append (printf "(max-width: %dpx) %dpx" $maxWidth $width) }}
-        {{ end }}
-        {{ $isWebP := eq "webp" $image.MediaType.SubType }}
-        {{ $isGif := eq "gif" $image.MediaType.SubType }}
-        <!-- Hugo does not support resizing animated Gifs, WebP, etc -->
-        {{ $isAnimated := or $isGif (and $isWebP $image.Content (findRE "ANIM" $image.Content)) }}
-        {{ if not $isAnimated }}
-          {{ $resized := $image.Resize (printf "%dx" $width) }}
-          {{ $srcSet = $srcSet | append (printf "%s %dw" $resized.RelPermalink $resized.Width) }}
-        {{ end }}
-        {{ if and (not $isGif) (not $isWebP) }}
-          <!-- If image format is not Gif or WebP, add conversions -->
-          {{ $webp := $image.Resize (printf "%dx webp" $width) }}
-          {{ $webpSrcSet = $webpSrcSet | append (printf "%s %dw" $webp.RelPermalink $webp.Width) }}
-        {{ end }}
-      {{ end }}
-    {{ end }}
-
-
-    <picture>
-      <source
-        type="image/webp"
-        {{ with $webpSrcSet }}srcset="{{ delimit . "," }}"{{ end }}
-        {{ with $sizes }}sizes="{{ delimit . "," }}"{{ end }}
-      />
-      <img
-        src="{{ $src }}"
-        {{ with $srcSet }}srcset="{{ delimit . "," }}"{{ end }}
-        {{ with $sizes }}sizes="{{ delimit . "," }}"{{ end }}
-        alt="{{ .alt }}"
-        {{ with .hdSrc }}data-hd-src="{{ $hdSrc }}"{{ end }}
-        {{ with .caption }}title="{{ . | markdownify | plainify }}"{{ end }}
-        {{ with .loading }}loading="{{ . }}"{{ end }}
-        {{ with .fetchpriority }}fetchpriority="{{ . }}"{{ end }}
-        {{ if not $isFigure }}
-          {{ with .class }}class="{{ . }}"{{ end }}
-        {{ end }}
-        {{ if .width }}
-          width="{{ .width }}"
-        {{ else }}
-          width="{{ $image.Width }}"
-        {{ end }}
-        {{ if .height }}
-          height="{{ .height }}"
-        {{ else }}
-          height="{{ $image.Height }}"
-        {{ end }}
-      />
-    </picture>
-  {{ end }}
-{{ else }}
-  <!-- Image is from static/ or another dir and can't be resized -->
-  {{ $imageConfig := false }}
-  {{ $src = .src | relURL }}
-  {{ if fileExists (path.Join "static" .src) }}
-    {{ $imageConfig = images.Config (path.Join "static" .src) }}
-  {{ else if not (fileExists $src) }}
-    {{ warnf "Image '%s' not found in static/ folder or site root" $src }}
-  {{ end }}
+    <img
+      src="{{ $imageData.src }}"
+      {{- with $imageData.srcset }} srcset="{{ . }}"{{ end }}
+      {{- with $imageData.sizes }} sizes="{{ . }}"{{ end }}
+      alt="{{ $imageData.alt }}"
+      {{- with $imageData.hdSrc }} data-hd-src="{{ . }}"{{ end }}
+      {{- with .caption }} title="{{ . | markdownify | plainify }}"{{ end }}
+      {{- with $imageData.loading }} loading="{{ . }}"{{ end }}
+      {{- with $imageData.fetchpriority }} fetchpriority="{{ . }}"{{ end }}
+      {{- if not $isFigure }}
+        {{- with $imageData.class }} class="{{ . }}"{{ end }}
+      {{- end }}
+      {{- with $imageData.width }} width="{{ . }}"{{ end }}
+      {{- with $imageData.height }} height="{{ . }}"{{ end }}
+    />
+  </picture>
+{{- else -}}
+  {{- /* Simple image */ -}}
   <img
-    src="{{ $src }}"
-    alt="{{ .alt }}"
-    {{ with .hdSrc }}data-hd-src="{{ $hdSrc }}"{{ end }}
-    {{ with .caption }}title="{{ . | markdownify | plainify }}"{{ end }}
-    {{ with .loading }}loading="{{ . }}"{{ end }}
-    {{ with .fetchpriority }}fetchpriority="{{ . }}"{{ end }}
-    {{ if not $isFigure }}
-      {{ with .class }}class="{{ . }}"{{ end }}
-    {{ end }}
-    {{ if .height }}
-      height="{{ .height }}"
-    {{ else if $imageConfig }}
-      height="{{ $imageConfig.Height }}"
-    {{ end }}
-    {{ if .width }}
-      width="{{ .width }}"
-    {{ else if $imageConfig }}
-      width="{{ $imageConfig.Width }}"
-    {{ end }}
+    src="{{ $imageData.src }}"
+    alt="{{ $imageData.alt }}"
+    {{- with $imageData.hdSrc }} data-hd-src="{{ . }}"{{ end }}
+    {{- with .caption }} title="{{ . | markdownify | plainify }}"{{ end }}
+    {{- with $imageData.loading }} loading="{{ . }}"{{ end }}
+    {{- with $imageData.fetchpriority }} fetchpriority="{{ . }}"{{ end }}
+    {{- if not $isFigure }}
+      {{- with $imageData.class }} class="{{ . }}"{{ end }}
+    {{- end }}
+    {{- with $imageData.width }} width="{{ . }}"{{ end }}
+    {{- with $imageData.height }} height="{{ . }}"{{ end }}
   />
-{{ end }}
+{{- end -}}
 
-{{ if .link }}</a>{{ end }}
+{{- if .link }}</a>{{ end -}}
 
+{{- /* Figure caption logic */ -}}
 <!-- prettier-ignore -->
-{{ if $isFigure }}
+{{- if $isFigure -}}
     <figcaption>
-      {{ with .title }}
+      {{- with .title }}
         <h4>{{ . }}</h4>
-      {{ end }}
-      {{ if or .caption .attr }}<p>
+      {{- end }}
+      {{- if or .caption .attr }}<p>
         {{ .caption | markdownify }}
-        {{ with .attrlink }}
+        {{- with .attrlink }}
           <a href="{{ . }}" target="_blank" rel="noopener noreferrer">
-        {{ end }}
+        {{- end }}
         {{ .attr | markdownify }}
-        {{ if .attrlink }}</a>{{ end }}</p>
-      {{ end }}
+        {{- if .attrlink }}</a>{{ end }}</p>
+      {{- end }}
     </figcaption>
   </figure>
-{{ end }}
+{{- end -}}
