@@ -38,62 +38,61 @@
   {{- end -}}
 
 
-  <!-- CSS -->
-  {{ $contentRatio := or site.Params.contentratio 0.6 -}}
-  {{ $languageDirection := or site.Language.LanguageDirection "ltr" -}}
-  {{ $vars := dict
+  <!-- CSS Bundle -->
+  {{- $contentRatio := or site.Params.contentratio 0.6 -}}
+  {{- $languageDirection := or site.Language.LanguageDirection "ltr" -}}
+  {{- $vars := dict
     "text_direction" $languageDirection
     "content_ratio" (printf "%f%%" (mul $contentRatio 100))
     "sidebar_ratio" (printf "%f%%" (mul (sub 1.0 $contentRatio) 100))
     "content_ratio_wide" (printf "%f%%" (mul 0.8 (mul $contentRatio 100)))
     "sidebar_ratio_wide" (printf "%f%%" (mul 0.8 (mul (sub 1.0 $contentRatio) 100)))
   -}}
-  {{ $options := dict
+  {{- $options := dict
     "transpiler" "dartsass"
     "vars" $vars
     "targetPath" (printf "css/anatole%s.css" (cond (eq site.Language.LanguageDirection "") "" (printf ".%s" site.Language.LanguageDirection)))
   -}}
-  {{ with resources.Get "scss/main.scss" -}}
-    {{ if hugo.IsProduction -}}
-      {{ with . | toCSS $options | minify | fingerprint }}
-        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" />
-      {{ end -}}
-    {{ else -}}
-      {{ with . | toCSS $options }}
-        <link rel="stylesheet" href="{{ .RelPermalink }}" />
-      {{ end -}}
-    {{ end -}}
-  {{ end -}}
 
-  {{ $markupHighlightStyle := resources.Get "css/markupHighlight.css" | resources.Minify | resources.Fingerprint }}
-  <link
-    rel="stylesheet"
-    href="{{ $markupHighlightStyle.RelPermalink }}"
-    integrity="{{ $markupHighlightStyle.Data.Integrity }}"
-    crossorigin="anonymous"
-    type="text/css"
-  />
-  {{ range .Site.Params.customCss }}
-    {{ $minstyles := resources.Get . }}
-    {{ $styles := $minstyles | resources.Minify | resources.Fingerprint }}
-    <link
-      rel="stylesheet"
-      href="{{ $styles.RelPermalink }}"
-      integrity="{{ $styles.Data.Integrity }}"
-      crossorigin="anonymous"
-      media="screen"
-    />
-  {{ end }}
-  {{ if .Params.redirectUrl }}
-    {{ $style := resources.Get "css/spinner.css" | resources.Minify | resources.Fingerprint }}
-    <link
-      rel="stylesheet"
-      href="{{ $style.RelPermalink }}"
-      integrity="{{ $style.Data.Integrity }}"
-      crossorigin="anonymous"
-      type="text/css"
-    />
+  {{- $cssBundle := slice -}}
+
+  {{- /* Add main SCSS */ -}}
+  {{- with resources.Get "scss/main.scss" -}}
+    {{- $cssBundle = $cssBundle | append (. | toCSS $options) -}}
   {{- end -}}
+
+  {{- /* Add markupHighlight.css */ -}}
+  {{- with resources.Get "css/markupHighlight.css" -}}
+    {{- $cssBundle = $cssBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Add custom CSS files */ -}}
+  {{- range .Site.Params.customCss -}}
+    {{- $customCSS := resources.Get . -}}
+    {{- if $customCSS -}}
+      {{- $cssBundle = $cssBundle | append $customCSS -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Add spinner.css if redirectUrl is present */ -}}
+  {{- if .Params.redirectUrl -}}
+    {{- with resources.Get "css/spinner.css" -}}
+      {{- $cssBundle = $cssBundle | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Bundle all CSS and inline */ -}}
+  {{- if gt (len $cssBundle) 0 -}}
+    {{- $bundledCSS := $cssBundle | resources.Concat "css/bundle.css" -}}
+    {{- if hugo.IsProduction -}}
+      {{- $bundledCSS = $bundledCSS | resources.Minify -}}
+    {{- end -}}
+    {{- $secureCSS := $bundledCSS | resources.Fingerprint "sha256" -}}
+    <style integrity="{{ $secureCSS.Data.Integrity }}">
+      {{- $secureCSS.Content | safeCSS -}}
+    </style>
+  {{- end -}}
+
   {{ if .Site.Params.googleFonts }}
     {{ $baseUrl := "https://fonts.googleapis.com/css2?family=" }}
     {{ $fontParam := delimit .Site.Params.googleFonts "&family=" }}
@@ -141,83 +140,56 @@
   {{ end -}}
 
 
-  <!-- JavaScript -->
-  {{ $anatoleHeader := resources.Get "js/anatole-header.js" }}
-  {{ $secureHeaderJS := $anatoleHeader |  resources.Minify | resources.Fingerprint }}
-  <script
-    type="text/javascript"
-    src="{{ $secureHeaderJS.RelPermalink }}"
-    integrity="{{ $secureHeaderJS.Data.Integrity }}"
-    crossorigin="anonymous"
-  ></script>
+  <!-- JavaScript Bundle -->
+  {{- $jsBuildOptions := dict "target" "es6" -}}
+  {{- if hugo.IsProduction -}}
+    {{- $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") -}}
+  {{- end -}}
+  {{- $jsBundle := slice -}}
 
-  {{ $shareJs := resources.Get "js/share.js" }}
-  {{ $secureShareJs := $shareJs |  resources.Minify | resources.Fingerprint }}
-  <script
-    type="text/javascript"
-    src="{{ $secureShareJs.RelPermalink }}"
-    integrity="{{ $secureShareJs.Data.Integrity }}"
-    crossorigin="anonymous"
-  ></script>
-
-  {{ $tocJs := resources.Get "js/toc.js" }}
-  {{ $secureTocJs := $tocJs |  resources.Minify | resources.Fingerprint }}
-  <script
-    type="text/javascript"
-    src="{{ $secureTocJs.RelPermalink }}"
-    integrity="{{ $secureTocJs.Data.Integrity }}"
-    crossorigin="anonymous"
-  ></script>
-
-  {{ if not .Site.Params.disableThemeSwitcher }}
-    {{ $anatoleThemeSwitcher := resources.Get "js/anatole-theme-switcher.js" }}
-    {{ $secureThemeSwitcherJS := $anatoleThemeSwitcher |  resources.Minify | resources.Fingerprint }}
-    <script
-      type="text/javascript"
-      src="{{ $secureThemeSwitcherJS.RelPermalink }}"
-      integrity="{{ $secureThemeSwitcherJS.Data.Integrity }}"
-      crossorigin="anonymous"
-    ></script>
-  {{ end }}
-
-  {{ if ne .Site.Params.disableNavPosSwitcher true }}
-    {{ $anatoleNavPosSwitcher := resources.Get "js/navpos-switcher.js" }}
-    {{ $secureNavPosSwitcherJS := $anatoleNavPosSwitcher |  resources.Minify | resources.Fingerprint }}
-    <script
-      type="text/javascript"
-      src="{{ $secureNavPosSwitcherJS.RelPermalink }}"
-      integrity="{{ $secureNavPosSwitcherJS.Data.Integrity }}"
-      crossorigin="anonymous"
-    ></script>
-  {{ end }}
-
-  {{- $js := "" -}}
-  {{- range .Site.Params.customJs -}}
-    {{- if or (in . "http://") (in . "https://") -}}
-      <script src="{{ . | relURL }}"></script>
-    {{- else -}}
-      {{- $customJS := resources.Get . -}}
-      {{- if $customJS -}}
-        {{- if eq $js "" -}}
-          {{- $js = $customJS -}}
-        {{- else -}}
-          {{- $js = slice $js $customJS | resources.Concat "js/custom.js" -}}
-        {{- end -}}
-
-      {{- end -}}
-
-    {{- end -}}
-
+  {{- /* Always include humanize-date logic in head to avoid re-rendering */ -}}
+  {{- with resources.Get "js/humanize-date.js" -}}
+    {{- $jsBundle = $jsBundle | append (. | resources.ExecuteAsTemplate "js/humanize-date.js" $) -}}
   {{- end -}}
 
-  {{- if ne $js "" -}}
-    {{- $secureJS := $js |  resources.Minify | resources.Fingerprint -}}
-    <script
-      type="text/javascript"
-      src="{{ $secureJS.RelPermalink }}"
-      integrity="{{ $secureJS.Data.Integrity }}"
-      crossorigin="anonymous"
-    ></script>
+  {{- /* Conditionally include theme switcher (in head to avoid re-rendering) */ -}}
+  {{- if not .Site.Params.disableThemeSwitcher -}}
+    {{- with resources.Get "js/anatole-theme-switcher.js" -}}
+      {{- $jsBundle = $jsBundle | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Conditionally include nav position switcher (in head to avoid re-rendering) */ -}}
+  {{- if ne .Site.Params.disableNavPosSwitcher true -}}
+    {{- with resources.Get "js/navpos-switcher.js" -}}
+      {{- $jsBundle = $jsBundle | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Add render-blocking critical path custom JS files (non-external only) */ -}}
+  {{- range .Site.Params.customJs -}}
+    {{- if not (or (in . "http://") (in . "https://")) -}}
+      {{- $customJS := resources.Get . -}}
+      {{- if $customJS -}}
+        {{- $jsBundle = $jsBundle | append $customJS -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Bundle all JS and inline to circumvent network round-trip latency */ -}}
+  {{- if gt (len $jsBundle) 0 -}}
+    {{- $bundledJS := $jsBundle | resources.Concat "js/bundle.js" | js.Build $jsBuildOptions -}}
+    {{- $secureJS := $bundledJS | resources.Fingerprint "sha256" -}}
+    <script type="text/javascript" integrity="{{ $secureJS.Data.Integrity }}">
+      {{- $secureJS.Content | safeJS -}}
+    </script>
+  {{- end -}}
+
+  {{- /* Defer external custom JS files to avoid blocking render */ -}}
+  {{- range .Site.Params.customJs -}}
+    {{- if or (in . "http://") (in . "https://") -}}
+      <script defer src="{{ . | relURL }}"></script>
+    {{- end -}}
   {{- end -}}
 
   {{ if and hugo.IsProduction .Site.Params.plausibleAnalytics .Site.Params.plausibleAnalytics.domain }}
@@ -236,14 +208,6 @@
     {{- partial "analytics/meta.html" . -}}
   {{ end }}
 
-  {{ $thumbnailHdLoader := resources.Get "js/thumbnail-hd-loader.js" }}
-  {{ $secureThumbnailHdLoaderJS := $thumbnailHdLoader |  resources.Minify | resources.Fingerprint }}
-  <script
-    type="text/javascript"
-    src="{{ $secureThumbnailHdLoaderJS.RelPermalink }}"
-    integrity="{{ $secureThumbnailHdLoaderJS.Data.Integrity }}"
-    crossorigin="anonymous"
-  ></script>
 
   <!-- Twitter Cards -->
   {{ template "_internal/twitter_cards.html" . }}

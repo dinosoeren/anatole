@@ -1,14 +1,21 @@
 <!-- Begin Brevo Form -->
-{{ $sibStyles := resources.Get "css/sib-styles.css" |
-  resources.Minify | resources.Fingerprint
-}}
-<link
-  rel="stylesheet"
-  href="{{ $sibStyles.RelPermalink }}"
-  integrity="{{ $sibStyles.Data.Integrity }}"
-  crossorigin="anonymous"
-  type="text/css"
-/>
+{{- /* CSS Bundle */ -}}
+{{- $cssBundle := slice -}}
+
+{{- /* Add sib-styles.css */ -}}
+{{- with resources.Get "css/sib-styles.css" -}}
+  {{- $cssBundle = $cssBundle | append (. | resources.Minify) -}}
+{{- end -}}
+
+{{- /* Bundle all CSS and inline */ -}}
+{{- if gt (len $cssBundle) 0 -}}
+  {{- $bundledCSS := $cssBundle | resources.Concat "css/brevo-bundle.css" -}}
+  {{- $secureCSS := $bundledCSS | resources.Fingerprint "sha256" -}}
+  <style integrity="{{ $secureCSS.Data.Integrity }}">
+    {{- $secureCSS.Content | safeCSS -}}
+  </style>
+{{- end -}}
+
 
 <div class="sib-form">
   <div id="sib-form-container" class="sib-form-container">
@@ -186,19 +193,29 @@
   </div>
 </div>
 
-{{ $js := resources.Get "js/brevo.js" | resources.Minify |
-  resources.Fingerprint
-}}
-<script
-  type="text/javascript"
-  src="{{ $js.RelPermalink }}"
-  integrity="{{ $js.Data.Integrity }}"
-  crossorigin="anonymous"
-></script>
+{{- /* JavaScript Bundle for inline JS */ -}}
+{{- $jsBuildOptions := dict "target" "es6" -}}
+{{- if hugo.IsProduction -}}
+  {{- $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") -}}
+{{- end -}}
+{{- $jsBundle := slice -}}
 
-{{ $mainJs := resources.Get "js/brevo-main.js" |
-  resources.Fingerprint
-}}
+{{- /* Add brevo.js to inline bundle */ -}}
+{{- with resources.Get "js/brevo.js" -}}
+  {{- $jsBundle = $jsBundle | append . -}}
+{{- end -}}
+
+{{- /* Bundle and inline brevo.js */ -}}
+{{- if gt (len $jsBundle) 0 -}}
+  {{- $bundledJS := $jsBundle | resources.Concat "js/brevo-bundle.js" | js.Build $jsBuildOptions -}}
+  {{- $secureJS := $bundledJS | resources.Fingerprint "sha256" -}}
+  <script type="text/javascript" integrity="{{ $secureJS.Data.Integrity }}">
+    {{- $secureJS.Content | safeJS -}}
+  </script>
+{{- end -}}
+
+{{- /* Keep brevo-main.js as external dependency since it's huge */ -}}
+{{- $mainJs := resources.Get "js/brevo-main.js" | resources.Minify | resources.Fingerprint -}}
 <script
   type="text/javascript"
   src="{{ $mainJs.RelPermalink }}"

@@ -25,6 +25,8 @@
     {{ end }}
   </ul>
 </footer>
+
+{{- /* Only load js and css resources once (in main footer__base) */ -}}
 {{ if not (eq .footerClassModifier "sidebar") }}
   {{- partial "medium-zoom.html" .context -}}
   {{- if (hasPrefix .context.Site.Config.Services.GoogleAnalytics.ID "G-") -}}
@@ -34,24 +36,60 @@
     {{ partial "google-analytics-gtag-async.html" .context }}
   {{- end -}}
 
-  {{ $jsBuildOptions := dict "target" "es6" }}
-  {{ if hugo.IsProduction }}
-    {{ $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") }}
-  {{ end }}
+  {{- /* JavaScript Bundle for Footer */ -}}
+  {{- $jsBuildOptions := dict "target" "es6" -}}
+  {{- if hugo.IsProduction -}}
+    {{- $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") -}}
+  {{- end -}}
 
-  {{ $humanizeDate := resources.Get "js/humanize-date.js" | resources.ExecuteAsTemplate "js/humanize-date.js" . | js.Build $jsBuildOptions }}
-  {{ $flexsearch := resources.Get "js/flexsearch.js" | resources.ExecuteAsTemplate "js/flexsearch.js" . | js.Build $jsBuildOptions }}
-  {{ $portfolioFilter := resources.Get "js/portfolio-filter.js" | js.Build $jsBuildOptions }}
+  {{- $jsBundle := slice -}}
 
-  {{ if hugo.IsProduction }}
-    {{ $flexsearch = $flexsearch | fingerprint "sha512" }}
-    {{ $portfolioFilter = $portfolioFilter | fingerprint "sha512" }}
-    {{ $humanizeDate = $humanizeDate | fingerprint "sha512" }}
-  {{ end }}
+  {{- /* Defer loading header nav-menu JS logic since it's not critical  */ -}}
+  {{- with resources.Get "js/anatole-header.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
 
-  {{/* prettier-ignore-start */}}
-  <script src="{{ $humanizeDate.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $humanizeDate.Data.Integrity }}"{{ end }}></script>
-  <script src="{{ $flexsearch.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $flexsearch.Data.Integrity }}"{{ end }}></script>
-  <script src="{{ $portfolioFilter.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $portfolioFilter.Data.Integrity }}"{{ end }}></script>
-  {{/* prettier-ignore-end */}}
+  {{- /* Defer loading TOC logic in footer since it's not critical */ -}}
+  {{- with resources.Get "js/toc.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Defer loading Search logic in footer since it's not critical */ -}}
+  {{- with resources.Get "js/flexsearch.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Conditionally include share via navigator button logic */ -}}
+  {{- if and (gt (len .context.Site.Params.shareIcons) 0) (ne .context.Params.noShare true) -}}
+    {{- with resources.Get "js/share.js" -}}
+      {{- $jsBundle = $jsBundle | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Conditionally include portfolio filters logic */ -}}
+  {{- $data := "" -}}
+  {{- if .CurrentSection.File -}}
+    {{- $data = index .context.Site.Data .context.CurrentSection.File.ContentBaseName -}}
+  {{- else -}}
+    {{- $data = index .context.Site.Data .context.Section -}}
+  {{- end -}}
+  {{- if $data -}}
+    {{- with resources.Get "js/portfolio-filter.js" -}}
+      {{- $jsBundle = $jsBundle | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Include thumbnail loader at the end to prioritize behavior over img quality */ -}}
+  {{- with resources.Get "js/thumbnail-hd-loader.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Bundle, build, and inline all footer JS to circumvent network round-trip latency */ -}}
+  {{- if gt (len $jsBundle) 0 -}}
+    {{- $bundledJS := $jsBundle | resources.Concat "js/footer-bundle.js" | js.Build $jsBuildOptions -}}
+    {{- $secureJS := $bundledJS | resources.Fingerprint "sha256" -}}
+    <script type="text/javascript" integrity="{{ $secureJS.Data.Integrity }}">
+      {{- $secureJS.Content | safeJS -}}
+    </script>
+  {{- end -}}
 {{ end }}

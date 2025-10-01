@@ -13,10 +13,23 @@
   data-loading="{{ .Site.Params.giscus.loading | default "lazy" }}"
 ></span>
 
-{{ $giscusJs := resources.Get "js/giscus.js" | resources.Minify | resources.Fingerprint }}
-<script
-  type="text/javascript"
-  src="{{ $giscusJs.RelPermalink }}"
-  integrity="{{ $giscusJs.Data.Integrity }}"
-  crossorigin="anonymous"
-></script>
+{{- /* JavaScript Bundle */ -}}
+{{- $jsBuildOptions := dict "target" "es6" -}}
+{{- if hugo.IsProduction -}}
+  {{- $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") -}}
+{{- end -}}
+{{- $jsBundle := slice -}}
+
+{{- /* Add giscus.js to bundle */ -}}
+{{- with resources.Get "js/giscus.js" -}}
+  {{- $jsBundle = $jsBundle | append . -}}
+{{- end -}}
+
+{{- /* Bundle and inline giscus.js */ -}}
+{{- if gt (len $jsBundle) 0 -}}
+  {{- $bundledJS := $jsBundle | resources.Concat "js/giscus-bundle.js" | js.Build $jsBuildOptions -}}
+  {{- $secureJS := $bundledJS | resources.Fingerprint "sha256" -}}
+  <script type="text/javascript" integrity="{{ $secureJS.Data.Integrity }}">
+    {{- $secureJS.Content | safeJS -}}
+  </script>
+{{- end -}}
