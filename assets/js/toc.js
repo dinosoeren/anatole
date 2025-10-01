@@ -103,29 +103,36 @@ function setupMobileTOCInteraction(header, mobileTocTrigger, mobileTocWrappers) 
   header.addEventListener('mouseleave', hideTOC);
 
   // Touch events for mobile devices
-  mobileTocTrigger.addEventListener('touchstart', function (e) {
-    e.preventDefault();
-    requestAnimationFrame(() => {
-      header.classList.toggle('expanded');
-      if (burgerBtn) {
-        burgerBtn.classList.remove('nav--active');
-        const navMenu = burgerBtn.nextElementSibling;
-        if (navMenu) {
-          navMenu.classList.remove('nav--active');
+  mobileTocTrigger.addEventListener(
+    'touchstart',
+    function (e) {
+      requestAnimationFrame(() => {
+        header.classList.toggle('expanded');
+        if (burgerBtn) {
+          burgerBtn.classList.remove('nav--active');
+          const navMenu = burgerBtn.nextElementSibling;
+          if (navMenu) {
+            navMenu.classList.remove('nav--active');
+          }
         }
-      }
-    });
-  });
+      });
+    },
+    { passive: true },
+  );
 
   // Close on outside tap
-  document.addEventListener('touchstart', function (e) {
-    const activeWrapper = getActiveTOCWrapper();
-    if (activeWrapper && !activeWrapper.contains(e.target) && !mobileTocTrigger.contains(e.target)) {
-      requestAnimationFrame(() => {
-        header.classList.remove('expanded');
-      });
-    }
-  });
+  document.addEventListener(
+    'touchstart',
+    function (e) {
+      const activeWrapper = getActiveTOCWrapper();
+      if (activeWrapper && !activeWrapper.contains(e.target) && !mobileTocTrigger.contains(e.target)) {
+        requestAnimationFrame(() => {
+          header.classList.remove('expanded');
+        });
+      }
+    },
+    { passive: true },
+  );
 }
 
 function initScrollHighlighting() {

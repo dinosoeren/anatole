@@ -182,7 +182,7 @@ function initSearch(container) {
   }
 
   document.addEventListener('click', handleGlobalClick);
-  document.addEventListener('touchstart', handleGlobalClick);
+  document.addEventListener('touchstart', handleGlobalClick, { passive: true });
 
   /*! Adapted from: https://dev.to/shubhamprakash/trap-focus-using-javascript-6a3 */
   document.addEventListener('keydown', (e) => {

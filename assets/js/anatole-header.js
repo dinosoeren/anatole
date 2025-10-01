@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  document.addEventListener('touchstart', clickAnywhere);
+  document.addEventListener('touchstart', clickAnywhere, { passive: true });
   document.addEventListener('click', clickAnywhere);
   document.addEventListener('touchend', clickAnywhere);
   document.addEventListener('mouseup', clickAnywhere);
