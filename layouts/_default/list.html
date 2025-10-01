@@ -7,78 +7,114 @@
         animated fadeInDown
       {{ end }}"
     >
-      {{ $listIdx := 0 }}
-      {{ range .Pages.GroupByDate "2006" }}
-        {{- $headerAnchor := delimit (split .Key " ") "-" | lower -}}
-        <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Key }}</h2>
-        {{ range $index, $page := .Pages }}
-          {{ $listIdx = add $listIdx 1 }}
+      {{ $taxonCountMap := dict }}
+      {{ if eq .Kind "taxonomy" }}
+        {{ $taxonomyName := .Data.Plural }}
+        {{ $taxonomy := cond (isset $.Site.Taxonomies $taxonomyName) (index $.Site.Taxonomies $taxonomyName) (slice) }}
+        {{ range $taxonomy.ByCount }}
+          {{ $taxonCountMap = merge $taxonCountMap (dict .Page.Title (dict "count" .Count "page" .Page)) }}
+        {{ end }}
+      {{ end }}
+
+      {{ if and .Site.Params.listTaxonomyByCount (eq .Kind "taxonomy") }}
+        <h2 class="archive__heading">{{ .Title }}</h2>
+        {{ $sortedTaxons := slice }}
+        {{ range $key, $value := $taxonCountMap }}
+          {{ $sortedTaxons = $sortedTaxons | append (dict "name" $key "count" $value.count "page" $value.page) }}
+        {{ end }}
+        {{ $sortedTaxons = sort $sortedTaxons "count" "desc" }}
+        {{ range $sortedTaxons }}
           <ul class="archive__list">
-            {{ $postClass := "" }}
-            {{ $external := false }}
-            {{ $postUrl := .RelPermalink }}
-            {{ if .Params.redirectUrl }}
-              {{ $postUrl = .Params.redirectUrl }}
-              {{ $external = true }}
-              {{ $postClass = "external" }}
-            {{ end }}
-            {{ $linkClass := "styled" }}
-            {{ if (eq .Site.Params.disableArchiveTitleStyling true) }}
-              {{ $linkClass = "" }}
-            {{ end }}
-            <li class="archive__list-item {{ $postClass }}">
-              <a
-                class="archive__list-title {{ $linkClass }}"
-                href="{{ $postUrl }}"
-                title="{{ .Title }}"
-                {{ if $external }}
-                  target="_blank" rel="noopener noreferrer"
-                {{ end }}
-              >
-                {{ if .Params.thumbnail }}
-                  {{ $loading := "lazy" }}
-                  {{ $fetchpriority := "low" }}
-                  {{ if le $listIdx 5 }}
-                    {{ $loading = "eager" }}
-                    {{ $fetchpriority = "high" }}
-                  {{ end }}
-                  {{ $imageOpts := dict
-                    "src" .Params.thumbnail
-                    "alt" "Thumbnail image"
-                    "page" $page
-                    "loading" $loading
-                    "fetchpriority" $fetchpriority
-                    "width" "48"
-                    "class" "archive__list-image"
-                  }}
-                  {{ partial "image.html" $imageOpts }}
-                {{ end }}
-                {{ if .Params.redirectUrl }}
-                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "archive__list-icon") }}
-                {{ end }}
-                {{ .Title }}</a
-              >
+            <li class="archive__list-item">
+              {{ $linkClass := "styled" }}
+              {{ if (eq $.Site.Params.disableArchiveTitleStyling true) }}
+                {{ $linkClass = "" }}
+              {{ end }}
+              <a class="archive__list-title {{ $linkClass }}" href="{{ .page.Permalink }}" title="{{ .name }}">
+                {{ .name }}
+              </a>
               <div class="archive__list-date">
-                {{ if isset .Site.Params "listdateformat" }}
-                  {{ if .Site.Params.localizedDates }}
-                    {{ time.Format .Site.Params.listDateFormat .Date }}
-                  {{ else }}
-                    {{ .Date.Format .Site.Params.listDateFormat }}
-                  {{ end }}
-
-                {{ else }}
-                  {{ if .Site.Params.localizedDates }}
-                    {{ time.Format "Jan 2" .Date }}
-                  {{ else }}
-                    {{ .Date.Format "Jan 2" }}
-                  {{ end }}
-
-                {{ end }}
+                <span class="sidebar__post-link-count">({{ .count }})</span>
               </div>
             </li>
           </ul>
         {{ end }}
+      {{ else }}
+        {{ $listIdx := 0 }}
+        {{ range .Pages.GroupByDate "2006" }}
+          {{- $headerAnchor := delimit (split .Key " ") "-" | lower -}}
+          <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Key }}</h2>
+          {{ range $index, $page := .Pages }}
+            {{ $listIdx = add $listIdx 1 }}
+            <ul class="archive__list">
+              {{ $postClass := "" }}
+              {{ $external := false }}
+              {{ $postUrl := .RelPermalink }}
+              {{ if .Params.redirectUrl }}
+                {{ $postUrl = .Params.redirectUrl }}
+                {{ $external = true }}
+                {{ $postClass = "external" }}
+              {{ end }}
+              {{ $linkClass := "styled" }}
+              {{ if (eq .Site.Params.disableArchiveTitleStyling true) }}
+                {{ $linkClass = "" }}
+              {{ end }}
+              <li class="archive__list-item {{ $postClass }}">
+                <a
+                  class="archive__list-title {{ $linkClass }}"
+                  href="{{ $postUrl }}"
+                  title="{{ .Title }}"
+                  {{ if $external }}
+                    target="_blank" rel="noopener noreferrer"
+                  {{ end }}
+                >
+                  {{ if .Params.thumbnail }}
+                    {{ $loading := "lazy" }}
+                    {{ $fetchpriority := "low" }}
+                    {{ if le $listIdx 5 }}
+                      {{ $loading = "eager" }}
+                      {{ $fetchpriority = "high" }}
+                    {{ end }}
+                    {{ $imageOpts := dict
+                      "src" .Params.thumbnail
+                      "alt" "Thumbnail image"
+                      "page" $page
+                      "loading" $loading
+                      "fetchpriority" $fetchpriority
+                      "width" "48"
+                      "class" "archive__list-image"
+                    }}
+                    {{ partial "image.html" $imageOpts }}
+                  {{ end }}
+                  {{ if .Params.redirectUrl }}
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "archive__list-icon") }}
+                  {{ end }}
+                  {{ .Title }}{{ with index $taxonCountMap .Title }}
+                    <span class="sidebar__post-link-count">({{ .count }})</span>
+                  {{ end }}</a
+                >
+                <div class="archive__list-date">
+                  {{ if isset .Site.Params "listdateformat" }}
+                    {{ if .Site.Params.localizedDates }}
+                      {{ time.Format .Site.Params.listDateFormat .Date }}
+                    {{ else }}
+                      {{ .Date.Format .Site.Params.listDateFormat }}
+                    {{ end }}
 
+                  {{ else }}
+                    {{ if .Site.Params.localizedDates }}
+                      {{ time.Format "Jan 2" .Date }}
+                    {{ else }}
+                      {{ .Date.Format "Jan 2" }}
+                    {{ end }}
+
+                  {{ end }}
+                </div>
+              </li>
+            </ul>
+          {{ end }}
+
+        {{ end }}
       {{ end }}
     </div>
   {{ else }}
