@@ -50,38 +50,41 @@
   <nav class="table-of-contents">
     {{- /* Add content TOC items */ -}}
     {{- if $hasContentTOC -}}
-      {{- $tocContent := $builtInTOC | replaceRE `<nav[^>]*>` "" | replaceRE `</nav>` "" -}}
       {{- /* Unfortunately Hugo doesn't auto-remove links from TOC headings */ -}}
       {{- /* so we need to process each <li> and remove non-anchor links */ -}}
+      {{- $tocContent := $builtInTOC | replaceRE `<nav[^>]*>` "" | replaceRE `</nav>` "" -}}
+      {{- /* Process each li item while preserving ul nesting structure */ -}}
+      {{- $processedContent := $tocContent -}}
       {{- $liItems := findRE `<li[^>]*>.*?</li>` $tocContent -}}
-      {{- $cleanedTOC := "" -}}
 
-      {{- /* Process each li item */ -}}
       {{- range $liItems -}}
-        {{- $liContent := . -}}
+        {{- $originalLi := . -}}
         {{- /* Extract the anchor href from the first # link */ -}}
-        {{- $anchorHref := findRE `href="#[^"]*"` $liContent 1 -}}
+        {{- $anchorHref := findRE `href="#[^"]*"` $originalLi 1 -}}
         {{- if and $anchorHref (eq (len $anchorHref) 1) -}}
           {{- $href := (index $anchorHref 0) | replaceRE `href="([^"]*)"` "$1" -}}
-          {{- /* Get the class attribute if present */ -}}
-          {{- $class := findRE `class="[^"]*"` $liContent 1 -}}
-          {{- $classAttr := "" -}}
-          {{- if $class -}}
-            {{- $classAttr = printf " %s" $class -}}
+          {{- /* Get the li class attribute if present */ -}}
+          {{- $liClass := findRE `<li[^>]*class="[^"]*"` $originalLi 1 -}}
+          {{- $liClassAttr := "" -}}
+          {{- if $liClass -}}
+            {{- $liClassAttr = (index $liClass 0) | replaceRE `<li[^>]*class="([^"]*)".*` ` class="$1"` -}}
+          {{- end -}}
+          {{- /* Get the anchor class attribute if present */ -}}
+          {{- $anchorClass := findRE `<a href="#[^"]*"[^>]*class="[^"]*"` $originalLi 1 -}}
+          {{- $anchorClassAttr := "" -}}
+          {{- if $anchorClass -}}
+            {{- $anchorClassAttr = (index $anchorClass 0) | replaceRE `.*class="([^"]*)".*` ` class="$1"` -}}
           {{- end -}}
           {{- /* Extract plain text content from the entire li */ -}}
-          {{- $plainText := $liContent | plainify -}}
-          {{- /* Reconstruct the clean li */ -}}
-          {{- $cleanedTOC = printf "%s<li><a href=\"%s\"%s>%s</a></li>" $cleanedTOC $href $classAttr $plainText -}}
+          {{- $plainText := $originalLi | plainify -}}
+          {{- /* Create the cleaned li */ -}}
+          {{- $cleanedLi := printf `<li%s><a href="%s"%s>%s</a></li>` $liClassAttr $href $anchorClassAttr $plainText -}}
+          {{- /* Replace the original li with the cleaned version */ -}}
+          {{- $processedContent = replace $processedContent $originalLi $cleanedLi -}}
         {{- end -}}
       {{- end -}}
 
-      {{- /* Wrap in ul tags and output */ -}}
-      {{- if $cleanedTOC -}}
-        <ul>
-          {{ $cleanedTOC | safeHTML }}
-        </ul>
-      {{- end -}}
+      {{- $processedContent | safeHTML -}}
     {{- end -}}
     <ul>
       {{- /* Add home paginated items */ -}}
