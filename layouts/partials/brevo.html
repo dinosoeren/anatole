@@ -84,7 +84,13 @@
           <div class="sib-input sib-form-block">
             <div class="form__entry entry_block">
               <div class="form__label-row">
-                <label class="entry__label" for="EMAIL" data-required="*">Enter your email address to subscribe</label>
+                {{ $inputLabel := "Enter your email address to subscribe" }}
+                {{ if .Site.Params.brevoFormInputLabel }}
+                  {{ $inputLabel = .Site.Params.brevoFormInputLabel }}
+                {{ end }}
+                <label class="entry__label" for="EMAIL" data-required="*">
+                  {{ $inputLabel | markdownify | safeHTML }}
+                </label>
 
                 <div class="entry__field">
                   <input
