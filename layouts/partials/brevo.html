@@ -52,7 +52,15 @@
         <div>
           <div class="sib-form-block title">
             {{ if and .Site.Params.brevoFormImg (ne .Params.contact true) }}
-              <img class="sib-form-block__img" src="{{ .Site.Params.brevoFormImg }}" alt="Newsletter" />
+              {{ $imageOpts := dict
+                "src" .Site.Params.brevoFormImg
+                "alt" "Newsletter"
+                "page" .
+                "fetchpriority" "low"
+                "loading" "lazy"
+                "class" "sib-form-block__img"
+              }}
+              {{ partial "image.html" $imageOpts }}
             {{ end }}
             {{ $title := i18n "newsletter" }}
             {{ if .Site.Params.brevoFormTitle }}

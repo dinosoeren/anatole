@@ -8,11 +8,15 @@
 >
   <div class="sidebar__content">
     <div class="sidebar__introduction">
-      <img
-        class="sidebar__introduction-profileimage"
-        src="{{ .Site.Params.profilePicture | relURL }}"
-        alt="profile picture"
-      />
+      {{ $imageOpts := dict
+        "src" .Site.Params.profilePicture
+        "alt" "Profile picture"
+        "page" .
+        "fetchpriority" "high"
+        "loading" "eager"
+        "class" "sidebar__introduction-profileimage"
+      }}
+      {{ partial "image.html" $imageOpts }}
       {{ if .IsHome }}
         <div class="sidebar__introduction-title">
           <h1>
