@@ -60,6 +60,7 @@ blockquote {
     @include color.themed() {
       background: oklch(from color.t('success') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('success');
+
       svg {
         color: color.t('success');
       }
@@ -69,36 +70,44 @@ blockquote {
     @include color.themed() {
       background: oklch(from color.t('danger') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('danger');
-    }
-    svg {
-      color: color.t('danger');
+
+      svg {
+        color: color.t('danger');
+      }
     }
   }
   &.warning {
     @include color.themed() {
       background: oklch(from color.t('warning') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('warning');
-    }
-    svg {
-      color: color.t('warning');
+
+      svg {
+        color: color.t('warning');
+      }
     }
   }
   &.disclaimer {
     @include color.themed() {
       background: oklch(from color.t('disclaimer') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('disclaimer');
-    }
-    svg {
-      color: color.t('disclaimer');
+
+      svg {
+        color: color.t('disclaimer');
+      }
     }
   }
   &.tip {
     @include color.themed() {
       background: oklch(from color.t('tip') calc(l - 0.1) calc(c - 0.05) h / 0.2);
       border-color: color.t('tip');
-    }
-    svg {
-      color: color.t('tip');
+
+      svg {
+        color: color-mix(in hsl, color.t('primary') 20%, color.t('tip'));
+
+        .theme--dark & {
+          color: color.t('tip');
+        }
+      }
     }
   }
 }
