@@ -158,7 +158,25 @@
               <input type="text" id="tag-input" placeholder="Filter by tags..." autocomplete="off" />
             </div>
           </div>
-          <div class="dropdown hidden" id="tag-dropdown"></div>
+          <div class="dropdown hidden" id="tag-dropdown">
+            {{- $allTags := dict -}}
+            {{- range $index, $element := $data.portfolioitems -}}
+              {{- range $i, $p := .portfolioitem -}}
+                {{- range .tags -}}
+                  {{- $tagCount := index $allTags . | default 0 -}}
+                  {{- $allTags = merge $allTags (dict . (add $tagCount 1)) -}}
+                {{- end -}}
+              {{- end -}}
+            {{- end -}}
+            {{- $sortedTags := slice -}}
+            {{- range $tag, $count := $allTags -}}
+              {{- $sortedTags = $sortedTags | append (dict "tag" $tag "count" $count) -}}
+            {{- end -}}
+            {{- $sortedTags = sort $sortedTags "tag" -}}
+            {{- range $sortedTags -}}
+              <div class="dropdown-option">{{- .tag -}}<span>({{ .count }})</span></div>
+            {{- end -}}
+          </div>
         </div>
         <button class="portfolio-filter-clear" title="Clear" aria-label="Clear">
           {{ partial "icons/icon" (dict "vendor" "fas" "name" "xmark" "className" "portfolio__icon") }}

@@ -6,6 +6,8 @@ let dirtySelectedFilterTags = [];
 // Anchor map gets updated separately from context (during page load)
 // so that tags are clickable before the whole page loads
 const portfolioItemAnchorsInitialized = new Map();
+let urlFiltersApplied = false;
+let addedTagInputListeners = false;
 
 // Helper function to update URL with current filters
 function updateURL(pushState = true) {
@@ -87,7 +89,7 @@ function getTagCount(context, tag) {
   return count;
 }
 
-function showOrHideOptionsWithCounts(context) {
+function showOrHideOptionsWithCounts(context, hideDropdownAfter = false) {
   const filter = context.tagInput.value.trim().toLowerCase();
   const coexistingTags = new Set(getCoexistingTags(context));
 
@@ -108,45 +110,9 @@ function showOrHideOptionsWithCounts(context) {
       }
     }
   });
-}
-
-function maybeRebuildDropdown(context, hideDropdownAfter = false) {
-  const currentOptionCount = context.tagDropdown.children.length;
-  const totalTagsCount = context.allTags.size;
-
-  // Only rebuild if the number of total tags has changed
-  if (currentOptionCount !== totalTagsCount) {
-    // Full rebuild
-    while (context.tagDropdown.firstChild) {
-      context.tagDropdown.removeChild(context.tagDropdown.firstChild);
-    }
-
-    // Create options for ALL tags, not just coexisting ones
-    context.sortedTags.forEach((tag) => {
-      const option = document.createElement('div');
-      option.textContent = tag;
-      option.classList.add('dropdown-option');
-      option.addEventListener('click', () => {
-        context.tagInput.value = '';
-        addTag(context, tag);
-        setTimeout(() => {
-          context.tagInput.blur();
-        }, 100);
-      });
-      const count = document.createElement('span');
-      count.textContent = '(' + getTagCount(context, tag) + ')';
-      option.appendChild(count);
-      context.tagDropdown.appendChild(option);
-    });
-  }
-
-  // Update visibility and counts
-  showOrHideOptionsWithCounts(context);
 
   if (hideDropdownAfter === true) {
     hideDropdown(context);
-  } else {
-    showDropdown(context);
   }
 }
 
@@ -178,7 +144,7 @@ function addTag(context, tag) {
             inline: 'nearest',
           });
         }
-      }, 100);
+      }, 50);
     });
   }
 }
@@ -259,7 +225,7 @@ function applyFilter(context, hideDropdownAfter = false) {
       requestAnimationFrame(() => loadingHint.classList.add('hidden'));
     }
   }
-  maybeRebuildDropdown(context, hideDropdownAfter);
+  showOrHideOptionsWithCounts(context, hideDropdownAfter);
 }
 
 // Initialize portfolio filter as soon as DOM elements are available
@@ -287,6 +253,8 @@ function initializeContext(ctxCallback) {
     tocLinks: document.querySelectorAll('.table-of-contents a'),
     selectedTags: [],
   };
+
+  maybeAddTagListeners(context);
 
   const expectedLinkTargets = context.portfolioSections.length + context.allPortfolioItems.length;
   let loadingHint = document.getElementById('loading-portfolio-items-hint');
@@ -345,8 +313,14 @@ function initializeContext(ctxCallback) {
 
   context.sortedTags = Array.from(context.allTags.keys()).sort();
 
-  // Apply URL filter, possibly before DOM content is fully loaded
-  applyFilterFromURL(context, ctxCallback);
+  // Apply filters, possibly before DOM content is fully loaded
+  if (urlFiltersApplied) {
+    applyFilter(context);
+    ctxCallback(context);
+  } else {
+    applyFilterFromURL(context, ctxCallback);
+    urlFiltersApplied = true;
+  }
 }
 
 function onContextReady(fallbackCtx) {
@@ -378,18 +352,45 @@ function onContextReady(fallbackCtx) {
     });
   });
 
-  context.tagInput.addEventListener('input', () => requestAnimationFrame(() => showOrHideOptionsWithCounts(context)));
-  context.tagInput.addEventListener('focus', () => requestAnimationFrame(() => showDropdown(context)));
-  context.tagInput.addEventListener('blur', () => {
+  maybeAddTagListeners(context);
+}
+
+// The function ensures the event listeners only get added once
+function maybeAddTagListeners(fallbackCtx) {
+  const ctx = portfolioFilterContext ?? fallbackCtx;
+  if (addedTagInputListeners || !ctx.tagInput || !ctx.tagDropdown || !ctx.selectedTagsContainer || !ctx.clearButton)
+    return;
+
+  Array.from(ctx.tagDropdown.querySelectorAll('.dropdown-option')).forEach((option) => {
+    option.addEventListener('click', () => {
+      const context = portfolioFilterContext ?? ctx;
+      context.tagInput.value = '';
+      addTag(context, (option.firstChild ?? option).textContent);
+      // Use a small timeout to ensure the DOM is updated before blurring
+      setTimeout(() => {
+        context.tagInput.blur();
+      }, 50);
+    });
+  });
+
+  ctx.tagInput.addEventListener('input', () =>
+    requestAnimationFrame(() => showOrHideOptionsWithCounts(portfolioFilterContext ?? ctx)),
+  );
+  ctx.tagInput.addEventListener('focus', () =>
+    requestAnimationFrame(() => showDropdown(portfolioFilterContext ?? ctx)),
+  );
+  ctx.tagInput.addEventListener('blur', () => {
+    const context = portfolioFilterContext ?? ctx;
     if (
       document.activeElement !== context.tagDropdown &&
-      document.activeElement.parentElement !== context.tagDropdown
+      !document.activeElement.parentElement.contains(context.tagDropdown)
     ) {
       requestAnimationFrame(() => hideDropdown(context));
     }
   });
 
-  context.tagInput.addEventListener('keydown', (e) => {
+  ctx.tagInput.addEventListener('keydown', (e) => {
+    const context = portfolioFilterContext ?? ctx;
     const options = Array.from(context.tagDropdown.querySelectorAll('.dropdown-option:not(.hidden)'));
     const focusedOption = context.tagDropdown.querySelector('.dropdown-option.focused');
     let focusedIndex = options.indexOf(focusedOption);
@@ -424,9 +425,10 @@ function onContextReady(fallbackCtx) {
       }
       addTag(context, tag);
       context.tagInput.value = '';
-      requestAnimationFrame(() => maybeRebuildDropdown(context, true));
+      requestAnimationFrame(() => showOrHideOptionsWithCounts(context, true));
       context.tagDropdown.scrollTo({ top: 0 });
-      setTimeout(() => context.tagInput.focus(), 100);
+      // Use a small timeout to ensure the DOM is updated before focusing
+      setTimeout(() => context.tagInput.focus(), 50);
       requestAnimationFrame(() => showDropdown(context));
     } else if (e.key === 'Backspace' && context.tagInput.value === '' && dirtySelectedFilterTags.length > 0) {
       e.preventDefault();
@@ -435,7 +437,8 @@ function onContextReady(fallbackCtx) {
     }
   });
 
-  context.tagInput.addEventListener('keyup', (e) => {
+  ctx.tagInput.addEventListener('keyup', (e) => {
+    const context = portfolioFilterContext ?? ctx;
     const options = Array.from(context.tagDropdown.querySelectorAll('.dropdown-option:not(.hidden)'));
     const focusedOption = context.tagDropdown.querySelector('.dropdown-option.focused');
     let focusedIndex = options.indexOf(focusedOption);
@@ -451,6 +454,7 @@ function onContextReady(fallbackCtx) {
   });
 
   document.addEventListener('click', (e) => {
+    const context = portfolioFilterContext ?? ctx;
     if (!context.tagDropdown.contains(e.target) && !context.tagInput.contains(e.target)) {
       hideDropdown(context);
     }
@@ -459,17 +463,20 @@ function onContextReady(fallbackCtx) {
     }
   });
 
-  context.clearButton.addEventListener('click', () => {
+  ctx.clearButton.addEventListener('click', () => {
+    const context = portfolioFilterContext ?? ctx;
     dirtySelectedFilterTags = [];
     requestAnimationFrame(() => {
       applyFilter(context);
       updateURL();
     });
-    setTimeout(() => context.tagInput.focus(), 100);
+    // Use a small timeout to ensure the DOM is updated before focusing
+    setTimeout(() => context.tagInput.focus(), 50);
   });
 
   // Handle browser back/forward navigation
   window.addEventListener('popstate', (event) => {
+    const context = portfolioFilterContext ?? ctx;
     if (event.state && event.state.filters) {
       dirtySelectedFilterTags = event.state.filters;
     } else {
@@ -488,6 +495,8 @@ function onContextReady(fallbackCtx) {
     }
     requestAnimationFrame(() => applyFilter(context, true));
   });
+
+  addedTagInputListeners = true;
 }
 
 // Function to attempt initialization with retries
