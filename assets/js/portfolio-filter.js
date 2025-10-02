@@ -221,7 +221,9 @@ function applyFilter(context, hideDropdownAfter = false) {
     // All sections found! Fully initialized
     portfolioFilterContext = context;
     const loadingHint = document.getElementById('loading-portfolio-items-hint');
-    if (loadingHint) {
+    // Only hide the loading hint now if the real footer is already visible.
+    // Otherwise, wait till the DOMContentLoaded event gets fired.
+    if (loadingHint && document.querySelectorAll('.footer__base').length > 1) {
       requestAnimationFrame(() => loadingHint.classList.add('hidden'));
     }
   }
