@@ -167,19 +167,6 @@
     {{- end -}}
   {{- end -}}
 
-  {{- /* Conditionally include portfolio filters logic (in head to avoid re-rendering) */ -}}
-  {{- $data := "" -}}
-  {{- if .Page.CurrentSection.File -}}
-    {{- $data = index .Site.Data .Page.CurrentSection.File.ContentBaseName -}}
-  {{- else -}}
-    {{- $data = index .Site.Data .Page.Section -}}
-  {{- end -}}
-  {{- if ne $data "" -}}
-    {{- with resources.Get "js/portfolio-filter.js" -}}
-      {{- $jsBundle = $jsBundle | append . -}}
-    {{- end -}}
-  {{- end -}}
-
   {{- /* Add render-blocking critical path custom JS files (non-external only) */ -}}
   {{- range .Site.Params.customJs -}}
     {{- if not (or (in . "http://") (in . "https://")) -}}
@@ -199,6 +186,26 @@
     <script type="text/javascript" {{ if hugo.IsProduction }}integrity="{{ $bundledJS.Data.Integrity }}"{{ end }}>
       {{- $bundledJS.Content | safeJS -}}
     </script>
+  {{- end -}}
+
+  {{- /* Conditionally include portfolio filters logic (in head to avoid re-rendering) */ -}}
+  {{- /* For some reason Hugo can't render this in the bundle with the others. */ -}}
+  {{- $sectionData := "" -}}
+  {{- if .CurrentSection.File -}}
+    {{- $sectionData = index .Site.Data .CurrentSection.File.ContentBaseName -}}
+  {{- else -}}
+    {{- $sectionData = index .Site.Data .Section -}}
+  {{- end -}}
+  {{- if $sectionData -}}
+    {{- with resources.Get "js/portfolio-filter.js" -}}
+      {{- $filterJs := .  | js.Build $jsBuildOptions -}}
+      {{- if hugo.IsProduction -}}
+        {{- $filterJs = $filterJs | resources.Fingerprint "sha256" -}}
+      {{- end -}}
+      <script type="text/javascript" {{ if hugo.IsProduction }}integrity="{{ $filterJs.Data.Integrity }}"{{ end }}>
+        {{- $filterJs.Content | safeJS -}}
+      </script>
+    {{- end -}}
   {{- end -}}
 
   {{- /* Defer external custom JS files to avoid blocking render */ -}}

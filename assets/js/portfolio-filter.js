@@ -328,6 +328,11 @@ function initializeContext(ctxCallback) {
 function onContextReady(fallbackCtx) {
   // Use fallbackCtx in case not all sections were found at the end
   const context = portfolioFilterContext ?? fallbackCtx;
+  if (!context) {
+    console.warn('portfolio filter context was never initialized');
+    return;
+  }
+
   const validTags = getValidTags(context);
   if (validTags.length !== dirtySelectedFilterTags.length) {
     dirtySelectedFilterTags = validTags;
