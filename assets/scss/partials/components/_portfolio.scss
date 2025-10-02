@@ -2,7 +2,7 @@
 @use 'modules/config' as conf;
 @use 'modules/navpos' as navpos;
 
-// Used to fade in portfolio images to hide content shift on render
+/* Fade in transition used to hide content shift from applied filter on render */
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -41,6 +41,9 @@
         color: color.t('info');
       }
     }
+
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
   }
 
   &__icon {
@@ -79,6 +82,9 @@
     line-height: 1;
     font-weight: 300;
 
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
+
     @include navpos.navpos() {
       scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') + 50px);
 
@@ -93,6 +99,9 @@
     font-size: 2.2rem;
     line-height: 1.3em;
     font-weight: 500;
+
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
   }
 
   &__image {
@@ -113,7 +122,7 @@
       left: -30px;
       width: 100svw;
 
-      /* Fade in portfolio images to hide content shift from applied filter */
+      /* Fade in to hide content shift from applied filter */
       animation: 1s ease-in-out 0s 1 fadeIn;
 
       &--right,
@@ -201,6 +210,11 @@
       }
     }
 
+    .separator {
+      /* Fade in to hide content shift from applied filter */
+      animation: 1s ease-in-out 0s 1 fadeIn;
+    }
+
     .tag {
       cursor: pointer;
     }
@@ -212,6 +226,9 @@
     list-style: none;
     padding: 0;
     row-gap: 0.8rem;
+
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
 
     @include color.themed() {
       color: color.t('primary-light');
@@ -261,6 +278,9 @@
 
     &-wrapper {
       padding-bottom: 1em;
+
+      /* Fade in to hide content shift from applied filter */
+      animation: 1s ease-in-out 0s 1 fadeIn;
     }
   }
 }
