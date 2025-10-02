@@ -70,32 +70,78 @@ function getCoexistingTags(context) {
   return Array.from(coexistingTags).sort();
 }
 
-function updateDropdown(context, hideDropdownAfter = false) {
-  while (context.tagDropdown.firstChild) {
-    context.tagDropdown.removeChild(context.tagDropdown.firstChild);
-  }
-  const filter = context.tagInput.value.trim().toLowerCase();
-  const availableTags = getCoexistingTags(context);
+function getTagCount(context, tag) {
+  const selectedTags = getValidTags(context);
+  const tagsToMatch = [...selectedTags, tag];
 
-  availableTags
-    .filter((tag) => tag.toLowerCase().includes(filter))
-    .forEach((tag) => {
+  let count = 0;
+  context.allPortfolioItems.forEach((item) => {
+    const itemTags = context.portfolioItemTagMap.get(parseInt(item.dataset.itemId));
+    if (!itemTags) return;
+    const matchesAllTags = tagsToMatch.every((tagToMatch) => itemTags.includes(tagToMatch));
+    if (matchesAllTags) {
+      count++;
+    }
+  });
+
+  return count;
+}
+
+function showOrHideOptionsWithCounts(context) {
+  const filter = context.tagInput.value.trim().toLowerCase();
+  const coexistingTags = new Set(getCoexistingTags(context));
+
+  Array.from(context.tagDropdown.children).forEach((option) => {
+    const tag = option.textContent.split('(')[0]; // Get tag name before count
+    const matchesFilter = tag.toLowerCase().includes(filter);
+    const isCoexisting = coexistingTags.has(tag);
+
+    // Show option if it matches filter and is coexisting
+    const shouldShow = matchesFilter && isCoexisting;
+    option.classList.toggle('hidden', !shouldShow);
+
+    // Update count if option is visible
+    if (shouldShow) {
+      const countSpan = option.querySelector('span');
+      if (countSpan) {
+        countSpan.textContent = '(' + getTagCount(context, tag) + ')';
+      }
+    }
+  });
+}
+
+function maybeRebuildDropdown(context, hideDropdownAfter = false) {
+  const currentOptionCount = context.tagDropdown.children.length;
+  const totalTagsCount = context.allTags.size;
+
+  // Only rebuild if the number of total tags has changed
+  if (currentOptionCount !== totalTagsCount) {
+    // Full rebuild
+    while (context.tagDropdown.firstChild) {
+      context.tagDropdown.removeChild(context.tagDropdown.firstChild);
+    }
+
+    // Create options for ALL tags, not just coexisting ones
+    context.sortedTags.forEach((tag) => {
       const option = document.createElement('div');
       option.textContent = tag;
       option.classList.add('dropdown-option');
       option.addEventListener('click', () => {
         context.tagInput.value = '';
         addTag(context, tag);
-        // Use a small timeout to ensure the DOM is updated before blurring
         setTimeout(() => {
           context.tagInput.blur();
         }, 100);
       });
       const count = document.createElement('span');
-      count.textContent = '(' + context.allTags.get(tag) + ')';
+      count.textContent = '(' + getTagCount(context, tag) + ')';
       option.appendChild(count);
       context.tagDropdown.appendChild(option);
     });
+  }
+
+  // Update visibility and counts
+  showOrHideOptionsWithCounts(context);
 
   if (hideDropdownAfter === true) {
     hideDropdown(context);
@@ -213,7 +259,7 @@ function applyFilter(context, hideDropdownAfter = false) {
       requestAnimationFrame(() => loadingHint.classList.add('hidden'));
     }
   }
-  updateDropdown(context, hideDropdownAfter);
+  maybeRebuildDropdown(context, hideDropdownAfter);
 }
 
 // Initialize portfolio filter as soon as DOM elements are available
@@ -332,7 +378,7 @@ function onContextReady(fallbackCtx) {
     });
   });
 
-  context.tagInput.addEventListener('input', () => requestAnimationFrame(() => updateDropdown(context)));
+  context.tagInput.addEventListener('input', () => requestAnimationFrame(() => showOrHideOptionsWithCounts(context)));
   context.tagInput.addEventListener('focus', () => requestAnimationFrame(() => showDropdown(context)));
   context.tagInput.addEventListener('blur', () => {
     if (
@@ -344,7 +390,7 @@ function onContextReady(fallbackCtx) {
   });
 
   context.tagInput.addEventListener('keydown', (e) => {
-    const options = Array.from(context.tagDropdown.querySelectorAll('.dropdown-option'));
+    const options = Array.from(context.tagDropdown.querySelectorAll('.dropdown-option:not(.hidden)'));
     const focusedOption = context.tagDropdown.querySelector('.dropdown-option.focused');
     let focusedIndex = options.indexOf(focusedOption);
 
@@ -378,7 +424,7 @@ function onContextReady(fallbackCtx) {
       }
       addTag(context, tag);
       context.tagInput.value = '';
-      requestAnimationFrame(() => updateDropdown(context, true));
+      requestAnimationFrame(() => maybeRebuildDropdown(context, true));
       context.tagDropdown.scrollTo({ top: 0 });
       setTimeout(() => context.tagInput.focus(), 100);
       requestAnimationFrame(() => showDropdown(context));
@@ -390,7 +436,7 @@ function onContextReady(fallbackCtx) {
   });
 
   context.tagInput.addEventListener('keyup', (e) => {
-    const options = Array.from(context.tagDropdown.querySelectorAll('.dropdown-option'));
+    const options = Array.from(context.tagDropdown.querySelectorAll('.dropdown-option:not(.hidden)'));
     const focusedOption = context.tagDropdown.querySelector('.dropdown-option.focused');
     let focusedIndex = options.indexOf(focusedOption);
 
