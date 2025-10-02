@@ -2,6 +2,16 @@
 @use 'modules/config' as conf;
 @use 'modules/navpos' as navpos;
 
+// Used to fade in portfolio images to hide content shift on render
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .portfolio {
   position: relative;
   padding: 0;
@@ -102,6 +112,9 @@
       overflow: hidden;
       left: -30px;
       width: 100svw;
+
+      /* Fade in portfolio images to hide content shift from applied filter */
+      animation: 1s ease-in-out 0s 1 fadeIn;
 
       &--right,
       &--left {
