@@ -18,16 +18,17 @@ window.translation = {
 
 var AUTOHIDE = Boolean(1);
 
-// Listen for email input events to show disclosure and load recaptcha
+// Listen for email input events to show disclosure, load recaptcha, and load brevo-main.js
 document.addEventListener('DOMContentLoaded', function () {
   let loadedReCaptcha = false;
+  let loadedBrevoMain = false;
   const formContainer = document.getElementById('sib-form-container');
   const contactForm = document.getElementById('contact-form');
   if (!formContainer && !contactForm) {
     return;
   }
 
-  const emailInput = document.getElementById('EMAIL');
+  const brevoEmailInput = document.getElementById('EMAIL');
   const contactEmailInput = document.getElementById('email');
   const optinContainer = document.querySelector('.sib-optin');
   const declarationContainer = document.querySelector('.sib-form__declaration');
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (
     !contactEmailInput &&
-    (!emailInput || !optinContainer || !declarationContainer || !subscribeButton || !optinCheckbox)
+    (!brevoEmailInput || !optinContainer || !declarationContainer || !subscribeButton || !optinCheckbox)
   ) {
     return;
   }
@@ -55,6 +56,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  function loadBrevoMain() {
+    if (loadedBrevoMain || (!formContainer && !contactForm)) return;
+    const scriptEl = document.createElement('script');
+    scriptEl.type = 'text/javascript';
+    scriptEl.defer = true;
+
+    scriptEl.src = formContainer?.dataset.brevoMainSrc || '/js/brevo-main.js';
+
+    // Add integrity attribute if available (for production)
+    if (formContainer?.dataset.brevoMainIntegrity) {
+      scriptEl.integrity = formContainer?.dataset.brevoMainIntegrity;
+      scriptEl.crossOrigin = 'anonymous';
+    }
+
+    let parent = (formContainer ?? contactForm).parentNode;
+    if (parent.parentNode) parent = parent.parentNode;
+    parent.appendChild(scriptEl);
+
+    loadedBrevoMain = true;
+  }
+
   if (subscribeButton) {
     subscribeButton.disabled = true;
     subscribeButton.classList.add('is-disabled');
@@ -69,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const checkFormValidity = (input) => {
     const isEmailValid = validateEmail(input.value);
 
-    if (input === emailInput) {
+    if (input === brevoEmailInput) {
       const isOptinChecked = optinCheckbox.checked;
 
       if (isEmailValid) {
@@ -96,8 +118,11 @@ document.addEventListener('DOMContentLoaded', function () {
   if (contactEmailInput) {
     contactEmailInput.addEventListener('input', () => checkFormValidity(contactEmailInput));
   }
-  if (emailInput) {
-    emailInput.addEventListener('input', () => checkFormValidity(emailInput));
-    optinCheckbox.addEventListener('change', () => checkFormValidity(emailInput));
+  if (brevoEmailInput) {
+    brevoEmailInput.addEventListener('input', () => {
+      loadBrevoMain();
+      checkFormValidity(brevoEmailInput);
+    });
+    optinCheckbox.addEventListener('change', () => checkFormValidity(brevoEmailInput));
   }
 });

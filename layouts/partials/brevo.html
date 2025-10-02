@@ -18,9 +18,19 @@
   </style>
 {{- end -}}
 
-
+{{- /* Prepare the brevo-main.js script for dynamic loading via data attributes */ -}}
+{{- /* brevo-main.js is loaded dynamically when the user starts typing in email input */ -}}
+{{- $mainJs := resources.Get "js/brevo-main.js" -}}
+{{- if hugo.IsProduction -}}
+  {{- $mainJs = $mainJs | resources.Minify | resources.Fingerprint "sha256" -}}
+{{- end -}}
 <div class="sib-form">
-  <div id="sib-form-container" class="sib-form-container">
+  <div
+    id="sib-form-container"
+    class="sib-form-container"
+    data-brevo-main-src="{{ $mainJs.RelPermalink }}"
+    {{ if hugo.IsProduction }}data-brevo-main-integrity="{{ $mainJs.Data.Integrity }}"{{ end }}
+  >
     <div id="error-message" class="sib-form-message-panel">
       <div class="sib-form-message-panel__text sib-form-message-panel__text--center">
         <svg viewBox="0 0 512 512" class="sib-icon sib-notification__icon">
@@ -231,18 +241,4 @@
     {{- $bundledJS.Content | safeJS -}}
   </script>
 {{- end -}}
-
-{{- /* Keep brevo-main.js as external dependency since it's huge */ -}}
-{{- $mainJs := resources.Get "js/brevo-main.js" -}}
-{{- if hugo.IsProduction -}}
-  {{- $mainJs = $mainJs | resources.Minify | resources.Fingerprint "sha256" -}}
-{{- end -}}
-<script
-  type="text/javascript"
-  src="{{ $mainJs.RelPermalink }}"
-  {{ if hugo.IsProduction }}
-    integrity="{{ $mainJs.Data.Integrity }}" crossorigin="anonymous"
-  {{ end }}
-  defer
-></script>
 <!-- End Brevo Form -->
