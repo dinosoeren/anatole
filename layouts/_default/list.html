@@ -144,7 +144,7 @@
     {{ else }}
       {{ $data = index .Site.Data .Section }}
     {{ end }}
-    {{ if $data }}
+    {{ if ne $data "" }}
       <div
         class="portfolio-filter-tags {{ with .Site.Params.doNotLoadAnimations }}
           .

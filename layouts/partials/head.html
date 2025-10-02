@@ -85,11 +85,10 @@
   {{- if gt (len $cssBundle) 0 -}}
     {{- $bundledCSS := $cssBundle | resources.Concat "css/bundle.css" -}}
     {{- if hugo.IsProduction -}}
-      {{- $bundledCSS = $bundledCSS | resources.Minify -}}
+      {{- $bundledCSS = $bundledCSS | resources.Minify | resources.Fingerprint "sha256" -}}
     {{- end -}}
-    {{- $secureCSS := $bundledCSS | resources.Fingerprint "sha256" -}}
-    <style integrity="{{ $secureCSS.Data.Integrity }}">
-      {{- $secureCSS.Content | safeCSS -}}
+    <style {{ if hugo.IsProduction }}integrity="{{ $bundledCSS.Data.Integrity }}"{{ end }}>
+      {{- $bundledCSS.Content | safeCSS -}}
     </style>
   {{- end -}}
 
@@ -141,7 +140,9 @@
 
 
   <!-- JavaScript Bundle -->
-  {{- $jsBuildOptions := dict "target" "es6" -}}
+  {{- $jsBuildOptions := dict
+    "target" "es6"
+  -}}
   {{- if hugo.IsProduction -}}
     {{- $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") -}}
   {{- end -}}
@@ -166,6 +167,19 @@
     {{- end -}}
   {{- end -}}
 
+  {{- /* Conditionally include portfolio filters logic (in head to avoid re-rendering) */ -}}
+  {{- $data := "" -}}
+  {{- if .Page.CurrentSection.File -}}
+    {{- $data = index .Site.Data .Page.CurrentSection.File.ContentBaseName -}}
+  {{- else -}}
+    {{- $data = index .Site.Data .Page.Section -}}
+  {{- end -}}
+  {{- if ne $data "" -}}
+    {{- with resources.Get "js/portfolio-filter.js" -}}
+      {{- $jsBundle = $jsBundle | append . -}}
+    {{- end -}}
+  {{- end -}}
+
   {{- /* Add render-blocking critical path custom JS files (non-external only) */ -}}
   {{- range .Site.Params.customJs -}}
     {{- if not (or (in . "http://") (in . "https://")) -}}
@@ -179,9 +193,11 @@
   {{- /* Bundle all JS and inline to circumvent network round-trip latency */ -}}
   {{- if gt (len $jsBundle) 0 -}}
     {{- $bundledJS := $jsBundle | resources.Concat "js/bundle.js" | js.Build $jsBuildOptions -}}
-    {{- $secureJS := $bundledJS | resources.Fingerprint "sha256" -}}
-    <script type="text/javascript" integrity="{{ $secureJS.Data.Integrity }}">
-      {{- $secureJS.Content | safeJS -}}
+    {{- if hugo.IsProduction -}}
+      {{- $bundledJS = $bundledJS | resources.Fingerprint "sha256" -}}
+    {{- end -}}
+    <script type="text/javascript" {{ if hugo.IsProduction }}integrity="{{ $bundledJS.Data.Integrity }}"{{ end }}>
+      {{- $bundledJS.Content | safeJS -}}
     </script>
   {{- end -}}
 

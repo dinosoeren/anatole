@@ -66,19 +66,6 @@
     {{- end -}}
   {{- end -}}
 
-  {{- /* Conditionally include portfolio filters logic */ -}}
-  {{- $data := "" -}}
-  {{- if .CurrentSection.File -}}
-    {{- $data = index .context.Site.Data .context.CurrentSection.File.ContentBaseName -}}
-  {{- else -}}
-    {{- $data = index .context.Site.Data .context.Section -}}
-  {{- end -}}
-  {{- if $data -}}
-    {{- with resources.Get "js/portfolio-filter.js" -}}
-      {{- $jsBundle = $jsBundle | append . -}}
-    {{- end -}}
-  {{- end -}}
-
   {{- /* Include thumbnail loader at the end to prioritize behavior over img quality */ -}}
   {{- with resources.Get "js/thumbnail-hd-loader.js" -}}
     {{- $jsBundle = $jsBundle | append . -}}
@@ -87,9 +74,11 @@
   {{- /* Bundle, build, and inline all footer JS to circumvent network round-trip latency */ -}}
   {{- if gt (len $jsBundle) 0 -}}
     {{- $bundledJS := $jsBundle | resources.Concat "js/footer-bundle.js" | js.Build $jsBuildOptions -}}
-    {{- $secureJS := $bundledJS | resources.Fingerprint "sha256" -}}
-    <script type="text/javascript" integrity="{{ $secureJS.Data.Integrity }}">
-      {{- $secureJS.Content | safeJS -}}
+    {{- if hugo.IsProduction -}}
+      {{- $bundledJS = $bundledJS | resources.Fingerprint "sha256" -}}
+    {{- end -}}
+    <script type="text/javascript" {{ if hugo.IsProduction }}integrity="{{ $bundledJS.Data.Integrity }}"{{ end }}>
+      {{- $bundledJS.Content | safeJS -}}
     </script>
   {{- end -}}
 {{ end }}
