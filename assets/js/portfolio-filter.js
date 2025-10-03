@@ -262,6 +262,9 @@ function initializeContext(ctxCallback) {
   let loadingHint = document.getElementById('loading-portfolio-items-hint');
   if (expectedLinkTargets < context.tocLinks.length && !loadingHint) {
     requestAnimationFrame(() => {
+      // Double check existence and return early to avoid race condition
+      loadingHint = document.getElementById('loading-portfolio-items-hint');
+      if (loadingHint) return;
       loadingHint = document.createElement('div');
       loadingHint.id = 'loading-portfolio-items-hint';
       loadingHint.classList.add('footer', 'footer__base');
