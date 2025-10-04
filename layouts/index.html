@@ -72,57 +72,59 @@
             "class" "post__thumbnail"
           }}
           {{ partial "image.html" $imageOpts }}
-          <div class="post__thumbnail-overlay">
-            <div class="left">
-              <div>
-                {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__thumbnail-overlay-icon") }}
-                <span class="post__footer-date"
-                  >{{ if isset .Site.Params "indexdateformat" }}
-                    {{ if .Site.Params.localizedDates }}
-                      {{ time.Format .Site.Params.indexDateFormat .Date }}
-                    {{ else }}
-                      {{ .Date.Format .Site.Params.indexDateFormat }}
-                    {{ end }}
+          {{ if ne .Site.Params.showMetaInThumbnailOverlay false }}
+            <div class="post__thumbnail-overlay">
+              <div class="left">
+                <div>
+                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__thumbnail-overlay-icon") }}
+                  <span class="post__footer-date"
+                    >{{ if isset .Site.Params "indexdateformat" }}
+                      {{ if .Site.Params.localizedDates }}
+                        {{ time.Format .Site.Params.indexDateFormat .Date }}
+                      {{ else }}
+                        {{ .Date.Format .Site.Params.indexDateFormat }}
+                      {{ end }}
 
-                  {{ else }}
-                    {{ if .Site.Params.localizedDates }}
-                      {{ time.Format "Mon, Jan 2, 2006" .Date }}
                     {{ else }}
-                      {{ .Date.Format "Mon, Jan 2, 2006" }}
-                    {{ end }}
+                      {{ if .Site.Params.localizedDates }}
+                        {{ time.Format "Mon, Jan 2, 2006" .Date }}
+                      {{ else }}
+                        {{ .Date.Format "Mon, Jan 2, 2006" }}
+                      {{ end }}
 
-                  {{ end }}</span
-                >
+                    {{ end }}</span
+                  >
+                </div>
+                {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
+                  <div>
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__thumbnail-overlay-icon") }}
+                    <span class="post__footer-date" data-humanize-date="{{ .Lastmod.Unix }}">
+                      {{ partial "humanize-date.html" (time .Lastmod) }}
+                    </span>
+                  </div>
+                {{ end }}
+                {{ if .Params.attr }}
+                  <div>
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "camera" "className" "post__thumbnail-overlay-icon") }}
+                    <span class="post__footer-date">
+                      Image:
+                      {{ if .Params.attrLink }}
+                        <a href="{{ .Params.attrLink }}" target="_blank" rel="noopener">{{ .Params.attr }}</a>
+                      {{ else }}
+                        {{ .Params.attr }}
+                      {{ end }}
+                    </span>
+                  </div>
+                {{ end }}
               </div>
-              {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
-                <div>
-                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__thumbnail-overlay-icon") }}
-                  <span class="post__footer-date" data-humanize-date="{{ .Lastmod.Unix }}">
-                    {{ partial "humanize-date.html" (time .Lastmod) }}
-                  </span>
-                </div>
-              {{ end }}
-              {{ if .Params.attr }}
-                <div>
-                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "camera" "className" "post__thumbnail-overlay-icon") }}
-                  <span class="post__footer-date">
-                    Image:
-                    {{ if .Params.attrLink }}
-                      <a href="{{ .Params.attrLink }}" target="_blank" rel="noopener">{{ .Params.attr }}</a>
-                    {{ else }}
-                      {{ .Params.attr }}
-                    {{ end }}
-                  </span>
-                </div>
-              {{ end }}
+              <div class="middle"></div>
+              <div class="right">
+                {{ if not (eq .Params.noShare true) }}
+                  {{ partial "share.html" . }}
+                {{ end }}
+              </div>
             </div>
-            <div class="middle"></div>
-            <div class="right">
-              {{ if not (eq .Params.noShare true) }}
-                {{ partial "share.html" . }}
-              {{ end }}
-            </div>
-          </div>
+          {{ end }}
         </div>
       {{ end }}
       <div class="post__content">
@@ -148,7 +150,7 @@
           <a href="{{ .RelPermalink }}">{{ i18n "read_more" }}</a>
         {{- end -}}
 
-        {{ if not .Params.thumbnail }}
+        {{ if or (not .Params.thumbnail) (eq .Site.Params.showMetaInThumbnailOverlay false) }}
           <ul class="post__meta">
             <li class="post__meta-item">
               {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__meta-icon") }}
