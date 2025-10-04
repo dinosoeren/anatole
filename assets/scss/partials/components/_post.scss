@@ -181,6 +181,11 @@
       display: block;
     }
 
+    /* Prevent ios font scaling issue */
+    .chroma * {
+      -webkit-text-size-adjust: none;
+    }
+
     .upper {
       text-transform: uppercase;
     }
