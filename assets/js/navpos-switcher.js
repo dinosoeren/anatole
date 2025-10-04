@@ -1,6 +1,25 @@
 const getStoredNavPos = () => localStorage.getItem('navpos');
 
+const isIOS = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || (window.opera && opera.toString() === '[object Opera]');
+
+  // Check for common iOS device indicators in the user agent string
+  if (/iPad|iPhone|iPod/.test(userAgent)) {
+    return true;
+  }
+
+  // Special handling for newer iPads which may report as MacIntel in navigator.platform
+  if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+    return true;
+  }
+
+  return false;
+};
+
 const setNavPos = (position) => {
+  // Force top nav on iOS devices due to white space bug
+  // See https://stackoverflow.com/q/70572209
+  position = isIOS() ? 'top' : position;
   localStorage.setItem('navpos', position);
   const html = document.documentElement;
   const prevNavPos = [...html.classList].find((c) => c.match(/navpos--(top|bottom)/));
