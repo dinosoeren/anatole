@@ -6,6 +6,12 @@
   cursor: pointer;
   padding: 16px 0;
 
+  // Never allow bottom nav on iOS devices due to white space bug.
+  // See https://stackoverflow.com/q/70572209
+  @include conf.ios {
+    display: none;
+  }
+
   @include conf.desktop {
     margin-top: -5px;
     padding: 0;

@@ -76,6 +76,14 @@
         }
       }
 
+      // Never allow bottom nav on iOS devices due to white space bug.
+      // See https://stackoverflow.com/q/70572209
+      @include conf.ios {
+        &:has(.navpos-switch) {
+          display: none;
+        }
+      }
+
       // Handle flex layout for theme and navpos switches on mobile
       @include conf.smaller-than-desktop {
         &:has(.themeswitch),

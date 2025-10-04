@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use 'modules/config' as conf;
 
 $navpos-configs: (
   top: (
@@ -39,10 +40,36 @@ $navpos-map: ();
       $navpos-map: ();
     }
   }
+
+  // Always use top configuration on iOS devices due to white space bug.
+  // See https://stackoverflow.com/q/70572209
+  @include conf.ios {
+    @each $position, $map in $navpos-configs {
+      .navpos--#{$position} & {
+        @each $key, $submap in map.get($navpos-configs, top) {
+          $value: map.get(map.get($navpos-configs, top), '#{$key}');
+          $navpos-map: map.merge(
+            $navpos-map,
+            (
+              $key: $value,
+            )
+          ) !global;
+        }
+        @content;
+        $navpos-map: ();
+      }
+    }
+  }
 }
 
 @mixin top {
   .navpos--top & {
+    @content;
+  }
+
+  // Always use top configuration on iOS devices due to white space bug.
+  // See https://stackoverflow.com/q/70572209
+  @include conf.ios {
     @content;
   }
 }
