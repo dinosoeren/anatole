@@ -49,7 +49,7 @@
     </ul>
 
     <div
-      class="search"
+      class="search {{ if eq .Site.Params.flexsearch.disableSidebarExpansion true }}no-expand{{ end }}"
       data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}"
       data-no-results="{{ (i18n "no_results" "XX") | default "No results for \"XX.\"" }}"
       data-feeling-lucky="{{ i18n "feeling_lucky" | default "Feeling lucky?" }}"

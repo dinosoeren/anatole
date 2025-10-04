@@ -8,6 +8,11 @@
   margin: 1.5em 30px 0 30px;
   position: relative;
 
+  @include conf.smaller-than-desktop {
+    margin: 5px;
+    flex: 1;
+  }
+
   label {
     display: flex;
     align-items: center;
@@ -20,6 +25,14 @@
     @include color.themed() {
       $pastels: color.t('pastels');
       background: nth($pastels, 5);
+
+      @include conf.smaller-than-desktop {
+        background: none;
+      }
+    }
+
+    @include conf.smaller-than-desktop {
+      padding: 0;
     }
 
     &::after {
@@ -39,27 +52,60 @@
         'Open Sans',
         'Helvetica Neue',
         sans-serif;
+
+      @include conf.smaller-than-desktop {
+        content: '';
+        padding: 0;
+      }
+    }
+
+    > .hi-svg-inline {
+      flex-shrink: 0;
+      transition: left 100ms;
+
+      @include conf.smaller-than-desktop {
+        position: absolute;
+        left: 0;
+      }
     }
   }
 
   &:hover label,
   &.active label,
-  & label:has(+ input[type='search']:focus) {
+  & label:has(+ input[type='search']:focus),
+  &.no-expand label {
     padding: 6px;
     margin-right: 0.5rem;
+
+    @include conf.smaller-than-desktop {
+      padding: 0;
+      margin: 0;
+      min-width: 0;
+    }
 
     &::after {
       content: '';
       padding: 0;
     }
+
+    > .hi-svg-inline {
+      @include conf.smaller-than-desktop {
+        left: 9px;
+      }
+    }
   }
 
   &:hover input[type='search'],
   &.active input[type='search'],
-  input[type='search']:focus {
+  input[type='search']:focus,
+  &.no-expand input[type='search'] {
     width: 100%;
     opacity: 1;
     padding: 0.1em 0.5em 0 0.5em;
+
+    @include conf.smaller-than-desktop {
+      padding-left: calc(1em + 15px);
+    }
   }
 
   &__no-results {
@@ -79,6 +125,8 @@
   &box {
     display: flex;
     width: 100%;
+    position: relative;
+    justify-content: center;
   }
 
   input[type='search'] {
@@ -242,24 +290,17 @@
   @include conf.desktop {
     display: flex;
   }
+
+  &__suggestions {
+    @include conf.smaller-than-desktop {
+      display: none;
+    }
+  }
 }
 
 .header .search {
-  margin: 5px;
-  flex: 1;
-
   @include conf.desktop {
     display: none;
-  }
-
-  label {
-    background: none;
-    padding: 6px;
-
-    &::after {
-      content: '';
-      padding: 0;
-    }
   }
 
   &__suggestions {
