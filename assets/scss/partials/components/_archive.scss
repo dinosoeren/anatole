@@ -76,7 +76,7 @@
       height: 48px !important;
       object-fit: cover !important;
       border-radius: 4px;
-      margin: 0;
+      margin: 0 !important;
 
       @include color.themed() {
         box-shadow: color.t('shadow');
