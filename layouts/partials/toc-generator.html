@@ -98,9 +98,14 @@
 
       {{- /* Add list items */ -}}
       {{- if $hasListItems -}}
-        {{ range .Pages.GroupByDate "2006" }}
-          {{- $anchorTitle := .Key | urlize -}}
-          <li><a href="#{{ $anchorTitle }}">{{ .Key }}</a></li>
+        {{- if and .Site.Params.listTaxonomyByCount (eq .Kind "taxonomy") -}}
+          {{- $anchorTitle := .Title | urlize -}}
+          <li><a href="#{{ $anchorTitle }}">{{ .Title }}</a></li>
+        {{- else -}}
+          {{ range .Pages.GroupByDate "2006" }}
+            {{- $anchorTitle := .Key | urlize -}}
+            <li><a href="#{{ $anchorTitle }}">{{ .Key }}</a></li>
+          {{- end -}}
         {{- end -}}
       {{- end -}}
 
