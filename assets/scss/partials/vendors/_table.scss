@@ -2,19 +2,36 @@
 
 table {
   display: table;
-  width: 80%;
   border-collapse: collapse;
 }
 
 tr {
   display: table-row;
+
+  &:first-child {
+    th {
+      @include color.themed() {
+        background: adjust-color(nth(color.t('pastels'), 1), $alpha: -0.6);
+      }
+    }
+  }
+
+  &:nth-child(even) {
+    td {
+      @include color.themed() {
+        background: adjust-color(color.t('shadow-color'), $alpha: -0.15);
+      }
+    }
+  }
 }
 
 th,
 td {
   display: table-cell;
   padding: 8px;
+
   @include color.themed() {
-    border: color.t('border');
+    border-top: color.t('border');
+    border-bottom: color.t('border');
   }
 }
