@@ -27,7 +27,7 @@
     {{ $title := i18n "offline_title" }}
     <h1 class="offline-title">{{- $title -}}</h1>
     <div class="offline-info">
-      {{ i18n "offline_info" | safeHTML }}
+      {{ i18n "offline_info" | markdownify | safeHTML }}
     </div>
     <div class="offline-actions">
       <a class="offline-action offline-action-home" href="{{ .Site.Home.RelPermalink }}">
@@ -63,6 +63,19 @@
         -}}
         {{- i18n "try_again" -}}
       </a>
+      {{- if .Site.Params.pwa.offline_cta_url -}}
+        <a class="offline-action offline-action-cta" href="{{ .Site.Params.pwa.offline_cta_url }}" target="_blank" rel="noopener">
+          {{- partial "icons/icon" (dict
+            "vendor" "bootstrap"
+            "name" "box-arrow-up-right"
+            "className" "offline-action-icon"
+            "width" "1.6rem"
+            "height" "1.6rem"
+            )
+          -}}
+          {{- (i18n "offline_cta" | default "Bored?") | markdownify | safeHTML -}}
+        </a>
+      {{- end -}}
     </div>
   </div>
 {{ end }}
