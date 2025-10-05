@@ -37,6 +37,10 @@
     <meta name="google-site-verification" content="{{ .Site.Params.googleSiteVerify }}" />
   {{- end -}}
 
+  {{ if .Params.noIndex }}
+    <meta name="robots" content="noindex, nofollow" />
+  {{ end }}
+
 
   <!-- CSS Bundle -->
   {{- $contentRatio := or site.Params.contentratio 0.6 -}}
