@@ -377,10 +377,21 @@ body {
 .theme--dark .offline-info {
   color: #9f9f9f;
 }
+.offline-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
 .offline-action {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  align-items: center;
   text-decoration: none;
   margin: 0.25rem;
-  padding: 0.75rem 1rem;
+  padding: 1rem 1rem 0.75rem 1rem;
 }
 .theme--light .offline-action {
   background: #a3c9f9;
@@ -402,9 +413,16 @@ body {
 .theme--dark .offline-action-try-again {
   background: #7a4c58;
 }
+.theme--light .offline-action-cta {
+  background: #ffe5b4;
+}
+.theme--dark .offline-action-cta {
+  background: #7a6240;
+}
 .offline-action-icon {
   vertical-align: middle;
-  margin-right: 0.5rem;
+  position: relative;
+  top: -1px;
 }
 
 .toc-wrapper {
@@ -3488,6 +3506,7 @@ body {
   padding: 8px;
   outline: none;
   font-family: inherit;
+  font-size: 16px;
 }
 .theme--light .form-style ul li .field-style {
   border: 1px solid #eeeeee;
