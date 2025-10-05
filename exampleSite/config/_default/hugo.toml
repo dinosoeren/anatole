@@ -41,10 +41,16 @@ localizedDates = false
     # hugo mod get github.com/hugomods/icons/vendors/font-awesome
     path = 'github.com/hugomods/icons/vendors/font-awesome'
     disable = false
-
+  # Note: sites importing the theme as a hugo module don't need to import the
+  # pwa module directly. This is only needed for exampleSite local dev.
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/dinosoeren/hugo-pwa@gomod
+    path = 'github.com/dinosoeren/hugo-pwa'
+    disable = false
 
 [outputs]
-  home = ["html", "rss", "searchIndex"]
+  home = ["html", "rss", "searchIndex", "offline"]
 
 [outputFormats]
   [outputFormats.searchIndex]
@@ -52,6 +58,12 @@ localizedDates = false
     baseName = "search-index"
     isPlainText = true
     notAlternative = true
+  [outputFormats.Offline]
+    path = "offline"
+    baseName = "index"
+    isHTML = true
+    notAlternative = true
+    mediaType = "text/html"
 
 [markup]
     [markup.goldmark]

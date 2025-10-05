@@ -31,11 +31,21 @@ postSectionName = "blog"  # Deprecated: use postSections instead
 postSections = ["post", "blog"]  # List of post sections that support comments and post features
 # relatedPosts = true
 # numberOfRelatedPosts = 3
+# useSimplePostLists = false
+# excludeMultipleSeriesFromRelated = true
 
 # Full link to license
 #license = "https://creativecommons.org/licenses/by/4.0/"
 
 # disableTitleCapitalization = true
+# defaultMobileNavPosition = "bottom"
+# disableNavPosSwitcher = false
+# disableArchiveTitleStyling = true
+# disableTitleCapitalization = true
+# showMetaInThumbnailOverlay = true
+# disableHeaderAnimation = true
+# disableSidebarAnimation = false
+# disableDesktopSidebarAnimation = true
 
 reversepagetitle = true # When set to 'true', the Window Title will be reversed to 'Title | Author' instead of the default 'Author | Title'
 
@@ -49,6 +59,7 @@ reversepagetitle = true # When set to 'true', the Window Title will be reversed 
 # highlightCurrentSection = true
 # showCurrentTaxonomyInSidebar = true
 # highlightCurrentTaxonomy = true
+# listTaxonomyByCount = true
 
 [simpleAnalytics]
 # enable = true
@@ -70,6 +81,8 @@ reversepagetitle = true # When set to 'true', the Window Title will be reversed 
 
 [flexSearch]
 # maxResultsCount = 5
+# disableNavbarExpansion = false
+# disableSidebarExpansion = false
 # suggestRecentPostsWhenNoResults = true
 # suggestRelatedPostsWhenNoResults = true
 # noResultsSuggestionCount = 3
@@ -83,6 +96,34 @@ reversepagetitle = true # When set to 'true', the Window Title will be reversed 
 # paragraphWordsCount = 3  # index first and last N words of each paragraph
 # paragraphWordsLimit = -1 # disable paragraph word indexing when -1
 # commonWords = []         # add words to exclude them from indexing
+
+# progressive web app (PWA) settings
+[pwa]
+  enable = true
+  # manifest_file = "site.webmanifest"
+  offline_image = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTN3MDE3YXZseXNxYnYwejl0cHdjMTBqa2lwaDRpbXl0b2ZncjhndSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/XIjw2n4kUXxuqDn7dN/giphy.gif'
+  offline_image_marquee = true
+  [[pwa.precaches]]
+    url = '/'
+  [[pwa.precaches]]
+    url = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTN3MDE3YXZseXNxYnYwejl0cHdjMTBqa2lwaDRpbXl0b2ZncjhndSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/XIjw2n4kUXxuqDn7dN/giphy.gif'
+  [pwa.caches]
+    [pwa.caches.font]
+      strategy = "cache-first"
+      origins = []
+      max_age = 2592000 # 30d
+    [pwa.caches.image]
+      strategy = "cache-first"
+      origins = []
+      max_age = 2592000 # 30d
+    [pwa.caches.script]
+      strategy = "cache-first"
+      origins = []
+      max_age = 2592000 # 30d
+    [pwa.caches.style]
+      strategy = "cache-first"
+      origins = []
+      max_age = 2592000 # 30d
 
 ## Social links
 # use 'fa-brands' when brand icons, use 'fas' when standard solid icons.
