@@ -7,7 +7,7 @@
   export PATH=/opt/build/repo/dart-sass:$PATH && \
   cd exampleSite && \
   hugo --gc --minify --themesDir=../ && \
-  staticrypt public/encryptme/index.html
+  staticrypt public/encryptme/* -r -d public/encryptme/
   """
 
 [dev]
