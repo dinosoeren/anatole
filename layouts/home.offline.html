@@ -1,0 +1,68 @@
+{{ define "main" }}
+  <div class="offline">
+    {{ if .Site.Params.pwa.offline_image }}
+      {{ if .Site.Params.pwa.offline_image_marquee }}
+        <marquee behavior="alternate">
+      {{ end }}
+        {{ partial "image.html" (dict
+          "src" .Site.Params.pwa.offline_image
+          "alt" "Offline"
+          "class" "offline-image"
+          "loading" "eager"
+          "fetchpriority" "high"
+          )
+        }}
+      {{ if .Site.Params.pwa.offline_image_marquee }}
+        </marquee>
+      {{ end }}
+    {{ end }}
+    {{ partial "icons/icon" (dict
+      "vendor" "bootstrap"
+      "name" "wifi-off"
+      "className" "offline-icon"
+      "width" "8rem"
+      "height" "8rem"
+      )
+    }}
+    {{ $title := i18n "offline_title" }}
+    <h1 class="offline-title">{{- $title -}}</h1>
+    <div class="offline-info">
+      {{ i18n "offline_info" | safeHTML }}
+    </div>
+    <div class="offline-actions">
+      <a class="offline-action offline-action-home" href="{{ .Site.Home.RelPermalink }}">
+        {{- partial "icons/icon" (dict
+          "vendor" "bootstrap"
+          "name" "house"
+          "className" "offline-action-icon"
+          "width" "1.6rem"
+          "height" "1.6rem"
+          )
+        -}}
+        {{- i18n "home" -}}
+      </a>
+      <a class="offline-action offline-action-go-back" href="javascript: window.history.back();">
+        {{- partial "icons/icon" (dict
+          "vendor" "bootstrap"
+          "name" "arrow-left-circle"
+          "className" "offline-action-icon"
+          "width" "1.6rem"
+          "height" "1.6rem"
+          )
+        -}}
+        {{- i18n "go_back" -}}
+      </a>
+      <a class="offline-action offline-action-try-again" href="javascript: window.location.reload();">
+        {{- partial "icons/icon" (dict
+          "vendor" "bootstrap"
+          "name" "arrow-clockwise"
+          "className" "offline-action-icon"
+          "width" "1.6rem"
+          "height" "1.6rem"
+          )
+        -}}
+        {{- i18n "try_again" -}}
+      </a>
+    </div>
+  </div>
+{{ end }}

@@ -1,0 +1,66 @@
+@use 'modules/color_theme' as color;
+
+.offline {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 0 1em 0;
+  padding: 0;
+
+  &-image {
+    opacity: 0.5;
+    transition: opacity 200ms;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &-icon,
+  &-title {
+    @include color.themed() {
+      color: color.t('primary');
+    }
+  }
+
+  &-info {
+    padding: 0 2em;
+    margin-bottom: 2em;
+
+    @include color.themed() {
+      color: color.t('primary-light');
+    }
+  }
+
+  &-action {
+    @include color.themed() {
+      background: nth(color.t('pastels'), 1);
+      color: color.t('primary');
+    }
+
+    text-decoration: none;
+    margin: 0.25rem;
+    padding: 0.75rem 1rem;
+
+    &-go-back {
+      @include color.themed() {
+        background: nth(color.t('pastels'), 3);
+      }
+    }
+
+    &-try-again {
+      @include color.themed() {
+        background: nth(color.t('pastels'), 2);
+      }
+    }
+
+    &-icon {
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+  }
+}

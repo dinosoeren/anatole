@@ -102,9 +102,13 @@
   {{- end -}}
 
 
-  <!-- Web manifest (Android PWA) -->
-  {{ if .Site.Params.manifest }}
-    <link rel="manifest" href="{{ .Site.Params.manifest | relURL }}" />
+  <!-- Web manifest (Mobile PWA) -->
+  {{ if .Site.Params.pwa.enable }}
+    {{ if .Site.Params.pwa.manifest_file }}
+      <link rel="manifest" href="{{ .Site.Params.pwa.manifest_file | relURL }}" />
+    {{ else }}
+      {{ partialCached "pwa/assets/meta" . }}
+    {{ end }}
   {{ end }}
 
 

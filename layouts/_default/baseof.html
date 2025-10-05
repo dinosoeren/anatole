@@ -47,5 +47,9 @@
     {{- if (eq .Site.Params.simpleAnalytics.enable true) -}}
       {{- partial "analytics/simpleanalytics.html" . -}}
     {{- end -}}
+
+    {{- if (eq .Site.Params.pwa.enable true) -}}
+      {{- partialCached "pwa/assets/sw" . -}}
+    {{- end -}}
   </body>
 </html>
