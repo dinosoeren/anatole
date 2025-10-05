@@ -18,7 +18,6 @@
   NODE_VERSION = "22"
   GO_VERSION = "1.24.3"
   HUGO_ENV = "production"
-  HUGO_THEME = "repo" # comment out for local dev
   HUGO_BASEURL = "https://acrobati.netlify.app"
 
 [[headers]]
