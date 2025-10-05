@@ -50,14 +50,14 @@
         animated fadeInDown
       {{ end }}"
     >
-      {{ $anchorTitle := .title | urlize }}
+      {{ $anchorTitle := .title | anchorize }}
       <h2 class="portfolio__title" id="{{ $anchorTitle }}">{{ title .title }}</h2>
       {{ if .description }}
         <p class="portfolio-section__description">{{ .description | markdownify }}</p>
       {{ end }}
       <div class="portfolio-section">
         {{ range $i, $p := .portfolioitem }}
-          {{ $anchorName := .name | urlize }}
+          {{ $anchorName := .name | anchorize }}
           <div id="{{ $anchorName }}" class="portfolio" data-tags="{{ delimit .tags "," }}">
             {{ if .image }}
               <div

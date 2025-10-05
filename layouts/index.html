@@ -42,7 +42,7 @@
       {{ $target = "_blank" }}
       {{ $postClass = "external" }}
     {{ end }}
-    {{- $headerAnchor := .Title | urlize -}}
+    {{- $headerAnchor := .Title | anchorize -}}
     <div
       id="{{ $headerAnchor }}"
       class="post {{ $postClass }} {{ with .Site.Params.doNotLoadAnimations }}

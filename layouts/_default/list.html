@@ -17,7 +17,7 @@
       {{ end }}
 
       {{ if and .Site.Params.listTaxonomyByCount (eq .Kind "taxonomy") }}
-        {{- $headerAnchor := .Title | urlize -}}
+        {{- $headerAnchor := .Title | anchorize -}}
         <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Title }}</h2>
         {{ $sortedTaxons := slice }}
         {{ range $key, $value := $taxonCountMap }}
@@ -42,7 +42,7 @@
         {{ end }}
       {{ else }}
         {{ range .Pages.GroupByDate "2006" }}
-          {{- $headerAnchor := .Key | urlize -}}
+          {{- $headerAnchor := .Key | anchorize -}}
           <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Key }}</h2>
           {{ partial "postlist.html" .Pages }}
         {{ end }}

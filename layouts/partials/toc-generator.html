@@ -91,7 +91,7 @@
       {{- if $isHome -}}
         {{- $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
         {{- range $index, $page := $paginator.Pages -}}
-          {{- $anchorTitle := .Title | urlize -}}
+          {{- $anchorTitle := .Title | anchorize -}}
           <li><a href="#{{ $anchorTitle }}">{{ .Title | markdownify }}</a></li>
         {{- end -}}
       {{- end -}}
@@ -99,11 +99,11 @@
       {{- /* Add list items */ -}}
       {{- if $hasListItems -}}
         {{- if and .Site.Params.listTaxonomyByCount (eq .Kind "taxonomy") -}}
-          {{- $anchorTitle := .Title | urlize -}}
+          {{- $anchorTitle := .Title | anchorize -}}
           <li><a href="#{{ $anchorTitle }}">{{ .Title }}</a></li>
         {{- else -}}
           {{ range .Pages.GroupByDate "2006" }}
-            {{- $anchorTitle := .Key | urlize -}}
+            {{- $anchorTitle := .Key | anchorize -}}
             <li><a href="#{{ $anchorTitle }}">{{ .Key }}</a></li>
           {{- end -}}
         {{- end -}}
@@ -112,11 +112,11 @@
       {{- /* Add portfolio section headings */ -}}
       {{- if $hasPortfolio -}}
         {{- range $data.portfolioitems -}}
-          {{- $anchorTitle := .title | urlize -}}
+          {{- $anchorTitle := .title | anchorize -}}
           <li><a href="#{{ $anchorTitle }}">{{ .title | markdownify }}</a></li>
           <ul>
             {{- range $i, $p := .portfolioitem -}}
-              {{- $anchorName := .name | urlize -}}
+              {{- $anchorName := .name | anchorize -}}
               <li><a href="#{{ $anchorName }}">{{ .name | markdownify }}</a></li>
             {{- end -}}
           </ul>
