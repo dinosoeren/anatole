@@ -1,19 +1,23 @@
 <head>
   <meta charset="utf-8" />
+  {{ $title := "" }}
   <title>
-    {{ if (eq .Site.Params.reversepagetitle true) }}
-      {{ with .Title }}
-        {{ . }} |
-      {{ end }}
-      {{- .Site.Params.author -}}
+    {{ if .IsHome }}
+      {{- $title = .Site.Title -}}
     {{ else }}
-      {{- .Site.Params.author -}}{{ with .Title }}
-        |
-        {{ . }}
+      {{ if (eq .Site.Params.reversepagetitle true) }}
+        {{ with .Title }}
+          {{- $title = (print $title . " | ") -}}
+        {{ end }}
+        {{- $title = (print $title .Site.Params.author) -}}
+      {{ else }}
+        {{- $title = .Site.Params.author -}}
+        {{ with .Title }}
+          {{- $title = (print $title " | " .) -}}
+        {{ end }}
       {{ end }}
-
     {{ end }}
-
+    {{- $title -}}
   </title>
 
   <!-- Meta -->
@@ -37,7 +41,16 @@
     <meta name="google-site-verification" content="{{ .Site.Params.googleSiteVerify }}" />
   {{- end -}}
 
-  {{ if .Params.noIndex }}
+
+  <!-- Prevent indexing of pages specifying noIndex and the offline page -->
+  <!-- To detect the offline page requires a trick since its .Permalink is "/" and .Section is "" -->
+  <!-- The offline page is the only "home" kind page with "canonical" as one of its alternative output formats -->
+  {{ $altFormats := slice }}
+  {{ range .AlternativeOutputFormats }}
+    {{ $altFormats = $altFormats | append .Rel }}
+  {{ end }}
+  {{ $isOfflinePage := and (eq .Kind "home") (in $altFormats "canonical") }}
+  {{ if or .Params.noIndex $isOfflinePage }}
     <meta name="robots" content="noindex, nofollow" />
   {{ end }}
 
@@ -143,7 +156,7 @@
 
   <!-- RSS -->
   {{ with .OutputFormats.Get "rss" -}}
-    {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .RelPermalink $.Site.Title | safeHTML }}
+    {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .RelPermalink $title | safeHTML }}
   {{ end -}}
 
 
