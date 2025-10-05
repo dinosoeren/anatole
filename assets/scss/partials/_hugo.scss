@@ -110,6 +110,16 @@ blockquote {
       }
     }
   }
+  &.question {
+    @include color.themed() {
+      background: oklch(from color.t('question') calc(l - 0.1) calc(c - 0.05) h / 0.2);
+      border-color: color.t('question');
+
+      svg {
+        color: color.t('question');
+      }
+    }
+  }
 }
 
 p {

@@ -5,6 +5,7 @@
   "⚠️" "warning"
   "📣" "disclaimer"
   "💡" "tip"
+  "❓" "question"
 }}
 
 {{ $emojiIcon := dict
@@ -14,6 +15,7 @@
   "⚠️" (partial "icons/icon" (dict "vendor" "fas" "name" "triangle-exclamation"))
   "📣" (partial "icons/icon" (dict "vendor" "fas" "name" "hand-point-right"))
   "💡" (partial "icons/icon" (dict "vendor" "fas" "name" "lightbulb"))
+  "❓" (partial "icons/icon" (dict "vendor" "fas" "name" "circle-question"))
 }}
 
 {{ $content := strings.TrimSpace (.Text | plainify) }}
