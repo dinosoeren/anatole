@@ -6,7 +6,8 @@
   rm dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz && \
   export PATH=/opt/build/repo/dart-sass:$PATH && \
   cd exampleSite && \
-  hugo --gc --minify --themesDir=../
+  hugo --gc --minify --themesDir=../ && \
+  staticrypt public/encryptme/index.html
   """
 
 [dev]
@@ -19,6 +20,7 @@
   GO_VERSION = "1.24.3"
   HUGO_ENV = "production"
   HUGO_BASEURL = "https://acrobati.netlify.app"
+  STATICRYPT_PASSWORD = "CHANGE_THIS_TEST_ONLY_VALUE"
 
 [[headers]]
   for = "/*"
