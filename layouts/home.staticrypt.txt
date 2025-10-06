@@ -240,11 +240,22 @@
 
           // Helper function to recursively clone elements with proper script handling
           function cloneElementWithScripts(sourceElement) {
-            const clonedElement = document.createElement(sourceElement.tagName.toLowerCase());
+            let clonedElement;
+
+            // Check if element needs XML namespace (SVG, MathML, etc.)
+            if (sourceElement.namespaceURI && sourceElement.namespaceURI !== 'http://www.w3.org/1999/xhtml') {
+              clonedElement = document.createElementNS(sourceElement.namespaceURI, sourceElement.tagName);
+            } else {
+              clonedElement = document.createElement(sourceElement.tagName.toLowerCase());
+            }
 
             // Copy all attributes
             for (const attr of sourceElement.attributes) {
-              clonedElement.setAttribute(attr.name, attr.value);
+              if (attr.namespaceURI) {
+                clonedElement.setAttributeNS(attr.namespaceURI, attr.name, attr.value);
+              } else {
+                clonedElement.setAttribute(attr.name, attr.value);
+              }
             }
 
             // Handle different element types
@@ -253,7 +264,12 @@
               if (sourceElement.src) {
                 clonedElement.src = sourceElement.src;
               } else if (sourceElement.textContent) {
-                clonedElement.textContent = sourceElement.textContent;
+                // Replace DOMContentLoaded with BodyReplaced in inline scripts
+                const scriptContent = sourceElement.textContent.replace(
+                  /DOMContentLoaded/g,
+                  'BodyReplaced'
+                );
+                clonedElement.textContent = scriptContent;
               }
             } else {
               // For non-script elements, handle text content and child elements
@@ -307,6 +323,12 @@
           // Replace current document head and body
           document.head.replaceWith(newHead);
           document.body.replaceWith(newBody);
+
+          // Dispatch BodyReplaced event for scripts that were listening for DOMContentLoaded
+          document.dispatchEvent(new CustomEvent('BodyReplaced', {
+            bubbles: true,
+            cancelable: false
+          }));
         },
         clearLocalStorageCallback: null,
       };
