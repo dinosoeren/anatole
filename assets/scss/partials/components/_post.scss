@@ -302,12 +302,6 @@
           color: color.t('primary');
         }
       }
-
-      &.post__content-title:not(.upper),
-      &.post__content-title:not(.upper) a {
-        font-size: $font-size-h2;
-        font-weight: 400;
-      }
     }
 
     h4 {
