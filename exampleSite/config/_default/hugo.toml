@@ -50,7 +50,7 @@ localizedDates = false
     disable = false
 
 [outputs]
-  home = ["html", "rss", "searchIndex", "offline"]
+  home = ["html", "rss", "searchIndex", "offline", "staticrypt"]
 
 [outputFormats]
   [outputFormats.searchIndex]
@@ -58,12 +58,18 @@ localizedDates = false
     baseName = "search-index"
     isPlainText = true
     notAlternative = true
-  [outputFormats.Offline]
+  [outputFormats.offline]
     path = "offline"
     baseName = "index"
     isHTML = true
     notAlternative = true
     mediaType = "text/html"
+  [outputFormats.staticrypt]
+    path = "staticrypt"
+    baseName = "template"
+    isHTML = false
+    notAlternative = true
+    mediaType = "text/plain"
 
 [markup]
     [markup.goldmark]
