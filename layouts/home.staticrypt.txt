@@ -233,7 +233,9 @@
       const templateConfig = {
         rememberExpirationKey: 'staticrypt_expiration',
         rememberPassphraseKey: 'staticrypt_passphrase',
-        replaceHtmlCallback: null,
+        replaceHtmlCallback: (plainHTML) => {
+          document.documentElement.innerHTML = plainHTML;
+        },
         clearLocalStorageCallback: null,
       };
 
