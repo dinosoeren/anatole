@@ -1,6 +1,6 @@
 github.com/GoogleChrome/workbox v6.5.4+incompatible/go.mod h1:dyEoGLpJeO43pUVJb+nNNr1WRgoF81hNEl4UGLV+yow=
-github.com/dinosoeren/anatole v0.0.0-20251006025251-71c9edeb91c5 h1:vqUV9Oc6qhh8WqBDwwAIYP+vP8zRrwQs9Xnr/YXjhW4=
-github.com/dinosoeren/anatole v0.0.0-20251006025251-71c9edeb91c5/go.mod h1:2yD8+h31gg6xeIPgunu3X5cByBz6SIVhBKYCNMIpwCc=
+github.com/dinosoeren/anatole v0.0.0-20251006063308-c8f3ca57ddde h1:oJgWy5y6h2vVVtDx93qOu7ldXc7eVguhuo6Yaie4dow=
+github.com/dinosoeren/anatole v0.0.0-20251006063308-c8f3ca57ddde/go.mod h1:2yD8+h31gg6xeIPgunu3X5cByBz6SIVhBKYCNMIpwCc=
 github.com/dinosoeren/hugo-pwa v0.0.0-20251001025501-38e941d43c29 h1:noKpuOroYEWYz+6gp/zceEmqZ6/mssMRH/Yn5qWk9ng=
 github.com/dinosoeren/hugo-pwa v0.0.0-20251001025501-38e941d43c29/go.mod h1:8HEiSpqnVgmzgmOKenwMg+oxBMFaRQWp5ZO6I2dSdkc=
 github.com/hugomods/font-awesome v6.7.1+incompatible/go.mod h1:C2wW6xDvHkcMlJMVTPQ+Npt+rO0OGv13xT1iyll2z2Q=
