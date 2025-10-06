@@ -234,7 +234,79 @@
         rememberExpirationKey: 'staticrypt_expiration',
         rememberPassphraseKey: 'staticrypt_passphrase',
         replaceHtmlCallback: (plainHTML) => {
-          document.documentElement.innerHTML = plainHTML;
+          // Parse the HTML and create a temporary document
+          const parser = new DOMParser();
+          const newDoc = parser.parseFromString(plainHTML, 'text/html');
+
+          // Helper function to recursively clone elements with proper script handling
+          function cloneElementWithScripts(sourceElement) {
+            const clonedElement = document.createElement(sourceElement.tagName.toLowerCase());
+
+            // Copy all attributes
+            for (const attr of sourceElement.attributes) {
+              clonedElement.setAttribute(attr.name, attr.value);
+            }
+
+            // Handle different element types
+            if (sourceElement.tagName.toLowerCase() === 'script') {
+              // For script elements, set textContent or src to ensure execution
+              if (sourceElement.src) {
+                clonedElement.src = sourceElement.src;
+              } else if (sourceElement.textContent) {
+                clonedElement.textContent = sourceElement.textContent;
+              }
+            } else {
+              // For non-script elements, handle text content and child elements
+              for (const child of sourceElement.childNodes) {
+                if (child.nodeType === Node.TEXT_NODE) {
+                  clonedElement.appendChild(document.createTextNode(child.textContent));
+                } else if (child.nodeType === Node.ELEMENT_NODE) {
+                  clonedElement.appendChild(cloneElementWithScripts(child));
+                }
+              }
+            }
+
+            return clonedElement;
+          }
+
+          // Create new head and body elements
+          const newHead = document.createElement('head');
+          const newBody = document.createElement('body');
+
+          // Clone head contents
+          if (newDoc.head) {
+            for (const child of newDoc.head.children) {
+              newHead.appendChild(cloneElementWithScripts(child));
+            }
+          }
+
+          // Clone body contents
+          if (newDoc.body) {
+            // Copy body attributes
+            for (const attr of newDoc.body.attributes) {
+              newBody.setAttribute(attr.name, attr.value);
+            }
+
+            // Clone body children
+            for (const child of newDoc.body.childNodes) {
+              if (child.nodeType === Node.TEXT_NODE) {
+                newBody.appendChild(document.createTextNode(child.textContent));
+              } else if (child.nodeType === Node.ELEMENT_NODE) {
+                newBody.appendChild(cloneElementWithScripts(child));
+              }
+            }
+          }
+
+          // Copy html element attributes if they exist
+          if (newDoc.documentElement) {
+            for (const attr of newDoc.documentElement.attributes) {
+              document.documentElement.setAttribute(attr.name, attr.value);
+            }
+          }
+
+          // Replace current document head and body
+          document.head.replaceWith(newHead);
+          document.body.replaceWith(newBody);
         },
         clearLocalStorageCallback: null,
       };
