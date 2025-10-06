@@ -68,6 +68,7 @@ localizedDates = false
     path = "staticrypt"
     baseName = "template"
     isHTML = false
+    isPlainText = true
     notAlternative = true
     mediaType = "text/plain"
 
