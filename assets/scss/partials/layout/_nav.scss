@@ -17,7 +17,7 @@
   &--active,
   .header:not(.nav-loaded) &:hover,
   .header:not(.nav-loaded):has(.navbar-burger:hover) & {
-    display: block;
+    display: flex;
   }
 
   // Show above nav only when navbar position is bottom and not desktop
