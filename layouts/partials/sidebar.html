@@ -1,17 +1,22 @@
 <div
-  class="sidebar{{ with .Site.Params.doNotLoadAnimations }}
-    .
-  {{ else }}
+  class="sidebar{{ if and (ne .Site.Params.disableSidebarAnimation true) (ne .Site.Params.doNotLoadAnimations true) }}
+    {{ with .Site.Params.disableDesktopSidebarAnimation }}
+      no-desktop-animated
+    {{ end }}
     animated fadeInDown
   {{ end }}"
 >
   <div class="sidebar__content">
     <div class="sidebar__introduction">
-      <img
-        class="sidebar__introduction-profileimage"
-        src="{{ .Site.Params.profilePicture | relURL }}"
-        alt="profile picture"
-      />
+      {{ $imageOpts := dict
+        "src" .Site.Params.profilePicture
+        "alt" "Profile picture"
+        "page" .
+        "fetchpriority" "high"
+        "loading" "eager"
+        "class" "sidebar__introduction-profileimage"
+      }}
+      {{ partial "image.html" $imageOpts }}
       {{ if .IsHome }}
         <div class="sidebar__introduction-title">
           <h1>
@@ -37,11 +42,86 @@
             aria-label="{{ $item.title }}"
             title="{{ $item.title }}"
           >
-            <i class="{{ $item.icon }} fa-2x" aria-hidden="true"></i>
+            {{ partial "icons/icon" (dict "vendor" ($item.vendor | default "fab") "name" $item.icon "width" "2em" "height" "2em") }}
           </a>
         </li>
       {{ end }}
     </ul>
+
+    <div
+      class="search {{ if eq .Site.Params.flexsearch.disableSidebarExpansion true }}no-expand{{ end }}"
+      data-max-results="{{ .Site.Params.flexsearch.maxResultsCount | default 5 }}"
+      data-no-results="{{ (i18n "no_results" "XX") | default "No results for \"XX.\"" }}"
+      data-feeling-lucky="{{ i18n "feeling_lucky" | default "Feeling lucky?" }}"
+      data-try-suggestions="{{ i18n "try_suggestions" | default "You might like these..." }}"
+      data-suggestions-target="sidebar__search-suggestions"
+    >
+      <div class="searchbox">
+        <label for="sidebar__search-text" aria-label="Search">
+          {{ partial "icons/icon" (dict "vendor" "fas" "name" "magnifying-glass") }}
+        </label>
+        <input id="sidebar__search-text" type="search" placeholder="Search..." aria-label="Search" autocomplete="off" />
+      </div>
+      {{- partial "search-results.html" (dict "page" . "position" "sidebar") -}}
+    </div>
+
+    {{- /* Include TOC for desktop */ -}}
+    {{- partial "toc.html" (dict "page" . "size" "desktop") -}}
+
+    {{ if ne .Site.Params.showPostSectionsInSidebar false }}
+      <div class="sidebar__posts section">
+        {{ range $section := .Site.Params.postSections }}
+          {{ $sectionPage := site.GetPage (printf "/%s" $section) }}
+          {{ $sectionTitle := cond (and $sectionPage $sectionPage.Title) $sectionPage.Title (title $section) }}
+          {{ $sectionURL := printf "/%s/" $section | relLangURL }}
+          {{ $postCount := len (where $.Site.RegularPages "Section" $section) }}
+          {{ $isCurrentSection := eq $.Section $section }}
+          {{ $highlightCurrentSection := $.Site.Params.highlightCurrentSection | default true }}
+          {{ $classModifier := cond (and $isCurrentSection $highlightCurrentSection) "current" "" }}
+          <a href="{{ $sectionURL }}" class="sidebar__post-link {{ $classModifier }}">
+            {{ if and $isCurrentSection $highlightCurrentSection }}
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "chevron-right" "className" "sidebar__post-link-icon") }}
+            {{ end }}
+            {{ $sectionTitle }} <span class="sidebar__post-link-count">({{ $postCount }})</span>
+          </a>
+        {{ end }}
+      </div>
+    {{ end }}
+    {{ if and (or (eq .Kind "taxonomy") (eq .Kind "term")) (ne .Site.Params.showCurrentTaxonomyInSidebar false) }}
+      <div class="sidebar__posts">
+        {{ $taxonomyName := .Data.Plural }}
+        {{ $taxonomy := cond (isset $.Site.Taxonomies $taxonomyName) (index $.Site.Taxonomies $taxonomyName) (slice) }}
+        {{ $taxonomyPage := $taxonomy.Page }}
+        {{ if $taxonomyPage }}
+          {{ $taxonomyTitle := title $taxonomyName }}
+          {{ if $taxonomyPage.Title }}
+            {{ $taxonomyTitle = $taxonomyPage.Title }}
+          {{ end }}
+          {{ $postCount := len $taxonomy }}
+          {{ $isCurrentTaxonomy := eq $.Kind "taxonomy" }}
+          {{ $highlightCurrentTaxonomy := $.Site.Params.highlightCurrentTaxonomy | default true }}
+          {{ $classModifier := cond (and $isCurrentTaxonomy $highlightCurrentTaxonomy) "current" "" }}
+          <a href="{{ $taxonomyPage.Permalink }}" class="sidebar__post-link taxon {{ $classModifier }}">
+            {{ if and $isCurrentTaxonomy $highlightCurrentTaxonomy }}
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "chevron-right" "className" "sidebar__post-link-icon") }}
+            {{ end }}
+            {{ $taxonomyTitle }} <span class="sidebar__post-link-count">({{ $postCount }})</span>
+          </a>
+        {{ end }}
+        {{ if eq .Kind "term" }}
+          {{ $termName := $.Title }}
+          {{ $postCount := len $.Pages }}
+          {{ $highlightCurrentTerm := $.Site.Params.highlightCurrentTerm | default true }}
+          {{ $classModifier := cond $highlightCurrentTerm "current" "" }}
+          <a href="{{ .RelPermalink }}" class="sidebar__post-link taxon {{ $classModifier }}">
+            {{ if $highlightCurrentTerm }}
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "chevron-right" "className" "sidebar__post-link-icon") }}
+            {{ end }}
+            {{ $termName }} <span class="sidebar__post-link-count">({{ $postCount }})</span>
+          </a>
+        {{ end }}
+      </div>
+    {{ end }}
   </div>
   {{- partial "footer.html" (dict "context" . "footerClassModifier" "sidebar") -}}
 </div>

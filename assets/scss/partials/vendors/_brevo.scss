@@ -1,0 +1,266 @@
+@use 'modules/color_theme' as color;
+@use 'modules/config' as conf;
+
+.newsletter {
+  scroll-margin-top: 75px;
+
+  &:has(.sib-form-block__img) {
+    scroll-margin-top: 170px;
+  }
+
+  &:has(+ .contact-form) .sib-form #sib-form .sib-form-block__img {
+    display: none;
+  }
+
+  .sib-form {
+    text-align: center;
+    background-color: transparent;
+    padding: 0 20px;
+    margin: 30px 0;
+
+    #error-message {
+      font-size: 16px;
+      text-align: left;
+      color: #661d1d;
+      background-color: #ffeded;
+      border-radius: 3px;
+      border-color: #ff4949;
+      max-width: 540px;
+    }
+
+    #success-message {
+      font-size: 16px;
+      text-align: left;
+      color: #085229;
+      background-color: #e7faf0;
+      border-radius: 3px;
+      border-color: #13ce66;
+      max-width: 540px;
+    }
+
+    #sib-container {
+      text-align: center;
+      background-color: transparent;
+      max-width: 540px;
+      border-radius: 4px;
+      border-width: 1px;
+      border-color: #c0ccd9;
+      border-style: solid;
+      direction: ltr;
+
+      @include color.themed() {
+        box-shadow: color.t('shadow');
+      }
+
+      a {
+        text-decoration: underline;
+        color: #2bb2fc;
+      }
+    }
+
+    #sib-form {
+      .sib-form-block {
+        padding: 8px 16px;
+        position: relative;
+        text-align: left;
+        background-color: transparent;
+
+        &.title {
+          text-align: center;
+
+          h2 {
+            font-size: 3.2rem;
+            font-weight: 400;
+            margin-top: 8px;
+            margin-bottom: 0;
+
+            @include conf.mobile {
+              font-size: 2.8rem;
+            }
+          }
+        }
+
+        &.subtitle {
+          text-align: center;
+          font-size: 16px;
+        }
+
+        &__img {
+          position: absolute;
+          top: -85px;
+          right: -85px;
+          display: block;
+          margin: 16px auto;
+          width: 150px;
+          height: 150px;
+          border-radius: 75px;
+          border: 1px solid #c0ccd9;
+          backdrop-filter: blur(20px);
+        }
+
+        .sib-text-form-block {
+          @include color.themed() {
+            color: color.t('primary-light');
+          }
+        }
+
+        .clickable__icon {
+          vertical-align: middle;
+        }
+
+        .svgIcon-sphere {
+          width: 63px;
+          height: 63px;
+        }
+
+        input[type^='checkbox'],
+        textarea,
+        input:first-child,
+        input:last-child {
+          padding: 0.5rem 0.75rem;
+          outline: none;
+          background: transparent;
+          height: auto;
+
+          @include color.themed() {
+            color: color.t('primary');
+          }
+
+          &::placeholder,
+          &:-ms-input-placeholder,
+          &::-ms-input-placeholder,
+          &::-webkit-input-placeholder,
+          &::-moz-placeholder,
+          &:-moz-placeholder {
+            text-align: left;
+          }
+        }
+      }
+
+      .entry__field {
+        background: transparent;
+
+        @include color.themed() {
+          border: 1px solid color.t('primary-lighter');
+        }
+      }
+
+      .entry__label {
+        font-weight: 600;
+        text-align: left;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .entry__error {
+        padding: 10px;
+        line-height: 1.2em;
+        font-size: 16px;
+        text-align: left;
+        color: #661d1d;
+        background-color: #ffeded;
+        border-radius: 3px;
+        border-color: #ff4949;
+      }
+
+      .entry__specification {
+        font-size: 12px;
+        text-align: left;
+        margin-top: 4px;
+      }
+
+      .checkbox__label {
+        font-size: 14px;
+        text-align: left;
+        background-color: transparent;
+      }
+
+      // Button container
+      > div:nth-of-type(4) > .sib-form-block {
+        text-align: left;
+      }
+
+      .sib-form-block__button {
+        font-size: 16px;
+        text-align: center;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #ffffff;
+        background-color: #3e4857;
+        border-radius: 3px;
+        border-width: 0px;
+        width: 100%;
+        margin-bottom: 8px;
+
+        &.is-disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .sib-optin,
+      .sib-form__declaration {
+        transition:
+          max-height 0.5s ease,
+          padding 0.5s ease,
+          margin 0.5s ease;
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 16px;
+      }
+
+      .is-visible {
+        max-height: 500px; /* Adjust as needed to fit content */
+        padding: 8px 16px;
+      }
+
+      .sib-form__declaration {
+        @include color.themed() {
+          color: color.t('primary-light');
+        }
+        font-size: 14px;
+        text-align: left;
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+.post__content .newsletter .sib-form {
+  padding: 0;
+  margin: 60px 0;
+}
+
+.post__content .newsletter:not(:has(+ .contact-form)) .sib-form:has(img),
+.post + .newsletter:not(:has(+ .contact-form)) .sib-form:has(img) {
+  margin-top: 96px;
+}
+
+@media screen and (max-width: 480px) {
+  .sib-form #sib-container {
+    padding: 16px 9px;
+  }
+  .newsletter .sib-form #sib-form .sib-form-block.title {
+    font-size: 28px;
+  }
+  .post__content .sib-form {
+    margin: 30px 0;
+  }
+}
+
+@media (max-width: 1135px) {
+  .newsletter:not(:has(+ .contact-form)) .sib-form:has(img) {
+    margin-top: 106px;
+  }
+  .post__content .newsletter:not(:has(+ .contact-form)) .sib-form:has(img),
+  .post + .newsletter:not(:has(+ .contact-form)) .sib-form:has(img) {
+    margin-top: 146px;
+  }
+  .newsletter .sib-form #sib-form .sib-form-block img {
+    top: -135px;
+    left: unset;
+    right: unset;
+    position: relative;
+    margin-bottom: -125px;
+  }
+}

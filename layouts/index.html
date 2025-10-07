@@ -33,9 +33,19 @@
   {{ end }}
 
   {{ $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
-  {{ range $paginator.Pages }}
+  {{ range $index, $page := $paginator.Pages }}
+    {{ $postClass := "" }}
+    {{ $target := "" }}
+    {{ $postUrl := .RelPermalink }}
+    {{ if .Params.redirectUrl }}
+      {{ $postUrl = .Params.redirectUrl }}
+      {{ $target = "_blank" }}
+      {{ $postClass = "external" }}
+    {{ end }}
+    {{- $headerAnchor := .Title | anchorize -}}
     <div
-      class="post {{ with .Site.Params.doNotLoadAnimations }}
+      id="{{ $headerAnchor }}"
+      class="post {{ $postClass }} {{ with .Site.Params.doNotLoadAnimations }}
         .
       {{ else }}
         animated fadeInDown
@@ -43,17 +53,93 @@
     >
       {{ if .Params.thumbnail }}
         <div class="post__thumbnail-wrapper">
-          <a href="{{ .RelPermalink }}">
-            <img class="post__thumbnail" src="{{ .Params.thumbnail | relURL }}" alt="Thumbnail image" loading="lazy" />
-          </a>
+          {{ $loading := "lazy" }}
+          {{ $fetchpriority := "low" }}
+          {{ if le $index 1 }}
+            {{ $loading = "eager" }}
+            {{ $fetchpriority = "high" }}
+          {{ end }}
+          {{ $imageOpts := dict
+            "src" .Params.thumbnail
+            "hdSrc" .Params.thumbnailHd
+            "alt" "Thumbnail image"
+            "link" $postUrl
+            "target" $target
+            "rel" (cond (eq $target "_blank") "noopener noreferrer" "")
+            "page" $page
+            "loading" $loading
+            "fetchpriority" $fetchpriority
+            "class" "post__thumbnail"
+          }}
+          {{ partial "image.html" $imageOpts }}
+          {{ if ne .Site.Params.showMetaInThumbnailOverlay false }}
+            <div class="post__thumbnail-overlay">
+              <div class="left">
+                <div>
+                  {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__thumbnail-overlay-icon") }}
+                  <span class="post__footer-date"
+                    >{{ if isset .Site.Params "indexdateformat" }}
+                      {{ if .Site.Params.localizedDates }}
+                        {{ time.Format .Site.Params.indexDateFormat .Date }}
+                      {{ else }}
+                        {{ .Date.Format .Site.Params.indexDateFormat }}
+                      {{ end }}
+
+                    {{ else }}
+                      {{ if .Site.Params.localizedDates }}
+                        {{ time.Format "Mon, Jan 2, 2006" .Date }}
+                      {{ else }}
+                        {{ .Date.Format "Mon, Jan 2, 2006" }}
+                      {{ end }}
+
+                    {{ end }}</span
+                  >
+                </div>
+                {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
+                  <div>
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__thumbnail-overlay-icon") }}
+                    <span class="post__footer-date" data-humanize-date="{{ .Lastmod.Unix }}">
+                      {{ partial "humanize-date.html" (time .Lastmod) }}
+                    </span>
+                  </div>
+                {{ end }}
+                {{ if .Params.attr }}
+                  <div>
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "camera" "className" "post__thumbnail-overlay-icon") }}
+                    <span class="post__footer-date">
+                      Image:
+                      {{ if .Params.attrLink }}
+                        <a href="{{ .Params.attrLink }}" target="_blank" rel="noopener">{{ .Params.attr }}</a>
+                      {{ else }}
+                        {{ .Params.attr }}
+                      {{ end }}
+                    </span>
+                  </div>
+                {{ end }}
+              </div>
+              <div class="middle"></div>
+              <div class="right">
+                {{ if not (eq .Params.noShare true) }}
+                  {{ partial "share.html" . }}
+                {{ end }}
+              </div>
+            </div>
+          {{ end }}
         </div>
       {{ end }}
       <div class="post__content">
+        {{ $titleClass := "upper" }}
         {{ if (eq .Site.Params.disableTitleCapitalization true) }}
-          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-        {{ else }}
-          <h3><a href="{{ .RelPermalink }}">{{ upper .Title }}</a></h3>
+          {{ $titleClass = "" }}
         {{ end }}
+        <h2 class="post__content-title {{ $titleClass }}">
+          <a href="{{ $postUrl }}" target="{{ $target }}">
+            {{ if .Params.redirectUrl }}
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "post__content-icon") }}
+            {{ end }}
+            {{ .Title }}
+          </a>
+        </h2>
         {{ if .Site.Params.fullPostContent }}
           <p>{{ .Content | safeHTML | plainify }}</p>
         {{ else }}
@@ -63,32 +149,51 @@
         {{- if and (.Truncated) (.Site.Params.readMore) -}}
           <a href="{{ .RelPermalink }}">{{ i18n "read_more" }}</a>
         {{- end -}}
+
+        {{ if or (not .Params.thumbnail) (eq .Site.Params.showMetaInThumbnailOverlay false) }}
+          <ul class="post__meta">
+            <li class="post__meta-item">
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__meta-icon") }}
+              <span class="post__meta-text"
+                >{{ if isset .Site.Params "singledateformat" }}
+                  {{ if .Site.Params.localizedDates }}
+                    {{ time.Format .Site.Params.singleDateFormat .Date }}
+                  {{ else }}
+                    {{ .Date.Format .Site.Params.singleDateFormat }}
+                  {{ end }}
+
+                {{ else }}
+                  {{ if .Site.Params.localizedDates }}
+                    {{ time.Format "Mon, Jan 2, 2006" .Date }}
+                  {{ else }}
+                    {{ .Date.Format "Mon, Jan 2, 2006" }}
+                  {{ end }}
+
+                {{ end }}
+              </span>
+            </li>
+            {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
+              <li class="post__meta-item">
+                {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__meta-icon") }}
+                <span class="post__meta-text" data-humanize-date="{{ .Lastmod.Unix }}">
+                  {{ partial "humanize-date.html" (time .Lastmod) }}
+                </span>
+              </li>
+            {{ end }}
+            {{ if not (eq .Params.noShare true) }}
+              <li class="post__meta-item">
+                {{ partial "share.html" . }}
+              </li>
+            {{ end }}
+          </ul>
+        {{ end }}
       </div>
 
-      <!--  -->
+      <!-- Footer with categories and tags -->
       <div class="post__footer">
-        <em class="fas fa-calendar-day"></em>
-        <span class="post__footer-date"
-          >{{ if isset .Site.Params "indexdateformat" }}
-            {{ if .Site.Params.localizedDates }}
-              {{ time.Format .Site.Params.indexDateFormat .Date }}
-            {{ else }}
-              {{ .Date.Format .Site.Params.indexDateFormat }}
-            {{ end }}
-
-          {{ else }}
-            {{ if .Site.Params.localizedDates }}
-              {{ time.Format "Mon, Jan 2, 2006" .Date }}
-            {{ else }}
-              {{ .Date.Format "Mon, Jan 2, 2006" }}
-            {{ end }}
-
-          {{ end }}</span
-        >
         {{ with .Page.Params.Categories }}
           {{ partial "taxonomy/categories.html" . }}
         {{ end }}
-
         {{ with .Page.Params.Tags }}
           {{ partial "taxonomy/tags.html" . }}
         {{ end }}
@@ -98,4 +203,9 @@
   <div class="pagination">
     {{ partial "pagination.html" . }}
   </div>
+  {{ if .Site.Params.brevoFormAction }}
+    <div id="join-newsletter" class="newsletter">
+      {{ partial "brevo.html" . }}
+    </div>
+  {{ end }}
 {{ end }}

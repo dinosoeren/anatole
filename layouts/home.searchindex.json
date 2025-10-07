@@ -1,0 +1,199 @@
+
+{{- $minWordLength := int (math.Max (.Site.Params.flexSearch.minWordLength | default 3) 1) -}}
+{{- $topWordsCount := int (math.Max (.Site.Params.flexSearch.topWordsCount | default 50) 0) -}}
+{{- $keySentencesCount := int (math.Max (.Site.Params.flexSearch.keySentencesCount | default 2) 0) -}}
+{{- $paragraphWordsCount := int (math.Max (.Site.Params.flexSearch.paragraphWordsCount | default 3) 0) -}}
+{{- $paragraphWordsLimit := int (math.Max (.Site.Params.flexSearch.paragraphWordsLimit | default 50) 0) -}}
+{{- $indexHeadings := .Site.Params.flexSearch.indexHeadings | default true -}}
+
+{{- $commonWords := slice "the" "and" "or" "but" "in" "on" "no" "not" "into" "onto" "at" "to" "for" "from" "of" "with" "by" "is" "are" "was" "were" "be" "been" "have" "has" "had" "do" "dont" "does" "doesnt" "did" "will" "would" "wouldve" "could" "couldve" "should" "shouldve" "may" "might" "can" "must" "shall" "a" "an" "then" "this" "that" "these" "those" "what" "how" "why" "when" "where" "i" "id" "ive" "you" "youd" "youve" "he" "hed" "she" "it" "we" "they" "me" "him" "her" "us" "them" "my" "your" "his" "her" "its" "our" "their" "there" "theyre" -}}
+{{- with .Site.Params.flexSearch.commonWords -}}
+  {{- $commonWords = append $commonWords . -}}
+{{- end -}}
+
+{{- /* Index pages from main sections */ -}}
+{{- $pages := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
+{{- $searchIndex := slice -}}
+{{- range $index, $element := where $pages "Params.excludeSearch" "!=" true -}}
+  {{- $plainContent := .Plain | htmlUnescape -}}
+  {{- $rawMarkdown := .RawContent -}}
+
+  {{- /* If optimization is disabled, use plain content as is */ -}}
+  {{- $content := dict
+    "plain" $plainContent
+  -}}
+
+  {{- if not (eq .Site.Params.flexSearch.optimizeContent false) -}}
+    {{- $lowerTags := slice -}}
+    {{- range .Params.tags | default slice -}}
+      {{- $lowerTags = $lowerTags | append (lower .) -}}
+    {{- end -}}
+
+    {{- /* Extract headings from raw markdown content if enabled */ -}}
+    {{- $headings := slice -}}
+    {{- if $indexHeadings -}}
+      {{- $headingMatches := findRE `(?m)^#{1,6}\s+(.+)$` $rawMarkdown -}}
+      {{- range $headingMatches -}}
+        {{- $heading := replaceRE `^#{1,6}\s+` "" . -}}
+        {{- $headings = $headings | append $heading -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* Extract sentences using better regex pattern */ -}}
+    {{- $cleanContent := replaceRE `\s+` " " $plainContent -}}
+    {{- $sentenceMatches := findRE `[^.!?]*[.!?]+` $cleanContent -}}
+    {{- $sentences := slice -}}
+    {{- range $sentenceMatches -}}
+      {{- $trimmed := trim . " \t\n\r" -}}
+      {{- if ne $trimmed "" -}}
+        {{- $sentences = $sentences | append $trimmed -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $sentenceCount := len $sentences -}}
+
+    {{- /* Get first N and last N sentences based on config */ -}}
+    {{- $keySentences := slice -}}
+    {{- if gt $sentenceCount 0 -}}
+      {{- range $i := seq $keySentencesCount -}}
+        {{- $idx := sub $i 1 -}}
+        {{- if lt $idx $sentenceCount -}}
+          {{- $keySentences = $keySentences | append (index $sentences $idx) -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if gt $sentenceCount $keySentencesCount -}}
+        {{- range $i := seq $keySentencesCount -}}
+          {{- $idx := sub (sub $sentenceCount $keySentencesCount) (sub $i 1) -}}
+          {{- if and (ge $idx 0) (lt $idx $sentenceCount) (ge $idx $keySentencesCount) -}}
+            {{- $keySentences = $keySentences | append (index $sentences $idx) -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* Extract paragraphs and get first/last N words from each, excluding shortcodes */ -}}
+    {{- $contentWithoutShortcodes := replaceRE `\{\{<[^>]*>\}\}` "" ($rawMarkdown | plainify) -}}
+    {{- $paragraphs := split (lower $contentWithoutShortcodes) "\n\n" -}}
+    {{- $paragraphWords := slice -}}
+    {{- range $paragraphs -}}
+      {{- $paragraph := trim . " \t\n\r" -}}
+      {{- if ne $paragraph "" -}}
+        {{- /* Strip markdown formatting for clean text */ -}}
+        {{- $cleanParagraph := replaceRE `#{1,6}\s+` "" $paragraph -}}
+        {{- $cleanParagraph = replaceRE `\*\*([^*]+)\*\*` "$1" $cleanParagraph -}}
+        {{- $cleanParagraph = replaceRE `\*([^*]+)\*` "$1" $cleanParagraph -}}
+        {{- $cleanParagraph = replaceRE "`([^`]+)`" "$1" $cleanParagraph -}}
+        {{- $cleanParagraph = replaceRE `\[([^\]]+)\]\([^)]+\)` "$1" $cleanParagraph -}}
+        {{- $cleanParagraph = replaceRE `\s+` " " $cleanParagraph -}}
+        {{- $words := split $cleanParagraph " " -}}
+        {{- $cleanWords := slice -}}
+        {{- range $words -}}
+          {{- $word := trim . " \t\n\r" -}}
+          {{- $word = replaceRE `[^\p{L}\p{N}\p{M}]` "" $word -}}
+          {{- if and (ne $word "") (ge (len $word) $minWordLength) (not (in $commonWords $word)) (not (in $lowerTags $word)) -}}
+            {{- $cleanWords = $cleanWords | append $word -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $words = $cleanWords -}}
+        {{- $wordCount := len $words -}}
+        {{- if gt $wordCount 0 -}}
+          {{- /* First N words */ -}}
+          {{- range first $paragraphWordsCount $words -}}
+            {{- $paragraphWords = $paragraphWords | append . -}}
+          {{- end -}}
+          {{- /* Last N words if more than 2*N words total */ -}}
+          {{- if gt $wordCount (mul $paragraphWordsCount 2) -}}
+            {{- range last $paragraphWordsCount $words -}}
+              {{- $paragraphWords = $paragraphWords | append . -}}
+            {{- end -}}
+          {{- else if gt $wordCount $paragraphWordsCount -}}
+            {{- /* Add remaining words if between N+1 and 2*N words total */ -}}
+            {{- $remaining := after $paragraphWordsCount $words -}}
+            {{- range $remaining -}}
+              {{- $paragraphWords = $paragraphWords | append . -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+
+        {{- /* Remove duplicates from paragraphWords and limit to N words */ -}}
+        {{- $uniqueParagraphWords := slice -}}
+        {{- $seenWords := dict -}}
+        {{- range $paragraphWords -}}
+          {{- $lowerWord := lower . -}}
+          {{- if not (index $seenWords $lowerWord) -}}
+            {{- $uniqueParagraphWords = $uniqueParagraphWords | append . -}}
+            {{- $seenWords = merge $seenWords (dict $lowerWord true) -}}
+            {{- if ge (len $uniqueParagraphWords) $paragraphWordsLimit -}}
+              {{- break -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $paragraphWords = $uniqueParagraphWords -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* Count word frequency for top N words, filtering out HTML entities and invalid words */ -}}
+    {{- $cleanContentForWords := replaceRE `\{\{<[^>]*>\}\}` "" $plainContent -}}
+    {{- $allWords := split (lower $cleanContentForWords) " " -}}
+    {{- $wordFreq := dict -}}
+    {{- range $allWords -}}
+      {{- $word := trim . " \t\n\r" -}}
+      {{- $word = replaceRE `[^\p{L}\p{N}\p{M}]` "" $word -}}
+      {{- if and (ne $word "") (ge (len $word) $minWordLength) (not (in $commonWords $word)) (not (in $lowerTags $word)) -}}
+        {{- $count := add (index $wordFreq $word | default 0) 1 -}}
+        {{- $wordFreq = merge $wordFreq (dict $word $count) -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* Sort words by frequency and get top N */ -}}
+    {{- $sortedWords := slice -}}
+    {{- range $word, $count := $wordFreq -}}
+      {{- $sortedWords = $sortedWords | append (dict "word" $word "count" $count) -}}
+    {{- end -}}
+    {{- $sortedWords = sort $sortedWords ".count" "desc" -}}
+    {{- $topWords := dict -}}
+    {{- range first $topWordsCount $sortedWords -}}
+      {{- $topWords = merge $topWords (dict .word .count) -}}
+    {{- end -}}
+
+    {{- /* Combine all extracted content */ -}}
+    {{- $content = dict
+      "topWords" $topWords
+      "headings" $headings
+      "sentences" $keySentences
+      "paragraphWords" $paragraphWords
+    -}}
+  {{- end -}}
+
+  {{- /* Prepare thumbnail options for partial */ -}}
+  {{- $thumbnailOpts := dict
+    "src" (.Params.thumbnail | default "")
+    "alt" .Title
+    "page" $element
+    "class" "search__suggestions-thumbnail"
+    "loading" "lazy"
+    "width" "40"
+    "height" "40"
+  -}}
+
+  {{- /* Get image data directly from resizer */ -}}
+  {{- $thumbnailImg := dict -}}
+  {{- if .Params.thumbnail -}}
+    {{- $thumbnailImg = partial "image-resize.html" $thumbnailOpts -}}
+  {{- end -}}
+
+  {{- $searchIndex = $searchIndex | append
+    (dict
+      "id" $index
+      "title" .Title
+      "date" (.Date.Format "2006-01-02")
+      "dateunix" .Date.Unix
+      "permalink" .RelPermalink
+      "thumbnailImg" $thumbnailImg
+      "thumbnailUrl" (.Params.thumbnail | default "")
+      "tags" (.Params.tags | default slice)
+      "content" $content
+      "summary" (htmlUnescape .Summary | plainify)
+    )
+  -}}
+{{- end -}}
+{{- $searchIndex | jsonify -}}

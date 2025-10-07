@@ -1,8 +1,16 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .sidebar {
   margin-top: 40px;
+  padding-top: 16px;
+
+  @include conf.smaller-than-desktop {
+    @include navpos.bottom {
+      margin-top: 0;
+    }
+  }
 
   @include conf.desktop {
     z-index: 2;
@@ -14,14 +22,14 @@
     flex-direction: column;
 
     @include color.themed() {
+      box-shadow: 0 0 5px color.t('shadow-color');
+
       @include conf.ltr {
         margin-right: 4px;
-        border-right: color.t('border');
       }
 
       @include conf.rtl {
         margin-left: 4px;
-        border-left: color.t('border');
       }
     }
   }
@@ -43,8 +51,10 @@
 
     &-item {
       display: inline;
-      padding: 0 4px;
+      padding: 0 0.2em;
       line-height: 0;
+      position: relative;
+      top: 2px;
     }
   }
 
@@ -75,6 +85,104 @@
 
       h1 {
         margin: 0;
+      }
+    }
+  }
+
+  &__posts {
+    margin: 1.5em 0 0 0;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    justify-content: center;
+
+    & + & {
+      margin-top: 0.5em;
+    }
+  }
+
+  &__post-link {
+    display: inline-block;
+    opacity: 0.7;
+    padding: 0.3em 1em;
+    border-radius: 999px;
+    color: color.t('primary');
+    font-size: 0.95em;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      border 0.2s,
+      opacity 0.2s;
+    margin-bottom: 0.25em;
+
+    @include color.themed() {
+      $pastels: color.t('pastels');
+      @for $i from 1 through length($pastels) {
+        &:nth-child(#{$i}n),
+        &.taxon:nth-child(#{$i % 2}n) {
+          background: color.t('accent');
+          border: 1px solid nth($pastels, $i);
+
+          &.current {
+            opacity: 1;
+            background: nth($pastels, $i);
+            box-shadow: color.t('shadow');
+          }
+
+          &:not(.current):hover,
+          &:not(.current):focus {
+            color: nth($pastels, $i);
+          }
+        }
+      }
+
+      &:hover,
+      &:focus {
+        opacity: 1;
+        background: color.t('accent');
+        border-color: color.t('border-color');
+        color: color.t('primary');
+        text-decoration: none;
+
+        .sidebar__post-link-count {
+          opacity: 1;
+        }
+      }
+
+      .theme--dark & {
+        &:hover,
+        &:focus {
+          background: color.t('primary');
+        }
+      }
+    }
+
+    &-count {
+      font-weight: 400;
+      font-family: monospace;
+      font-size: 0.8em;
+      opacity: 0.8;
+    }
+
+    &-icon {
+      width: 0.8em;
+      height: 0.8em;
+      margin-left: -0.3em;
+      position: relative;
+      top: 1px;
+
+      @include color.themed() {
+        color: color.t('accent');
+      }
+    }
+
+    &.current {
+      .sidebar__post-link-count {
+        font-weight: 800;
       }
     }
   }

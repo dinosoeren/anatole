@@ -6,11 +6,18 @@
   border-radius: 2px;
   display: inline-block;
   font-size: 1.4rem;
+  backdrop-filter: blur(5px);
 
   @include color.themed() {
     border: color.t('border');
-    background-color: color.t('primary-lighter');
+    background-color: mix(color.t('primary-lighter'), rgba(0, 0, 0, 0.1));
     color: color.t('primary') !important;
+  }
+
+  &:hover {
+    @include color.themed() {
+      border: 1px solid color.t('primary-light');
+    }
   }
 
   @include conf.ltr {

@@ -1,0 +1,18 @@
+{{- $imageOpts := dict
+  "src" (.Get "src")
+  "alt" ((.Get "alt") | default (.Get "caption"))
+  "caption" (.Get "caption")
+  "title" (.Get "title")
+  "link" (.Get "link")
+  "target" (.Get "target")
+  "rel" (.Get "rel")
+  "attr" (.Get "attr")
+  "attrlink" (.Get "attrlink")
+  "page" .Page
+  "loading" (.Get "loading" | default "lazy")
+  "fetchpriority" (.Get "fetchpriority" | default "low")
+  "height" (.Get "height")
+  "width" (.Get "width")
+  "class" (.Get "class")
+-}}
+{{- partial "image.html" $imageOpts -}}

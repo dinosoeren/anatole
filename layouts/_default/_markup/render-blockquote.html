@@ -1,0 +1,38 @@
+{{ $emojiClass := dict
+  "✅" "success"
+  "❌" "failure"
+  "ℹ️" "info"
+  "⚠️" "warning"
+  "📣" "disclaimer"
+  "💡" "tip"
+  "❓" "question"
+}}
+
+{{ $emojiIcon := dict
+  "✅" (partial "icons/icon" (dict "vendor" "fas" "name" "circle-check"))
+  "❌" (partial "icons/icon" (dict "vendor" "fas" "name" "circle-xmark"))
+  "ℹ️" (partial "icons/icon" (dict "vendor" "fas" "name" "note-sticky"))
+  "⚠️" (partial "icons/icon" (dict "vendor" "fas" "name" "triangle-exclamation"))
+  "📣" (partial "icons/icon" (dict "vendor" "fas" "name" "hand-point-right"))
+  "💡" (partial "icons/icon" (dict "vendor" "fas" "name" "lightbulb"))
+  "❓" (partial "icons/icon" (dict "vendor" "fas" "name" "circle-question"))
+}}
+
+{{ $content := strings.TrimSpace (.Text | plainify) }}
+{{ $firstChar := substr $content 0 1 }}
+{{ $class := index $emojiClass $firstChar }}
+{{ if not $class }}
+  {{/* Try the first two characters (some emojis are 2 chars) */}}
+  {{ $firstChar = substr $content 0 2 }}
+  {{ $class = index $emojiClass $firstChar }}
+  {{ if not $class }}
+    {{ $class = "info" }}
+    {{ $firstChar = "ℹ️" }}
+  {{ end }}
+{{ end }}
+{{ $icon := index $emojiIcon $firstChar }}
+
+
+<blockquote class="{{ $class }}">
+  {{ (replace .Text $firstChar $icon) | safeHTML }}
+</blockquote>

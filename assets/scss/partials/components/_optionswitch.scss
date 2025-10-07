@@ -7,6 +7,26 @@
   &__label {
     cursor: pointer;
     white-space: nowrap;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    padding: 16px 0;
+
+    @include conf.desktop {
+      padding: 0;
+    }
+
+    &.nav__link--active {
+      @include conf.desktop {
+        padding-bottom: 24px;
+        margin-bottom: -24px;
+      }
+    }
+
+    .icon {
+      margin-left: 2px;
+      top: 0;
+    }
   }
 
   &__list {
@@ -19,9 +39,10 @@
       border-radius: 5px;
       position: absolute;
       top: 32px;
+      backdrop-filter: blur(5px);
 
       @include color.themed() {
-        background: color.t('primary-lighter');
+        background: adjust-color(color.t('accent'), $alpha: -0.05);
         box-shadow: color.t('shadow');
       }
     }
@@ -33,7 +54,6 @@
       bottom: 0;
       text-align: center;
       white-space: nowrap;
-      padding-top: 24px;
 
       @include color.themed() {
         color: color.t('primary');
@@ -41,7 +61,19 @@
 
       @include conf.desktop {
         padding: 12px;
+        text-align: left;
       }
+    }
+  }
+
+  &__link {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 16px 0;
+
+    @include conf.desktop {
+      padding: 0;
     }
   }
 
@@ -59,9 +91,9 @@
       width: 14px;
 
       @include color.themed() {
-        background: color.t('primary-lighter');
-        box-shadow: color.t('shadow');
-        border-color: color.t('primary-lighter');
+        background: adjust-color(color.t('accent'), $alpha: -0.05);
+        box-shadow: 0 0 10px color.t('shadow-color');
+        border-color: adjust-color(color.t('accent'), $alpha: -0.05);
       }
     }
   }

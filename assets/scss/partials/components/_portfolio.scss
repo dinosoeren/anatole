@@ -1,18 +1,65 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
+
+/* Fade in transition used to hide content shift from applied filter on render */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 
 .portfolio {
   position: relative;
-  padding-left: 0px;
-  padding-right: 0px;
-  padding-bottom: 0px;
-  padding-top: 48px;
+  padding: 0;
 
-  @include conf.desktop {
-    padding: 48px;
+  @include navpos.navpos() {
+    scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') + 30px);
+
+    @include conf.desktop {
+      scroll-margin-top: navpos.navpos('scroll-margin-desktop');
+    }
   }
 
-  &::before {
+  @include conf.desktop {
+    padding: 36px 48px;
+  }
+
+  &-section {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  &__description,
+  &-section__description {
+    a {
+      @include color.themed() {
+        color: color.t('info');
+      }
+    }
+
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
+  }
+
+  &__icon {
+    position: relative;
+    top: 2px;
+  }
+
+  &.post__content {
+    padding: 2px 48px 36px 48px;
+
+    @include conf.desktop {
+      padding: 0 48px 36px 48px;
+    }
+  }
+
+  &:not(.post__content)::before {
     content: '';
     position: absolute;
     top: 10%;
@@ -33,15 +80,35 @@
     letter-spacing: 1px;
     font-size: 2.6rem;
     line-height: 1;
-    font-weight: 600;
+    font-weight: 300;
+
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
+
+    @include navpos.navpos() {
+      scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') + 50px);
+
+      @include conf.desktop {
+        scroll-margin-top: calc(navpos.navpos('scroll-margin-desktop') + 45px);
+      }
+    }
+  }
+
+  &__name {
+    letter-spacing: 1px;
+    font-size: 2.2rem;
+    line-height: 1.3em;
+    font-weight: 500;
+
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
   }
 
   &__image {
     max-width: 100%;
     min-width: 100%;
-    box-shadow: color.t('shadow');
+    height: auto;
     overflow: hidden;
-    transition: box-shadow 0.3s ease;
     object-fit: cover;
     border-bottom: 0px;
     display: block;
@@ -52,13 +119,16 @@
       background-color: #fff;
       position: relative;
       overflow: hidden;
+      left: -30px;
+      width: 100svw;
+
+      /* Fade in to hide content shift from applied filter */
+      animation: 1s ease-in-out 0s 1 fadeIn;
 
       &--right,
       &--left {
         margin-right: auto;
         margin-left: auto;
-        width: calc(100% - 64px);
-        padding: 32px 32px 0px 32px;
         max-width: inherit;
 
         @include color.themed() {
@@ -66,11 +136,16 @@
         }
 
         @include conf.desktop {
+          left: 0;
           width: 60%;
           object-fit: contain;
           max-width: none;
           border-radius: 0.5em;
           padding: 0;
+
+          @include color.themed() {
+            border: 1px solid color.t('primary-lighter');
+          }
         }
       }
 
@@ -90,38 +165,42 @@
     }
   }
 
-  &__description {
+  &__image-wrapper + &__details {
+    margin-top: -30px;
+
+    @include conf.desktop {
+      margin-top: -48px;
+    }
+  }
+
+  &__details {
     padding: 32px;
     position: relative;
+    border-radius: 0.5em;
 
     @include color.themed() {
-      background-color: color.t('accent');
+      border: color.t('border');
+      background: adjust-color(color.t('shadow-color'), $alpha: -0.2);
+      box-shadow: 0 5px 10px adjust-color(color.t('shadow-color'), $alpha: -0.15);
     }
 
     @include conf.desktop {
       padding: 48px;
-      border-radius: 0.5em;
-
-      @include color.themed() {
-        box-shadow: color.t('shadow');
-      }
     }
 
     &--left,
     &--right {
-      margin-top: -24px;
+      padding-top: 16px;
+      backdrop-filter: blur(20px);
 
       @include color.themed() {
         border-bottom: color.t('border');
       }
 
       @include conf.desktop {
-        @include color.themed() {
-          background: color.t('primary-lighter');
-        }
+        padding-top: 32px;
         border-bottom: 0px;
         width: 60%;
-        margin-top: -48px;
       }
     }
 
@@ -129,6 +208,15 @@
       @include conf.desktop {
         margin-left: auto;
       }
+    }
+
+    .separator {
+      /* Fade in to hide content shift from applied filter */
+      animation: 1s ease-in-out 0s 1 fadeIn;
+    }
+
+    .tag {
+      cursor: pointer;
     }
   }
 
@@ -138,6 +226,13 @@
     list-style: none;
     padding: 0;
     row-gap: 0.8rem;
+
+    /* Fade in to hide content shift from applied filter */
+    animation: 1s ease-in-out 0s 1 fadeIn;
+
+    @include color.themed() {
+      color: color.t('primary-light');
+    }
 
     &-item {
       &:not(:last-child) {
@@ -151,7 +246,6 @@
     display: inline-block;
     position: relative;
     outline: 0;
-    background: transparent;
 
     text-align: center;
     text-decoration: none;
@@ -159,11 +253,12 @@
     white-space: nowrap;
     font-style: normal;
     border-radius: 999em;
-    padding: 10px;
+    padding: 10px 15px;
 
     @include color.themed() {
-      border: 1px solid color.t('primary-light');
+      background: color.t('accent');
       color: color.t('info');
+      border: 1px solid color.t('primary-lighter');
     }
 
     &:hover {
@@ -183,6 +278,174 @@
 
     &-wrapper {
       padding-bottom: 1em;
+
+      /* Fade in to hide content shift from applied filter */
+      animation: 1s ease-in-out 0s 1 fadeIn;
+    }
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.portfolio-filter-tags {
+  display: flex;
+  align-items: stretch;
+  position: sticky;
+  z-index: 1;
+  padding: 10px 30px;
+  width: calc(100% - 60px);
+  backdrop-filter: blur(5px);
+
+  @include color.themed() {
+    background: adjust-color(color.t('accent'), $alpha: -0.3);
+  }
+
+  @include navpos.navpos() {
+    top: navpos.navpos('filter-top-mobile');
+
+    @include conf.desktop {
+      top: navpos.navpos('filter-top-desktop');
+    }
+  }
+
+  .multi-select-container {
+    position: relative;
+    flex: 1;
+  }
+
+  .input-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(100% - 10px);
+    padding: 5px;
+    border-radius: 0.25rem 0 0 0.25rem;
+    border: 0;
+
+    @include color.themed() {
+      background: adjust-color(color.t('primary'), $alpha: -0.9);
+    }
+
+    &:has(input:focus) {
+      @include color.themed() {
+        background: adjust-color(color.t('info'), $alpha: -0.7);
+      }
+    }
+  }
+
+  #tag-input {
+    outline: none;
+    border: none;
+    background: none;
+    flex: 1;
+    width: 40%;
+    min-width: 90px;
+    max-width: 110px;
+    padding: calc(0.25rem + 1px);
+    font-size: 16px;
+
+    @include color.themed() {
+      color: color.t('primary');
+    }
+
+    &::placeholder {
+      @include color.themed() {
+        color: adjust-color(color.t('primary'), $alpha: -0.5);
+      }
+    }
+  }
+
+  .selected-tags {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.8em;
+
+    &:not(:has(> :first-child)) {
+      display: none;
+    }
+  }
+
+  .selected-tag {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    @include color.themed() {
+      background: color.t('accent');
+      border: color.t('border');
+    }
+  }
+
+  .remove-tag {
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .dropdown {
+    position: absolute;
+    width: 100%;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1000;
+    font-size: 0.9em;
+
+    @include color.themed() {
+      background: color.t('accent');
+      border: color.t('border');
+    }
+  }
+
+  .dropdown-option {
+    padding: 0.5rem;
+    cursor: pointer;
+
+    &:hover,
+    &.focused {
+      @include color.themed() {
+        color: color.t('accent');
+        background: color.t('info');
+      }
+    }
+
+    span {
+      font-family: monospace;
+      font-size: 0.8em;
+      opacity: 0.8;
+      margin-left: 0.3em;
+    }
+  }
+
+  .portfolio-filter-clear {
+    padding: 5px 10px;
+    border-radius: 0 0.25rem 0.25rem 0;
+    cursor: pointer;
+    background: none;
+    border: 0;
+
+    @include color.themed() {
+      color: color.t('primary');
+      background: adjust-color(color.t('primary'), $alpha: -0.9);
+    }
+
+    &[disabled] {
+      border-color: transparent;
+      cursor: not-allowed;
+
+      @include color.themed() {
+        color: adjust-color(color.t('primary'), $alpha: -0.5);
+      }
+    }
+
+    &:focus {
+      @include color.themed() {
+        border-color: color.t('info');
+      }
     }
   }
 }

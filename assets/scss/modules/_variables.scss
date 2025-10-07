@@ -1,19 +1,29 @@
 $accent--lightmode: #fff;
 $primary--lightmode: #464646;
+$primary-dark--lightmode: #000;
 $primary-light--lightmode: #9f9f9f;
 $primary-lighter--lightmode: #eeeeee;
+$border--lightmode: 1px solid #eeeeee;
+$shadow-color--lightmode: rgba(10, 10, 10, 0.2);
 $shadow--lightmode: 0 8px 16px rgba(10, 10, 10, 0.1);
 
 $accent--darkmode: #152028;
 $primary--darkmode: #eeeeee;
+$primary-dark--darkmode: #fff;
 $primary-light--darkmode: #9f9f9f;
 $primary-lighter--darkmode: #464646;
-$shadow--darkmode: 0 8px 16px rgba(226, 226, 226, 0.1);
+$border--darkmode: 1px solid #384249;
+$shadow-color--darkmode: rgba(0, 0, 0, 0.4);
+$shadow--darkmode: 0 8px 16px rgba(0, 0, 0, 0.4);
 
 $warning: #ffc107;
 $info: #6086b4;
 $success: #51d88a;
 $danger: #ef5753;
+$tip: #ffee8c;
+$question: #ffba8c;
+$disclaimer: #a4a4a4;
 
-$thumbnail-height: 15em;
+$thumbnail-height: 25em;
+$thumbnail-sm-height: 15em;
 $body-max-width: 1920px;

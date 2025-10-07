@@ -1,0 +1,16 @@
+[module]
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/hugomods/icons
+    path = 'github.com/hugomods/icons'
+    disable = false
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/hugomods/icons/vendors/font-awesome
+    path = 'github.com/hugomods/icons/vendors/font-awesome'
+    disable = false
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/dinosoeren/hugo-pwa@gomod
+    path = 'github.com/dinosoeren/hugo-pwa'
+    disable = false

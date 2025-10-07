@@ -1,2 +1,29 @@
-<h3>{{ T "toc" }}</h3>
-{{ .TableOfContents }}
+{{- $toc := partial "toc-generator.html" .page -}}
+{{- if $toc -}}
+  {{- $isHome := eq .page.Kind "home" -}}
+  {{- $pageTitle := i18n "toc" | default "Table of contents" -}}
+  {{- if $isHome -}}
+    {{- $pageNumber := 1 -}}
+    {{- if .Paginator -}}
+      {{- $pageNumber = .page.Paginator.PageNumber -}}
+    {{- end -}}
+    {{- $pageTitle = i18n "page_num_posts" $pageNumber | default (printf "Page %d posts" $pageNumber) -}}
+  {{- end -}}
+
+  {{- /* Desktop TOC (for sidebar) - only show on desktop */ -}}
+  {{- $wrapperClassName := "toc-wrapper" -}}
+  {{- $titleClassName := "toc-title" -}}
+  {{- $classModifier := cond (and (eq .size "desktop") (eq .page.Site.Params.centerTocInSidebar true)) "center" "" -}}
+  {{- if eq .size "mobile" -}}
+    {{- $wrapperClassName = "toc-wrapper-mobile" -}}
+    {{- $titleClassName = "toc-title-mobile" -}}
+    {{- /* Add position-specific classes for mobile TOC */ -}}
+    {{- if .position -}}
+      {{- $wrapperClassName = printf "%s toc--%s" $wrapperClassName .position -}}
+    {{- end -}}
+  {{- end -}}
+  <div class="{{ $wrapperClassName }} {{ $classModifier }}">
+    <div class="{{ $titleClassName }}">{{ $pageTitle }}</div>
+    {{ $toc }}
+  </div>
+{{- end -}}

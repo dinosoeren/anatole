@@ -1,0 +1,84 @@
+{{- /* Get image data from resizer */ -}}
+{{- $imageData := partial "image-resize.html" . -}}
+
+{{- /* Figure logic */ -}}
+{{- $isFigure := or .caption .title .attr -}}
+{{- if $isFigure -}}
+  <figure {{ with .class }}class="{{ . }}"{{ end }}>
+{{- end -}}
+
+{{- /* Link wrapper logic */ -}}
+{{- if .link -}}
+  <a
+    href="{{ .link | safeURL }}"
+    {{- if strings.HasPrefix .link "http" }}
+      target="_blank" rel="noopener noreferrer"
+    {{- else }}
+      {{- with .target }} target="{{ . }}"{{ end }}
+      {{- with .rel }} rel="{{ . }}"{{ end }}
+    {{- end }}
+  >
+{{- end -}}
+
+{{- /* Render appropriate image element based on data */ -}}
+{{- if $imageData.webpSrcset -}}
+  {{- /* Responsive image with WebP support */ -}}
+  <picture>
+    <source
+      type="image/webp"
+      srcset="{{ $imageData.webpSrcset }}"
+      {{- with $imageData.sizes }} sizes="{{ . }}"{{ end }}
+    />
+    <img
+      src="{{ $imageData.src }}"
+      {{- with $imageData.srcset }} srcset="{{ . }}"{{ end }}
+      {{- with $imageData.sizes }} sizes="{{ . }}"{{ end }}
+      alt="{{ $imageData.alt }}"
+      {{- with $imageData.hdSrc }} data-hd-src="{{ . }}"{{ end }}
+      {{- with .caption }} title="{{ . | markdownify | plainify }}"{{ end }}
+      {{- with $imageData.loading }} loading="{{ . }}"{{ end }}
+      {{- with $imageData.fetchpriority }} fetchpriority="{{ . }}"{{ end }}
+      {{- if not $isFigure }}
+        {{- with $imageData.class }} class="{{ . }}"{{ end }}
+      {{- end }}
+      {{- with $imageData.width }} width="{{ . }}"{{ end }}
+      {{- with $imageData.height }} height="{{ . }}"{{ end }}
+    />
+  </picture>
+{{- else -}}
+  {{- /* Simple image */ -}}
+  <img
+    src="{{ $imageData.src }}"
+    alt="{{ $imageData.alt }}"
+    {{- with $imageData.hdSrc }} data-hd-src="{{ . }}"{{ end }}
+    {{- with .caption }} title="{{ . | markdownify | plainify }}"{{ end }}
+    {{- with $imageData.loading }} loading="{{ . }}"{{ end }}
+    {{- with $imageData.fetchpriority }} fetchpriority="{{ . }}"{{ end }}
+    {{- if not $isFigure }}
+      {{- with $imageData.class }} class="{{ . }}"{{ end }}
+    {{- end }}
+    {{- with $imageData.width }} width="{{ . }}"{{ end }}
+    {{- with $imageData.height }} height="{{ . }}"{{ end }}
+  />
+{{- end -}}
+
+{{- if .link }}</a>{{ end -}}
+
+{{- /* Figure caption logic */ -}}
+<!-- prettier-ignore -->
+{{- if $isFigure -}}
+    <figcaption>
+      {{- with .title }}
+        <h4>{{ . }}</h4>
+      {{- end }}
+      {{- if or .caption .attr }}<p>
+        {{ .caption | markdownify }}
+        {{- with .attrlink }}
+          <a href="{{ . }}" target="_blank" rel="noopener noreferrer">
+        {{- end }}
+        {{ .attr | markdownify }}
+        {{- if .attrlink }}</a>{{ end }}</p>
+      {{- end }}
+    </figcaption>
+  </figure>
+{{- end -}}

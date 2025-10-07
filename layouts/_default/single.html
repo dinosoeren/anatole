@@ -8,7 +8,16 @@
   >
     {{ if .Params.thumbnail }}
       <div class="post__thumbnail-wrapper">
-        <img class="post__thumbnail" src="{{ .Params.thumbnail | relURL }}" alt="Thumbnail image" />
+        {{ $imageOpts := dict
+          "src" .Params.thumbnail
+          "hdSrc" .Params.thumbnailHd
+          "alt" "Thumbnail image"
+          "page" .Page
+          "loading" "eager"
+          "fetchpriority" "high"
+          "class" "post__thumbnail"
+        }}
+        {{ partial "image.html" $imageOpts }}
       </div>
     {{ end }}
     <div class="post__content">
@@ -27,7 +36,7 @@
       {{ if $isPostSection }}
         <ul class="post__meta">
           <li class="post__meta-item">
-            <em class="fas fa-calendar-day post__meta-icon"></em>
+            {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-day" "className" "post__meta-icon") }}
             <span class="post__meta-text"
               >{{ if isset .Site.Params "singledateformat" }}
                 {{ if .Site.Params.localizedDates }}
@@ -46,31 +55,59 @@
               {{ end }}
             </span>
           </li>
+          {{ if and .Lastmod (not (eq .Lastmod .Date)) }}
+            <li class="post__meta-item">
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "pen-to-square" "className" "post__meta-icon") }}
+              <span class="post__meta-text" data-humanize-date="{{ .Lastmod.Unix }}">
+                {{ partial "humanize-date.html" (time .Lastmod) }}
+              </span>
+            </li>
+          {{ end }}
           <li class="post__meta-item">
-            <em class="fas fa-stopwatch post__meta-icon"></em>
+            {{ partial "icons/icon" (dict "vendor" "fas" "name" "stopwatch" "className" "post__meta-icon") }}
             <span class="post__meta-text">{{ i18n "reading_time" .ReadingTime }}</span>
           </li>
+          {{ if .Params.attr }}
+            <li class="post__meta-item">
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "camera" "className" "post__meta-icon") }}
+              <span class="post__meta-text">
+                Image:
+                {{ if .Params.attrLink }}
+                  <a href="{{ .Params.attrLink }}" target="_blank" rel="noopener">{{ .Params.attr }}</a>
+                {{ else }}
+                  {{ .Params.attr }}
+                {{ end }}
+              </span>
+            </li>
+          {{ end }}
+          {{ if not (eq .Params.noShare true) }}
+            <li class="post__meta-item">
+              {{ partial "share.html" . }}
+            </li>
+          {{ end }}
         </ul>
       {{ end }}
 
       {{- partial "expirationnote.html" . -}}
 
-      {{- if (eq .Params.toc true) -}}
-        {{- partial "toc.html" . -}}
-      {{- end -}}
-
-      {{ .Content }}
+      {{ .Content | safeHTML }}
 
       {{- if isset .Params "series" -}}
         {{- partial "series.html" . -}}
       {{- end -}}
 
-      {{- if (eq .Site.Params.relatedPosts true) -}}
-        {{- partial "related.html" . -}}
-      {{- end -}}
+      {{ if and .Site.Params.brevoFormAction (ne .Params.noNewsletter true) }}
+        <div id="join-newsletter" class="newsletter">
+          {{ partial "brevo.html" . }}
+        </div>
+      {{ end }}
 
       {{- if (eq .Params.contact true) -}}
         {{- partial "contact.html" . -}}
+      {{- end -}}
+
+      {{- if (eq .Site.Params.relatedPosts true) -}}
+        {{- partial "related.html" . -}}
       {{- end -}}
 
       {{- if (eq .Site.Params.mermaid.enable true) -}}
@@ -86,6 +123,10 @@
         {{ partial "taxonomy/tags.html" . }}
       {{ end }}
     </div>
+
+    {{ if not (eq .Params.noShare true) }}
+      {{ partial "share.html" . }}
+    {{ end }}
 
     {{ $isPostSection := (eq .Type "post") }}
     {{ if .Site.Params.postSectionName }}

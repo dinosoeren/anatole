@@ -1,31 +1,87 @@
-baseURL = "https://example.com"
+baseURL = "https://acrobati.netlify.app/"
 languageCode = "en"
 DefaultContentLanguage = "en"
 title = "Website of Jane Doe"
 
 # theme as hugo module
-#theme = "github.com/lxndrblz/anatole"
+# theme = "github.com/dinosoeren/anatole"
 # theme as git submodule
-theme = "anatole"
+# theme = "anatole"
 
 summarylength = 10
 enableEmoji = true
 enableRobotsTXT = true
 
 
-
 # Syntax highlighting
-pygmentsUseClasses = true   
+pygmentsUseClasses = true
 pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
 
 # Localized dates requires Hugo version 0.87.0
 localizedDates = false
 
+[module]
+  # uncomment line below for temporary local development of module
+  # replacements = "github.com/dinosoeren/anatole -> ../"
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/dinosoeren/anatole@gomod
+    path = "github.com/dinosoeren/anatole"
+    disable = false
+  # Note: sites importing the theme as a hugo module don't need to import the
+  # icon modules directly. This is only needed for exampleSite local dev.
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/hugomods/icons
+    path = 'github.com/hugomods/icons'
+    disable = false
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/hugomods/icons/vendors/font-awesome
+    path = 'github.com/hugomods/icons/vendors/font-awesome'
+    disable = false
+  # Note: sites importing the theme as a hugo module don't need to import the
+  # pwa module directly. This is only needed for exampleSite local dev.
+  [[module.imports]]
+    # upgrade with:
+    # hugo mod get github.com/dinosoeren/hugo-pwa@gomod
+    path = 'github.com/dinosoeren/hugo-pwa'
+    disable = false
+
+[outputs]
+  home = ["html", "rss", "searchIndex", "offline", "staticrypt"]
+
+[outputFormats]
+  [outputFormats.searchIndex]
+    mediaType = "application/json"
+    baseName = "search-index"
+    isPlainText = true
+    notAlternative = true
+  [outputFormats.offline]
+    path = "offline"
+    baseName = "index"
+    isHTML = true
+    notAlternative = true
+    mediaType = "text/html"
+  [outputFormats.staticrypt]
+    path = "staticrypt"
+    baseName = "template"
+    isHTML = false
+    isPlainText = true
+    notAlternative = true
+    mediaType = "text/plain"
+
 [markup]
     [markup.goldmark]
+      # Enable custom html in markdown for e.g. {{% loading %}} shortcode
       [markup.goldmark.renderer]
         unsafe=true
+      # Enable attributes for img render hook and figure shortcode
+      [markup.goldmark.parser]
+        wrapStandAloneImageWithinParagraph = false
+        [markup.goldmark.parser.attribute]
+          block = true
     [markup.goldmark.extensions]
       [markup.goldmark.extensions.passthrough]
         enable = true
