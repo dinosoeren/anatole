@@ -15,8 +15,8 @@
 
 [build.environment]
   HUGO_VERSION = "0.147.8"
-  DART_SASS_VERSION = "1.89.2"
-  NODE_VERSION = "22"
+  DART_SASS_VERSION = "1.102.0"
+  NODE_VERSION = "24"
   GO_VERSION = "1.24.3"
   HUGO_ENV = "production"
   HUGO_BASEURL = "https://acrobati.netlify.app"

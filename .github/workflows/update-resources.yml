@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - master
+      # `gomod` is the branch consumed as a Hugo module by downstream sites
+      # (walls.dev pins a pseudo-version of it), and it is well ahead of
+      # master. Without it listed here the committed resources/ on the branch
+      # people actually build against never get regenerated.
+      - gomod
 
 jobs:
   build:
@@ -11,8 +16,21 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+      # This job commits the compiled output of the SCSS pipeline, so the Dart
+      # Sass version it runs is baked into the repo. `snap install --edge` used
+      # to be used here, which pulled whatever bleeding-edge build shipped that
+      # day — meaning the committed resources drifted from DART_SASS_VERSION in
+      # netlify.toml, and downstream sites got CSS (and therefore CSP integrity
+      # hashes) that no pinned toolchain reproduces. Read the pin instead.
       - name: install dart sass
-        run: sudo snap install dart-sass --edge
+        run: |
+          set -euo pipefail
+          DART_SASS_VERSION=$(grep -oP '^\s*DART_SASS_VERSION\s*=\s*"\K[^"]+' netlify.toml)
+          cd "$(mktemp -d)"
+          curl -sSLO "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
+          tar -xzf "dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz" -C /opt
+          sudo ln -sf /opt/dart-sass/sass /usr/local/bin/sass
+          sass --version
       - name: setup hugo
         uses: peaceiris/actions-hugo@v3
         with:
@@ -21,7 +39,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
       - name: install
         run: |
           npm ci
