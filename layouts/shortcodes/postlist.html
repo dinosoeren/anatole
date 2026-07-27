@@ -1,0 +1,6 @@
+{{ $posts := slice }}
+{{ range (.Params | default slice) }}
+  {{ $posts = $posts | append ($.Site.GetPage .) }}
+{{ end }}
+
+{{ partial "postlist.html" $posts }}

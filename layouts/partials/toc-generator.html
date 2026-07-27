@@ -1,0 +1,156 @@
+{{- $context := . -}}
+{{- $isHome := eq .Kind "home" -}}
+{{- $isSinglePost := eq .Kind "page" -}}
+{{- $tocItems := slice -}}
+{{- $hasContact := and $isSinglePost (eq .Params.contact true) -}}
+{{- $hasNewsletter := and $isSinglePost .Site.Params.brevoFormAction (ne .Params.noNewsletter true) -}}
+
+{{- /* Use Hugo's built-in TableOfContents for content headings */ -}}
+{{- $builtInTOC := .TableOfContents -}}
+{{- $hasContentTOC := and $builtInTOC (ne $builtInTOC "<nav id=\"TableOfContents\"></nav>") -}}
+
+{{- /* Check for list headers */ -}}
+{{- $hasListItems := and (ne $isSinglePost true) (ne $isHome true) (gt .Pages.Len 0) -}}
+
+{{- /* For portfolio pages, get portfolio section headings */ -}}
+{{- $data := "" -}}
+{{- if .CurrentSection.File -}}
+  {{- $data = index .Site.Data .CurrentSection.File.ContentBaseName -}}
+{{- else -}}
+  {{- $data = index .Site.Data .Section -}}
+{{- end -}}
+
+{{- $hasPortfolio := and $data $data.portfolioitems -}}
+
+{{- /* Check for additional sections */ -}}
+{{- $hasSeries := and $isSinglePost (isset .Params "series") -}}
+{{- $hasRelated := and $isSinglePost (eq .Site.Params.relatedPosts true) (gt (len (.Site.RegularPages.Related .)) 0) -}}
+
+{{- /* Check for comments */ -}}
+{{- $hasComments := false -}}
+{{- if $isSinglePost -}}
+  {{- $isPostSection := (eq .Type "post") -}}
+  {{- if .Site.Params.postSectionName -}}
+    {{- $isPostSection = or $isPostSection (eq .Type .Site.Params.postSectionName) -}}
+  {{- end -}}
+  {{- if .Site.Params.postSections -}}
+    {{- $isPostSection = or $isPostSection (in .Site.Params.postSections .Type) -}}
+  {{- end -}}
+  {{- if and $isPostSection (ne .Page.Params.disableComments true) -}}
+    {{- if .Site.Config.Services.Disqus.Shortname -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.utterances.repo -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.giscus.repo -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.CommentoURL -}}{{- $hasComments = true -}}{{- end -}}
+    {{- if .Site.Params.gitalk.repo -}}{{- $hasComments = true -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Only generate TOC if we have content */ -}}
+{{- if or $isHome $hasContact $hasNewsletter $hasContentTOC $hasListItems $hasPortfolio $hasSeries $hasRelated $hasComments -}}
+  <nav class="table-of-contents">
+    {{- /* Add content TOC items */ -}}
+    {{- if $hasContentTOC -}}
+      {{- /* Unfortunately Hugo doesn't auto-remove links from TOC headings */ -}}
+      {{- /* so we need to process each <li> and remove non-anchor links */ -}}
+      {{- $tocContent := $builtInTOC | replaceRE `<nav[^>]*>` "" | replaceRE `</nav>` "" -}}
+      {{- /* Process each li item while preserving ul nesting structure */ -}}
+      {{- $processedContent := $tocContent -}}
+      {{- $liItems := findRE `<li[^>]*>.*?</li>` $tocContent -}}
+
+      {{- range $liItems -}}
+        {{- $originalLi := . -}}
+        {{- /* Extract the anchor href from the first # link */ -}}
+        {{- $anchorHref := findRE `href="#[^"]*"` $originalLi 1 -}}
+        {{- if and $anchorHref (eq (len $anchorHref) 1) -}}
+          {{- $href := (index $anchorHref 0) | replaceRE `href="([^"]*)"` "$1" -}}
+          {{- /* Get the li class attribute if present */ -}}
+          {{- $liClass := findRE `<li[^>]*class="[^"]*"` $originalLi 1 -}}
+          {{- $liClassAttr := "" -}}
+          {{- if $liClass -}}
+            {{- $liClassAttr = (index $liClass 0) | replaceRE `<li[^>]*class="([^"]*)".*` ` class="$1"` -}}
+          {{- end -}}
+          {{- /* Get the anchor class attribute if present */ -}}
+          {{- $anchorClass := findRE `<a href="#[^"]*"[^>]*class="[^"]*"` $originalLi 1 -}}
+          {{- $anchorClassAttr := "" -}}
+          {{- if $anchorClass -}}
+            {{- $anchorClassAttr = (index $anchorClass 0) | replaceRE `.*class="([^"]*)".*` ` class="$1"` -}}
+          {{- end -}}
+          {{- /* Extract plain text content from the entire li */ -}}
+          {{- $plainText := $originalLi | plainify -}}
+          {{- /* Create the cleaned li */ -}}
+          {{- $cleanedLi := printf `<li%s><a href="%s"%s>%s</a></li>` $liClassAttr $href $anchorClassAttr $plainText -}}
+          {{- /* Replace the original li with the cleaned version */ -}}
+          {{- $processedContent = replace $processedContent $originalLi $cleanedLi -}}
+        {{- end -}}
+      {{- end -}}
+
+      {{- $processedContent | safeHTML -}}
+    {{- end -}}
+    <ul>
+      {{- /* Add home paginated items */ -}}
+      {{- if $isHome -}}
+        {{- $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) -}}
+        {{- range $index, $page := $paginator.Pages -}}
+          {{- $anchorTitle := .Title | anchorize -}}
+          <li><a href="#{{ $anchorTitle }}">{{ .Title | markdownify }}</a></li>
+        {{- end -}}
+      {{- end -}}
+
+      {{- /* Add list items */ -}}
+      {{- if $hasListItems -}}
+        {{- if and .Site.Params.listTaxonomyByCount (eq .Kind "taxonomy") -}}
+          {{- $anchorTitle := .Title | anchorize -}}
+          <li><a href="#{{ $anchorTitle }}">{{ .Title }}</a></li>
+        {{- else -}}
+          {{ range .Pages.GroupByDate "2006" }}
+            {{- $anchorTitle := .Key | anchorize -}}
+            <li><a href="#{{ $anchorTitle }}">{{ .Key }}</a></li>
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+
+      {{- /* Add portfolio section headings */ -}}
+      {{- if $hasPortfolio -}}
+        {{- range $data.portfolioitems -}}
+          {{- $anchorTitle := .title | anchorize -}}
+          <li><a href="#{{ $anchorTitle }}">{{ .title | markdownify }}</a></li>
+          <ul>
+            {{- range $i, $p := .portfolioitem -}}
+              {{- $anchorName := .name | anchorize -}}
+              <li><a href="#{{ $anchorName }}">{{ .name | markdownify }}</a></li>
+            {{- end -}}
+          </ul>
+        {{- end -}}
+      {{- end -}}
+
+      {{- /* Add series section */ -}}
+      {{- if $hasSeries -}}
+        <li>
+          <a href="#posts-in-series"
+            >{{ i18n "series_posts" (dict "Title" (replace (index .Params.series 0) "-" " " | title)) | default "Posts in Series" }}</a
+          >
+        </li>
+      {{- end -}}
+
+      {{- /* Add newsletter section */ -}}
+      {{- if $hasNewsletter -}}
+        <li><a href="#join-newsletter">{{ .Site.Params.brevoFormTitle | default (i18n "newsletter") }}</a></li>
+      {{- end -}}
+
+      {{- /* Add contact section */ -}}
+      {{- if $hasContact -}}
+        <li><a href="#contact-form">{{ .Site.Params.contactFormTitle | default (i18n "contact") }}</a></li>
+      {{- end -}}
+
+      {{- /* Add related posts section */ -}}
+      {{- if $hasRelated -}}
+        <li><a href="#related-posts">{{ i18n "related" | default "Related Posts" }}</a></li>
+      {{- end -}}
+
+      {{- /* Add comments section */ -}}
+      {{- if $hasComments -}}
+        <li><a href="#comment">{{ i18n "comments" | default "Comments" }}</a></li>
+      {{- end -}}
+    </ul>
+  </nav>
+{{- end -}}

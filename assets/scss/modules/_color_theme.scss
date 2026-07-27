@@ -5,28 +5,62 @@ $themes: (
   light: (
     accent: var.$accent--lightmode,
     primary: var.$primary--lightmode,
+    primary-dark: var.$primary-dark--lightmode,
     primary-light: var.$primary-light--lightmode,
     primary-lighter: var.$primary-lighter--lightmode,
     info: var.$info,
     shadow: var.$shadow--lightmode,
-    border: 1px solid var.$primary-lighter--lightmode,
+    shadow-color: var.$shadow-color--lightmode,
+    border: var.$border--lightmode,
     alert: var.$warning,
     success: var.$success,
     warning: var.$warning,
     danger: var.$danger,
+    tip: var.$tip,
+    question: var.$question,
+    disclaimer: var.$disclaimer,
+    pastels: (
+      #a3c9f9,
+      // pastel blue
+      #f9d1d1,
+      // pastel pink
+      #b8e2d3,
+      // pastel mint
+      #ffe5b4,
+      // pastel peach
+      #e2d5f7,
+      // pastel lavender
+    ),
   ),
   dark: (
     accent: var.$accent--darkmode,
     primary: var.$primary--darkmode,
+    primary-dark: var.$primary-dark--darkmode,
     primary-light: var.$primary-light--darkmode,
     primary-lighter: var.$primary-lighter--darkmode,
     info: var.$info,
     shadow: var.$shadow--darkmode,
-    border: 1px solid var.$primary-lighter--darkmode,
+    shadow-color: var.$shadow-color--darkmode,
+    border: var.$border--darkmode,
     alert: var.$warning,
     success: var.$success,
     warning: var.$warning,
     danger: var.$danger,
+    tip: var.$tip,
+    question: var.$question,
+    disclaimer: var.$disclaimer,
+    pastels: (
+      #3a5379,
+      // muted blue
+      #7a4c58,
+      // muted pink
+      #3d6656,
+      // muted mint
+      #7a6240,
+      // muted peach
+      #5a4c7a,
+      // muted lavender
+    ),
   ),
 );
 

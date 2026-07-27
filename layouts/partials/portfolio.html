@@ -1,0 +1,172 @@
+{{ $data := "" }}
+{{ if .CurrentSection.File }}
+  {{ $data = index .Site.Data .CurrentSection.File.ContentBaseName }}
+{{ else }}
+  {{ $data = index .Site.Data .Section }}
+{{ end }}
+{{ if $data }}
+  <div
+    class="portfolio-filter-tags {{ with .Site.Params.doNotLoadAnimations }}
+      .
+    {{ else }}
+      animated fadeInDown
+    {{ end }}"
+  >
+    <div class="multi-select-container">
+      <div class="input-container">
+        <div class="selected-tags" id="selected-tags">
+          <input type="text" id="tag-input" placeholder="Filter by tags..." autocomplete="off" />
+        </div>
+      </div>
+      <div class="dropdown hidden" id="tag-dropdown">
+        {{- $allTags := dict -}}
+        {{- range $index, $element := $data.portfolioitems -}}
+          {{- range $i, $p := .portfolioitem -}}
+            {{- range .tags -}}
+              {{- $tagCount := index $allTags . | default 0 -}}
+              {{- $allTags = merge $allTags (dict . (add $tagCount 1)) -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $sortedTags := slice -}}
+        {{- range $tag, $count := $allTags -}}
+          {{- $sortedTags = $sortedTags | append (dict "tag" $tag "count" $count) -}}
+        {{- end -}}
+        {{- $sortedTags = sort $sortedTags "tag" -}}
+        {{- range $sortedTags -}}
+          <div class="dropdown-option">{{- .tag -}}<span>({{ .count }})</span></div>
+        {{- end -}}
+      </div>
+    </div>
+    <button class="portfolio-filter-clear" title="Clear" aria-label="Clear">
+      {{ partial "icons/icon" (dict "vendor" "fas" "name" "xmark" "className" "portfolio__icon") }}
+    </button>
+  </div>
+  {{ range $index, $elemen:= $data.portfolioitems }}
+    <div
+      class="post {{ with .Site.Params.doNotLoadAnimations }}
+        .
+      {{ else }}
+        animated fadeInDown
+      {{ end }}"
+    >
+      {{ $anchorTitle := .title | anchorize }}
+      <h2 class="portfolio__title" id="{{ $anchorTitle }}">{{ title .title }}</h2>
+      {{ if .description }}
+        <p class="portfolio-section__description">{{ .description | markdownify }}</p>
+      {{ end }}
+      <div class="portfolio-section">
+        {{ range $i, $p := .portfolioitem }}
+          {{ $anchorName := .name | anchorize }}
+          <div id="{{ $anchorName }}" class="portfolio" data-tags="{{ delimit .tags "," }}">
+            {{ if .image }}
+              <div
+                class="portfolio__image-wrapper {{ if (modBool $i 2) }}
+                  portfolio__image-wrapper--right
+                {{ else }}
+                  portfolio__image-wrapper--left
+                {{ end }}"
+              >
+                {{ $loading := "lazy" }}
+                {{ if and (eq $index 0) (or (eq $i 0) (eq $i 1)) }}
+                  {{ $loading = "eager" }}
+                {{ end }}
+                {{ $imageOpts := dict
+                  "src" .image
+                  "alt" .name
+                  "page" $
+                  "link" .link
+                  "loading" $loading
+                  "class" "portfolio__image"
+                }}
+                {{ partial "image.html" $imageOpts }}
+              </div>
+            {{ end }}
+            <div
+              class="portfolio__details {{ if (modBool $i 2) }}
+                portfolio__details--left
+              {{ else }}
+                portfolio__details--right
+              {{ end }}"
+            >
+              <h3 class="portfolio__name">{{ .name | markdownify }}</h3>
+              <ul class="portfolio__meta">
+                {{ if .start }}
+                  <li class="portfolio__meta-item">
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "calendar-days" "className" "portfolio__icon") }}
+                    <span>{{ .start }}{{ if and .end (not (eq .end .start)) }}&nbsp;-&nbsp;{{ .end }}{{ end }}</span>
+                  </li>
+                {{ end }}
+                {{ if .venue }}
+                  <li class="portfolio__meta-item">
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "location-dot" "className" "portfolio__icon") }}
+
+
+                    <span>{{ .venue }}</span>
+                  </li>
+                {{ end }}
+                {{ if .status }}
+                  <li class="portfolio__meta-item">
+                    {{ partial "icons/icon" (dict "vendor" "fas" "name" "flag-checkered" "className" "portfolio__icon") }}
+
+
+                    <span>{{ .status }}</span>
+                  </li>
+                {{ end }}
+                {{ if .authors }}
+                  {{ range .authors }}
+                    <li class="portfolio__meta-item">
+                      {{ partial "icons/icon" (dict "vendor" "fas" "name" "at" "className" "portfolio__icon") }}
+                      <span>{{ . }}</span>
+                    </li>
+                  {{ end }}
+
+                {{ end }}
+              </ul>
+              <p class="portfolio__description">{{ .description | markdownify }}</p>
+              {{ if .link }}
+                <div class="portfolio__button-wrapper">
+                  <a
+                    class="portfolio__button"
+                    href="{{ .link | safeURL }}"
+                    {{ if strings.HasPrefix .link "http" }}
+                      target="_blank" rel="noopener"
+                    {{ end }}
+                  >
+                    {{ if strings.HasPrefix .link "http" }}
+                      {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-up-right-from-square" "className" "portfolio__icon") }}
+                    {{ else }}
+                      {{ partial "icons/icon" (dict "vendor" "fas" "name" "arrow-right" "className" "portfolio__icon") }}
+                    {{ end }}
+                    {{- if .linktext -}}
+                      {{ .linktext | markdownify }}
+                    {{- else -}}
+                      Read More
+                    {{- end -}}
+                  </a>
+                </div>
+              {{ end }}
+              <div class="separator">
+                {{ range .tags }}
+                  <a class="tag" role="button">{{ . }}</a>
+                {{ end }}
+              </div>
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+
+  {{- if isset .Params "series" -}}
+    <div class="post__content portfolio">
+      {{- partial "series.html" . -}}
+    </div>
+  {{- end -}}
+
+  {{ if and .Site.Params.brevoFormAction (ne .Params.noNewsletter true) }}
+    <div id="join-newsletter" class="newsletter">
+      {{ partial "brevo.html" . }}
+    </div>
+  {{ end }}
+{{ end }}

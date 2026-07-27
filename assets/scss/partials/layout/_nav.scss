@@ -1,16 +1,46 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .nav {
   $py-desktop: 24px;
 
   display: none;
+  flex-direction: column;
 
   @include conf.desktop {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     box-shadow: none;
+  }
+
+  &--active,
+  .header:not(.nav-loaded) &:hover,
+  .header:not(.nav-loaded):has(.navbar-burger:hover) & {
+    display: flex;
+  }
+
+  // Show above nav only when navbar position is bottom and not desktop
+  &--above {
+    @include conf.smaller-than-desktop {
+      @include navpos.top {
+        display: none !important;
+      }
+    }
+    @include conf.desktop {
+      display: none !important;
+    }
+  }
+
+  // Show below nav only when navbar position is top or is desktop
+  &--below {
+    @include conf.smaller-than-desktop {
+      @include navpos.bottom {
+        display: none !important;
+      }
+    }
   }
 
   &__list {
@@ -19,17 +49,14 @@
     padding: 0;
     width: 100%;
 
-    @include color.themed() {
-      background-color: color.t('primary-lighter');
+    &--end {
+      display: flex;
     }
 
     @include conf.desktop {
       display: flex;
       padding: $py-desktop 30px;
-
-      @include color.themed() {
-        background-color: color.t('accent');
-      }
+      gap: 20px;
 
       &--end {
         flex-shrink: 1;
@@ -38,7 +65,6 @@
     }
 
     &-item {
-      padding: 16px 0;
       text-transform: uppercase;
       text-align: center;
       white-space: nowrap;
@@ -47,31 +73,53 @@
         padding-top: 0;
         padding-bottom: 0;
 
-        &:not(:last-child) {
-          @include conf.ltr {
-            padding-right: 20px;
-          }
-          @include conf.rtl {
-            padding-left: 20px;
-          }
+        &:has(.navpos-switch) {
+          display: none;
         }
+      }
+
+      // Never allow bottom nav on iOS devices due to white space bug.
+      // See https://stackoverflow.com/q/70572209
+      @include conf.ios {
+        &:has(.navpos-switch) {
+          display: none;
+        }
+      }
+
+      // Handle flex layout for theme and navpos switches on mobile
+      @include conf.smaller-than-desktop {
+        &:has(.themeswitch),
+        &:has(.navpos-switch) {
+          flex: 1;
+        }
+      }
+
+      .icon {
+        position: relative;
+        top: 2px;
       }
     }
   }
 
   &__link {
-    &--active {
-      padding-bottom: $py-desktop;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 16px 0;
 
+    @include conf.desktop {
+      padding: 0;
+    }
+
+    &--active {
       @include conf.desktop {
+        padding-bottom: $py-desktop;
+        margin-bottom: -$py-desktop;
+
         @include color.themed() {
           border-bottom: 1px solid color.t('primary');
         }
       }
     }
-  }
-
-  &--active {
-    display: block;
   }
 }

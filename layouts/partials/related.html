@@ -1,9 +1,36 @@
-﻿{{ $related := .Site.RegularPages.Related . | first .Site.Params.numberOfRelatedPosts }}
-{{ with $related }}
-  <h3>{{- T "related_posts" -}}</h3>
-  <ul>
-    {{ range . }}
-      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+﻿{{ $related := "" }}
+{{- if eq .Site.Params.excludeMultipleSeriesFromRelated false -}}
+  {{ $related = .Site.RegularPages.Related . | first .Site.Params.numberOfRelatedPosts }}
+{{ else }}
+  {{ $related = slice }}
+  {{ $series_pages := slice }}
+  {{ range .Site.RegularPages.Related . }}
+    {{ if .Params.series }}
+      {{ $has_new_series := false }}
+      {{ range .Params.series }}
+        {{ if not (in $series_pages .) }}
+          {{ $series_pages = $series_pages | append . }}
+          {{ $has_new_series = true }}
+        {{ end }}
+      {{ end }}
+      {{ if $has_new_series }}
+        {{ $related = $related | append . }}
+      {{ end }}
+    {{ else }}
+      {{ $related = $related | append . }}
     {{ end }}
-  </ul>
+  {{ end }}
+  {{ $related = $related | first .Site.Params.numberOfRelatedPosts }}
+{{ end }}
+{{ with $related }}
+  <h2 id="related-posts">{{- T "related_posts" -}}</h2>
+  {{ if eq $.Site.Params.useSimplePostLists true }}
+    <ul>
+      {{ range . }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{ end }}
+    </ul>
+  {{ else }}
+    {{ partial "postlist.html" . }}
+  {{ end }}
 {{ end }}

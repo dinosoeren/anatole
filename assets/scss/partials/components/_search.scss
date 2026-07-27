@@ -1,0 +1,311 @@
+@use 'modules/color_theme' as color;
+@use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
+
+.search {
+  display: flex;
+  flex-direction: column;
+  margin: 1.5em 30px 0 30px;
+  position: relative;
+
+  @include conf.smaller-than-desktop {
+    margin: 5px;
+    flex: 1;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    padding: 6px 6px 6px 9px;
+    border-radius: 24px;
+    min-width: 16px;
+    position: relative;
+
+    @include color.themed() {
+      $pastels: color.t('pastels');
+      background: nth($pastels, 5);
+
+      @include conf.smaller-than-desktop {
+        background: none;
+      }
+    }
+
+    @include conf.smaller-than-desktop {
+      padding: 0;
+    }
+
+    &::after {
+      content: 'Search';
+      padding: 0 0.7rem;
+      font-weight: 400;
+      font-size: 0.9em;
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Open Sans',
+        'Helvetica Neue',
+        sans-serif;
+
+      @include conf.smaller-than-desktop {
+        content: '';
+        padding: 0;
+      }
+    }
+
+    > .hi-svg-inline {
+      flex-shrink: 0;
+      transition: left 100ms;
+
+      @include conf.smaller-than-desktop {
+        position: absolute;
+        left: 0;
+      }
+    }
+  }
+
+  &:hover label,
+  &.active label,
+  & label:has(+ input[type='search']:focus),
+  &.no-expand label {
+    padding: 6px;
+    margin-right: 0.5rem;
+
+    @include conf.smaller-than-desktop {
+      padding: 0;
+      margin: 0;
+      min-width: 0;
+    }
+
+    &::after {
+      content: '';
+      padding: 0;
+    }
+
+    > .hi-svg-inline {
+      @include conf.smaller-than-desktop {
+        left: 9px;
+      }
+    }
+  }
+
+  &:hover input[type='search'],
+  &.active input[type='search'],
+  input[type='search']:focus,
+  &.no-expand input[type='search'] {
+    width: 100%;
+    opacity: 1;
+    padding: 0.1em 0.5em 0 0.5em;
+
+    @include conf.smaller-than-desktop {
+      padding-left: calc(1em + 15px);
+    }
+  }
+
+  &__no-results {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9em;
+
+    @include color.themed() {
+      color: color.t('primary-light');
+    }
+
+    @include conf.desktop {
+      text-align: left;
+    }
+  }
+
+  &box {
+    display: flex;
+    width: 100%;
+    position: relative;
+    justify-content: center;
+  }
+
+  input[type='search'] {
+    opacity: 0;
+    border-radius: 0.2rem;
+    outline: none;
+    line-height: 2em;
+    width: 0;
+    padding: 0.1em 0 0 0;
+    overflow-x: hidden;
+    transition: width 200ms;
+    font-size: 16px;
+
+    @include color.themed() {
+      border: 1px solid color.t('primary-light');
+      background: color.t('accent');
+      caret-color: color.t('primary');
+      color: color.t('primary');
+    }
+
+    &:focus {
+      @include color.themed() {
+        border: 1px solid color.t('primary-light');
+      }
+    }
+
+    &::placeholder {
+      @include color.themed() {
+        color: color.t('primary-light');
+      }
+    }
+
+    &::-webkit-search-cancel-button {
+      appearance: none;
+    }
+  }
+
+  &__suggestions {
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.3rem;
+
+    @include conf.desktop {
+      left: 3rem;
+      top: 4rem;
+      position: absolute;
+      width: calc(100% - 3rem);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+
+      @include color.themed() {
+        background: adjust-color(color.t('accent'), $alpha: -0.3);
+        box-shadow: 0 0.5rem 1rem color.t('shadow-color');
+        border: 1px solid color.t('primary-lighter');
+      }
+    }
+
+    &--hidden {
+      display: none;
+    }
+
+    // Show suggestions when hovering, and when focused + search
+    // index has not loaded + toc is not selected (expanded)
+    &:hover,
+    .sidebar .search:not(.active) .searchbox:has(input[type='search']:focus) + &,
+    .header:not(.expanded):has(.search:not(.active)):has(input[type='search']:focus) & {
+      display: flex;
+    }
+
+    // Always hide Search suggestions below trigger when nav is on bottom
+    &--below {
+      @include navpos.bottom {
+        display: none !important;
+      }
+    }
+
+    // Always hide Search suggestions above trigger when nav is on top
+    &--above {
+      @include navpos.top {
+        display: none !important;
+      }
+    }
+
+    &:has(.search__suggestions-item) {
+      padding: 0 0 0.5rem 0;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      gap: 1rem;
+
+      @include color.themed() {
+        &:not(:last-child) {
+          border-bottom: 0 dashed color.t('primary-lighter');
+        }
+      }
+
+      &:focus,
+      &:focus-visible,
+      &:hover {
+        cursor: pointer;
+        outline: none;
+
+        @include color.themed() {
+          background: adjust-color(color.t('primary-lighter'), $alpha: -0.6);
+        }
+      }
+
+      img,
+      picture {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+
+        @include conf.desktop {
+          width: 30px;
+          height: 30px;
+        }
+
+        @include conf.midscreen {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      img {
+        object-fit: cover;
+        border-radius: 4px;
+      }
+    }
+
+    &-title {
+      font-weight: 500;
+
+      span {
+        @include color.themed() {
+          color: color.t('primary-light');
+        }
+
+        &:last-of-type {
+          font-size: 0.75em;
+        }
+      }
+
+      @include conf.desktop {
+        font-size: 1.3rem;
+      }
+
+      @include conf.midscreen {
+        font-size: 1.6rem;
+      }
+    }
+  }
+}
+
+.sidebar .search {
+  display: none;
+
+  @include conf.desktop {
+    display: flex;
+  }
+
+  &__suggestions {
+    @include conf.smaller-than-desktop {
+      display: none;
+    }
+  }
+}
+
+.header .search {
+  @include conf.desktop {
+    display: none;
+  }
+
+  &__suggestions {
+    @include conf.desktop {
+      display: none;
+    }
+  }
+}

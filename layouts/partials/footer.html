@@ -25,10 +25,60 @@
     {{ end }}
   </ul>
 </footer>
-{{- partial "medium-zoom.html" .context -}}
-{{- if (hasPrefix .context.Site.Config.Services.GoogleAnalytics.ID "G-") -}}
-  {{- template "_internal/google_analytics.html" .context -}}
-{{- end -}}
-{{- if and (hugo.IsProduction) (.context.Site.Params.gtagId) -}}
-  {{ partial "google-analytics-gtag-async.html" .context }}
-{{- end -}}
+
+{{- /* Only load js and css resources once (in main footer__base) */ -}}
+{{ if not (eq .footerClassModifier "sidebar") }}
+  {{- partial "medium-zoom.html" .context -}}
+  {{- if (hasPrefix .context.Site.Config.Services.GoogleAnalytics.ID "G-") -}}
+    {{- template "_internal/google_analytics.html" .context -}}
+  {{- end -}}
+  {{- if and (hugo.IsProduction) (.context.Site.Params.gtagId) -}}
+    {{ partial "google-analytics-gtag-async.html" .context }}
+  {{- end -}}
+
+  {{- /* JavaScript Bundle for Footer */ -}}
+  {{- $jsBuildOptions := dict "target" "es6" -}}
+  {{- if hugo.IsProduction -}}
+    {{- $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") -}}
+  {{- end -}}
+
+  {{- $jsBundle := slice -}}
+
+  {{- /* Defer loading header nav-menu JS logic since it's not critical  */ -}}
+  {{- with resources.Get "js/anatole-header.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Defer loading TOC logic in footer since it's not critical */ -}}
+  {{- with resources.Get "js/toc.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Defer loading Search logic in footer since it's not critical */ -}}
+  {{- with resources.Get "js/flexsearch.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Conditionally include share via navigator button logic */ -}}
+  {{- if and (gt (len .context.Site.Params.shareIcons) 0) (ne .context.Params.noShare true) -}}
+    {{- with resources.Get "js/share.js" -}}
+      {{- $jsBundle = $jsBundle | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Include thumbnail loader at the end to prioritize behavior over img quality */ -}}
+  {{- with resources.Get "js/thumbnail-hd-loader.js" -}}
+    {{- $jsBundle = $jsBundle | append . -}}
+  {{- end -}}
+
+  {{- /* Bundle, build, and inline all footer JS to circumvent network round-trip latency */ -}}
+  {{- if gt (len $jsBundle) 0 -}}
+    {{- $bundledJS := $jsBundle | resources.Concat "js/footer-bundle.js" | js.Build $jsBuildOptions -}}
+    {{- if hugo.IsProduction -}}
+      {{- $bundledJS = $bundledJS | resources.Fingerprint "sha256" -}}
+    {{- end -}}
+    <script type="text/javascript" {{ if hugo.IsProduction }}integrity="{{ $bundledJS.Data.Integrity }}"{{ end }}>
+      {{- $bundledJS.Content | safeJS -}}
+    </script>
+  {{- end -}}
+{{ end }}

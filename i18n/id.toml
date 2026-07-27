@@ -9,11 +9,11 @@ one = "satu menit membaca"
 other = "{{ .Count }} menit membaca"
 
 [old_content_warning]
-one = "Peringatan: postingan ini berumur lebih dari {{ .Count }} hari. Informasi nya mungkin sudah kadaluwarsa ."
-other = "Peringatan: postingan ini berumur lebih dari {{ .Count }} hari. Informasi nya mungkin sudah kadaluwarsa ."
+one = "Peringatan: postingan ini berumur lebih dari {{ .Count }} tahun. Informasi nya mungkin sudah kadaluwarsa ."
+other = "Peringatan: postingan ini berumur lebih dari {{ .Count }} tahun. Informasi nya mungkin sudah kadaluwarsa ."
 
 [page_not_found]
-other = "Halaman tidak ditemukan." 
+other = "Halaman tidak ditemukan."
 
 [page_does_not_exist]
 other = "Maaf, halaman ini tidak tersedia."
@@ -37,7 +37,7 @@ other = "Nama"
 other = "Email"
 
 [message]
-other = "Pesan" 
+other = "Pesan"
 
 [warning]
 other = "Peringatan"

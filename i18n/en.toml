@@ -5,12 +5,12 @@ other = "category"
 other = "tag"
 
 [reading_time]
-one = "One-minute read"
-other = "{{ .Count }}-minute read"
+one = "1m read"
+other = "{{ .Count }}m read"
 
 [old_content_warning]
-one = "Warning: This post is over {{ .Count }} day old. The information may be out of date."
-other = "Warning: This post is over {{ .Count }} days old. The information may be out of date."
+one = "**Warning**: This post is over {{ .Count }} year old. The information may be out of date."
+other = "**Warning**: This post is over {{ .Count }} years old. The information may be out of date."
 
 [page_not_found]
 other = "Page Not Found"
@@ -22,7 +22,7 @@ other = "Sorry, this page does not exist."
 other = "You can head back to <a href=\"{{ . }}\">homepage</a>."
 
 [comments]
-other = "comments"
+other = "Comments"
 
 [send]
 other = "Send"
@@ -37,7 +37,7 @@ other = "Name"
 other = "Email"
 
 [message]
-other = "Message" 
+other = "Message"
 
 [warning]
 other = "Warning"
@@ -48,6 +48,33 @@ other = "Info"
 [update]
 other = "Update"
 
+[just_now]
+other = "Just now"
+
+[minutes_ago]
+one = "{{ .Count }}m ago"
+other = "{{ .Count }}m ago"
+
+[hours_ago]
+one = "{{ .Count }}h ago"
+other = "{{ .Count }}h ago"
+
+[days_ago]
+one = "{{ .Count }}d ago"
+other = "{{ .Count }}d ago"
+
+[weeks_ago]
+one = "{{ .Count }}w ago"
+other = "{{ .Count }}w ago"
+
+[months_ago]
+one = "{{ .Count }}mo ago"
+other = "{{ .Count }}mo ago"
+
+[years_ago]
+one = "{{ .Count }}y ago"
+other = "{{ .Count }}y ago"
+
 [series_posts]
 other = "Posts in this series"
 
@@ -56,3 +83,27 @@ other = "Related Posts"
 
 [toc]
 other = "Table of contents"
+
+[page_num_posts]
+other = "Page {{ . }} posts"
+
+[contact]
+other = "Send me a message"
+
+[newsletter]
+other = "Join me Newsletter"
+
+[loading]
+other = "Loading..."
+
+[while_you_wait]
+other = "While you wait, try these..."
+
+[no_results]
+other = "No results for \"{{ . }}.\""
+
+[feeling_lucky]
+other = "Feeling lucky?"
+
+[try_suggestions]
+other = "You might like these..."

@@ -1,9 +1,18 @@
 @use 'modules/color_theme' as color;
 @use 'modules/config' as conf;
 @use 'modules/variables' as var;
+@use 'modules/navpos' as navpos;
 
 .post {
   margin: 30px;
+
+  @include navpos.navpos() {
+    scroll-margin-top: navpos.navpos('scroll-margin-mobile');
+
+    @include conf.desktop {
+      scroll-margin-top: navpos.navpos('scroll-margin-desktop');
+    }
+  }
 
   @include color.themed() {
     background-color: color.t('accent');
@@ -11,23 +20,25 @@
 
   &__meta {
     display: flex;
+    flex-wrap: wrap;
     list-style: none;
     padding: 0;
+    gap: 1em;
+
+    .post__content & {
+      line-height: 1.1em;
+    }
 
     &-item {
-      &:not(:last-child) {
-        margin-right: 1.25rem;
-      }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.4em;
     }
 
     &-icon {
-      @include conf.ltr {
-        margin-right: 2px;
-      }
-
-      @include conf.rtl {
-        margin-left: 2px;
-      }
+      position: relative;
+      top: -2px;
     }
 
     &-text {
@@ -48,16 +59,113 @@
     height: var.$thumbnail-height;
     object-fit: cover;
     display: block;
+    transition: opacity 0.2s ease;
+
+    @include conf.mobile {
+      height: var.$thumbnail-sm-height;
+    }
+
+    // HD loading state
+    &.hd-loading {
+      // Subtle visual indication that HD is loading
+      opacity: 0.98;
+    }
 
     &-wrapper {
-      border-radius: 2px;
+      border-radius: 4px;
       width: 100%;
       margin-bottom: 1em;
       overflow: hidden;
       transition: box-shadow 0.3s ease;
+      position: relative;
 
       @include color.themed() {
         box-shadow: color.t('shadow');
+      }
+    }
+
+    &-overlay {
+      position: absolute;
+      cursor: default;
+      pointer-events: none;
+      bottom: 0;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding-top: 20px;
+      font-weight: 600;
+
+      @include color.themed() {
+        background: linear-gradient(0, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+      }
+
+      @include conf.mobile {
+        flex-direction: column-reverse;
+        height: 100%;
+
+        @include color.themed() {
+          background: linear-gradient(0, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
+        }
+      }
+
+      &-icon {
+        position: relative;
+        top: 2px;
+
+        & + span {
+          margin-left: 1px;
+        }
+      }
+
+      a {
+        pointer-events: all;
+      }
+
+      .left,
+      .right,
+      .middle {
+        display: flex;
+        align-content: end;
+        flex-wrap: wrap;
+        flex-shrink: 1;
+        width: calc(100% - 10px);
+      }
+
+      .left {
+        gap: 5px;
+        padding: 6px 8px;
+        text-wrap: nowrap;
+        color: #eee;
+
+        a {
+          color: #eee;
+
+          &:hover {
+            @include color.themed() {
+              color: color.t('info');
+            }
+          }
+        }
+      }
+
+      .right {
+        text-align: right;
+        justify-content: end;
+        padding: 5px;
+        flex-shrink: 1;
+        text-wrap: nowrap;
+        width: auto;
+
+        .category {
+          font-size: 1.2rem;
+          margin: 3px;
+          text-wrap: nowrap;
+        }
+      }
+
+      .middle {
+        flex: 1;
+        pointer-events: none;
       }
     }
   }
@@ -70,10 +178,54 @@
     }
 
     .chroma {
-      @include color.themed() {
-        background-color: color.t('primary-lighter');
-        display: block;
-        border-bottom: 1px solid color.t('primary-lighter');
+      display: block;
+    }
+
+    /* Prevent ios font scaling issue */
+    .chroma * {
+      -webkit-text-size-adjust: none;
+    }
+
+    .upper {
+      text-transform: uppercase;
+    }
+
+    &-title:has(+ p) {
+      margin-bottom: 0px;
+    }
+
+    hr {
+      height: 1px;
+      width: 100%;
+      margin: 1.5em auto;
+      position: relative;
+      overflow: visible;
+      border: 0;
+      background: adjust-color(color.t('primary-light'), $alpha: -0.8);
+    }
+
+    /* Youtube Video Embed Styles */
+    div:not(.g-recaptcha):has(> iframe) {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+    div iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .gallery-wrapper,
+    div:not(.g-recaptcha):has(> iframe:not([title='reCAPTCHA'])) {
+      @include conf.mobile {
+        position: relative;
+        left: -30px;
+        width: calc(100% + 60px);
       }
     }
 
@@ -84,18 +236,36 @@
     pre {
       padding: 5px;
       overflow-x: auto;
+      position: relative;
 
-      @include color.themed() {
-        background-color: color.t('primary-lighter');
+      @include conf.mobile {
+        width: calc(100% + 50px);
+        left: -30px;
       }
     }
 
-    h1 {
-      $font-size-h1: 3.6rem;
+    h1,
+    h2,
+    h3,
+    h4 {
+      @include navpos.navpos() {
+        scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') - 5px);
 
+        @include conf.desktop {
+          scroll-margin-top: calc(navpos.navpos('scroll-margin-desktop') - 10px);
+        }
+      }
+    }
+
+    $font-size-h1: 3.6rem;
+    $font-size-h2: 2.4rem;
+    $font-size-h3: 2.1rem;
+    $font-size-h4: 1.9rem;
+
+    h1 {
       font-size: $font-size-h1;
+      font-weight: 200;
       letter-spacing: 1px;
-      line-height: 1;
 
       a {
         font-size: $font-size-h1;
@@ -107,12 +277,9 @@
     }
 
     h2 {
-      $font-size-h2: 2.4rem;
-
       font-size: $font-size-h2;
-      font-weight: 600;
+      font-weight: 400;
       letter-spacing: 1px;
-      line-height: 1;
 
       a {
         font-size: $font-size-h2;
@@ -124,15 +291,26 @@
     }
 
     h3 {
-      $font-size-h3: 2rem;
-
       font-size: $font-size-h3;
       font-weight: 600;
       letter-spacing: 1px;
-      line-height: 1;
 
       a {
         font-size: $font-size-h3;
+
+        @include color.themed() {
+          color: color.t('primary');
+        }
+      }
+    }
+
+    h4 {
+      font-size: $font-size-h4;
+      font-weight: 1000;
+      letter-spacing: 1px;
+
+      a {
+        font-size: $font-size-h4;
 
         @include color.themed() {
           color: color.t('primary');
@@ -152,6 +330,65 @@
       margin-left: auto;
       margin-right: auto;
       max-width: 100%;
+      object-fit: contain;
+      transition: opacity 0.2s ease;
+      position: relative;
+
+      // HD loading state for any image with data-hd-src
+      &[data-hd-src].hd-loading {
+        filter: brightness(0.98);
+      }
+
+      @include conf.mobile {
+        max-width: calc(100% + 60px);
+        width: calc(100% + 60px);
+        height: auto;
+        left: -30px;
+      }
+
+      &.inline {
+        display: inline-block;
+        max-width: 100%;
+        width: revert-layer;
+        left: 0;
+      }
+    }
+
+    &-icon {
+      position: relative;
+      top: 2px;
+    }
+
+    blockquote {
+      @include conf.mobile {
+        padding: 1px 30px 1px 11px;
+        position: relative;
+        left: -30px;
+        width: calc(100% + 14px);
+      }
+
+      img {
+        margin-bottom: 1em;
+
+        @include conf.mobile {
+          max-width: calc(100% - 2.2em);
+          left: unset;
+          margin-left: 2.2em;
+        }
+      }
+
+      a {
+        padding: 2px 0;
+
+        @include color.themed() {
+          color: color.t('primary-dark');
+          border-bottom: 2px solid color.t('primary');
+        }
+
+        &:hover {
+          border-color: transparent;
+        }
+      }
     }
 
     figure {
@@ -159,6 +396,16 @@
       height: auto;
       margin: 0 auto;
       text-align: center;
+
+      &.inline {
+        display: inline-block;
+
+        img {
+          max-width: 100%;
+          width: revert-layer;
+          left: 0;
+        }
+      }
 
       &.big {
         max-width: 87.5%;
@@ -207,14 +454,19 @@
           }
         }
       }
+
+      /** Avoid stretching imgs with fixed height */
+      img {
+        max-height: fit-content;
+      }
     }
   }
 
   &__footer {
-    padding: 12px 0;
+    padding: 0 0 12px 0;
 
     @include color.themed() {
-      border-bottom: color.t('border');
+      border-bottom: 1px solid adjust-color(color.t('primary-light'), $alpha: -0.8);
     }
 
     &-date {
@@ -229,6 +481,12 @@
         margin-left: 10px;
         margin-right: 5px;
       }
+    }
+  }
+
+  &:only-of-type {
+    .post__footer {
+      padding: 12px 0;
     }
   }
 }

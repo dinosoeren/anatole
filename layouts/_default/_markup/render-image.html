@@ -1,0 +1,12 @@
+{{- $imageOpts := dict
+  "src" .Destination
+  "alt" .PlainText
+  "caption" .Title
+  "page" .Page
+  "loading" "lazy"
+  "fetchpriority" "low"
+  "height" .Attributes.Height
+  "width" .Attributes.Width
+  "class" .Attributes.Class
+-}}
+{{- partial "image.html" $imageOpts -}}

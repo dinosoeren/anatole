@@ -7,3 +7,7 @@ demo/
 exampleSite/public/
 .DS_Store
 public/
+dart-sass/*
+
+# Local Netlify folder
+.netlify

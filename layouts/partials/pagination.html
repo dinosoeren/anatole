@@ -4,8 +4,8 @@
     {{ $.Scratch.Set "hasNextDots" false }}
     {{ if .Paginator.HasPrev }}
       <li class="pagination__list-item">
-        <a class="page-link" href="{{ .Paginator.Prev.URL }}">
-          <i class="fa fa-angle-left" aria-label="Previous"></i>
+        <a class="page-link" href="{{ .Paginator.Prev.URL }}" aria-label="Previous">
+          {{ partial "icons/icon" (dict "vendor" "fas" "name" "angle-left" "className" "icon") }}
         </a>
       </li>
     {{ end }}
@@ -25,10 +25,10 @@
       {{ else }}
         {{ if and (not ($.Scratch.Get "hasPrevDots")) (lt .PageNumber $.Paginator.PageNumber) }}
           {{ $.Scratch.Set "hasPrevDots" true }}
-          <span class="page-link dots">&hellip;</span>
+          <li class="pagination__list-item page-link dots">&hellip;</li>
         {{ else if and (not ($.Scratch.Get "hasNextDots")) (gt .PageNumber $.Paginator.PageNumber) }}
           {{ $.Scratch.Set "hasNextDots" true }}
-          <span class="page-link dots">&hellip;</span>
+          <li class="pagination__list-item page-link dots">&hellip;</li>
         {{ end }}
 
       {{ end }}
@@ -36,8 +36,8 @@
     {{ end }}
     {{ if .Paginator.HasNext }}
       <li class="pagination__list-item">
-        <a class="page-link" href="{{ .Paginator.Next.URL }}">
-          <i class="fa fa-angle-right" aria-label="Next"></i>
+        <a class="page-link" href="{{ .Paginator.Next.URL }}" aria-label="Next">
+          {{ partial "icons/icon" (dict "vendor" "fas" "name" "angle-right" "className" "icon") }}
         </a>
       </li>
     {{ end }}

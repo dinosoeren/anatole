@@ -1,4 +1,6 @@
 @use 'modules/color_theme' as color;
+@use 'modules/config' as conf;
+@use 'modules/navpos' as navpos;
 
 .archive {
   margin: 30px;
@@ -8,6 +10,14 @@
     font-weight: 600;
     line-height: 2.2em;
 
+    @include navpos.navpos() {
+      scroll-margin-top: calc(navpos.navpos('scroll-margin-mobile') - 5px);
+
+      @include conf.desktop {
+        scroll-margin-top: calc(navpos.navpos('scroll-margin-desktop') - 10px);
+      }
+    }
+
     @include color.themed() {
       color: color.t('primary');
     }
@@ -15,12 +25,19 @@
 
   &__list {
     padding: 0;
+    line-height: 1.125em !important;
 
     &-item {
       display: flex;
       justify-content: space-between;
       padding-bottom: 5px;
       list-style-type: none;
+      align-items: center;
+    }
+
+    &-icon {
+      position: relative;
+      top: 2px;
     }
 
     &-date {
@@ -32,16 +49,37 @@
     }
 
     &-title {
-      display: inline-block;
+      display: flex;
       flex: 0.96;
+      gap: 12px;
+      align-items: center;
+
+      &.styled {
+        text-transform: uppercase;
+        font-weight: 500;
+      }
 
       @include color.themed() {
-        color: color.t('primary');
+        color: color.t('primary') !important;
       }
       &:hover {
         @include color.themed() {
-          color: color.t('info');
+          color: color.t('info') !important;
         }
+      }
+    }
+
+    &-image {
+      left: 0 !important;
+      width: 48px !important;
+      max-width: unset !important;
+      height: 48px !important;
+      object-fit: cover !important;
+      border-radius: 4px;
+      margin: 0 !important;
+
+      @include color.themed() {
+        box-shadow: color.t('shadow');
       }
     }
   }

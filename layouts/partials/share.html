@@ -1,0 +1,38 @@
+{{ $link := .Permalink }}
+{{ if .Params.redirectUrl }}
+  {{ $link = .Params.redirectUrl }}
+{{ end }}
+
+
+<div class="share-buttons">
+  {{ range $index, $icon := .Site.Params.shareIcons }}
+    {{ $attrs := newScratch }}
+    {{ if hasPrefix $icon.name "share" }}
+      {{ $attrs.Set "role" "button" }}
+      {{ $attrs.Set "class" "share-button" }}
+      {{ $attrs.Set "data-share-url" $link }}
+      {{ $attrs.Set "data-share-title" ($.Title | plainify) }}
+      {{ $attrs.Set "data-share-text" ($.Summary | plainify) }}
+    {{ else }}
+      {{ $url := $icon.url }}
+      {{ $url = replace $url ":url" ($link | urlquery) }}
+      {{ $url = replace $url ":title" ($.Title | plainify | urlquery) }}
+      {{ $url = replace $url ":summary" ($.Summary | plainify | urlquery) }}
+      {{ $url = replace $url ":source" ($.Site.Title | plainify | urlquery) }}
+      {{ $attrs.Set "href" $url }}
+      {{ $attrs.Set "target" "_blank" }}
+      {{ $attrs.Set "rel" "noopener noreferrer" }}
+    {{ end }}
+
+
+    <a
+      title="{{ $icon.title }}"
+      {{ with $icon.colorIndex }}data-color-index="{{ . }}"{{ end }}
+      {{ range $key, $value := $attrs.Values }}
+        {{ printf `%s="%s"` $key $value | safeHTMLAttr }}
+      {{ end }}
+    >
+      {{ partial "icons/icon" (dict "vendor" $icon.vendor "name" $icon.icon) }}
+    </a>
+  {{ end }}
+</div>

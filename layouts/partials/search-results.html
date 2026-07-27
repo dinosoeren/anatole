@@ -1,0 +1,20 @@
+{{- $position := .position | default "below" -}}
+{{- $id := printf "header__search-suggestions--%s" $position -}}
+{{- $className := printf "search__suggestions--%s" $position -}}
+{{- if eq $position "sidebar" -}}
+  {{- $id = "sidebar__search-suggestions" -}}
+  {{- $className = "" -}}
+{{- end -}}
+<div id="{{ $id }}" class="search__suggestions {{ $className }} search__suggestions--hidden">
+  <div class="search__no-results">
+    <strong>{{ i18n "loading" | default "Loading..." }}</strong>
+    {{ if or (and (gt (len (.page.Site.RegularPages.Related .page)) 0) (ne .page.Site.Params.flexsearch.suggestRelatedPostsWhenNoResults false)) (and (eq (len (.page.Site.RegularPages.Related .page)) 0) (ne .page.Site.Params.flexsearch.suggestRecentPostsWhenNoResults false)) }}
+      {{ i18n "while_you_wait" | default "While you wait, try these..." }}
+    {{ end }}
+  </div>
+  {{ if gt (len (.page.Site.RegularPages.Related .page)) 0 }}
+    {{- partial "search-results-related.html" .page -}}
+  {{ else }}
+    {{- partial "search-results-recent.html" .page -}}
+  {{ end }}
+</div>

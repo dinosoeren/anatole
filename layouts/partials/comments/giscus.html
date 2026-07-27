@@ -1,45 +1,37 @@
-<script>
-    const getStoredTheme = () => localStorage.getItem("theme") === "dark" ? "dark" : "light";
+<span
+  id="giscus-data"
+  data-repo="{{ .Site.Params.giscus.repo }}"
+  data-repo-id="{{ .Site.Params.giscus.repoID }}"
+  data-category="{{ .Site.Params.giscus.category }}"
+  data-category-id="{{ .Site.Params.giscus.categoryID }}"
+  data-mapping="{{ .Site.Params.giscus.mapping | default "pathname" }}"
+  data-strict="{{ .Site.Params.giscus.strict | default "0" }}"
+  data-reactions-enabled="{{ .Site.Params.giscus.reactionsEnabled | default "1" }}"
+  data-emit-metadata="{{ .Site.Params.giscus.emitMetadata | default "0" }}"
+  data-input-position="{{ .Site.Params.giscus.inputPosition | default "bottom" }}"
+  data-lang="{{ .Site.Params.giscus.lang | default "en" }}"
+  data-loading="{{ .Site.Params.giscus.loading | default "lazy" }}"
+></span>
 
-    const setGiscusTheme = () => {
-        const sendMessage = (message) => {
-            const iframe = document.querySelector('iframe.giscus-frame');
-            if (iframe) {
-                iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-            }
-        }
-        sendMessage({ setConfig: { theme: getStoredTheme() } })
-    }
+{{- /* JavaScript Bundle */ -}}
+{{- $jsBuildOptions := dict "target" "es6" -}}
+{{- if hugo.IsProduction -}}
+  {{- $jsBuildOptions = $jsBuildOptions | merge (dict "minify" "true") -}}
+{{- end -}}
+{{- $jsBundle := slice -}}
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const giscusAttributes = {
-            "src": "https://giscus.app/client.js",
-            "data-repo": "{{ .Site.Params.giscus.repo }}",
-            "data-repo-id": "{{ .Site.Params.giscus.repoID }}",
-            "data-category": "{{ .Site.Params.giscus.category }}",
-            "data-category-id": "{{ .Site.Params.giscus.categoryID }}",
-            "data-mapping": "{{ .Site.Params.giscus.mapping | default "pathname" }}",
-            "data-strict": "{{ .Site.Params.giscus.strict | default "0" }}",
-            "data-reactions-enabled": "{{ .Site.Params.giscus.reactionsEnabled | default "1" }}",
-            "data-emit-metadata": "{{ .Site.Params.giscus.emitMetadata | default "0" }}",
-            "data-input-position": "{{ .Site.Params.giscus.inputPosition | default "bottom" }}",
-            "data-theme": getStoredTheme(),
-            "data-lang": "{{ .Site.Params.giscus.lang | default "en" }}",
-            "data-loading": "{{ .Site.Params.giscus.loading | default "lazy" }}",
-            "crossorigin": "anonymous",
-            "async": "",
-        };
+{{- /* Add giscus.js to bundle */ -}}
+{{- with resources.Get "js/giscus.js" -}}
+  {{- $jsBundle = $jsBundle | append . -}}
+{{- end -}}
 
-        // Dynamically create script tag.
-        const giscusScript = document.createElement("script");
-        Object.entries(giscusAttributes).forEach(
-            ([key, value]) => giscusScript.setAttribute(key, value));
-        document.getElementById("comment").appendChild(giscusScript);
-
-        // Update giscus theme when the theme switcher is clicked.
-        const themeSwitcher = document.querySelector(".themeswitch");
-        if (themeSwitcher) {
-            themeSwitcher.addEventListener("click", setGiscusTheme);
-        }
-    });
-</script>
+{{- /* Bundle and inline giscus.js */ -}}
+{{- if gt (len $jsBundle) 0 -}}
+  {{- $bundledJS := $jsBundle | resources.Concat "js/giscus-bundle.js" | js.Build $jsBuildOptions -}}
+  {{- if hugo.IsProduction -}}
+    {{- $bundledJS = $bundledJS | resources.Fingerprint "sha256" -}}
+  {{- end -}}
+    <script type="text/javascript" {{ if hugo.IsProduction }}integrity="{{ $bundledJS.Data.Integrity }}"{{ end }}>
+      {{- $bundledJS.Content | safeJS -}}
+    </script>
+{{- end -}}

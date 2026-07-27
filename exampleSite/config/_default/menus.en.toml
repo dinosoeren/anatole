@@ -20,26 +20,27 @@
   name = "About"
   weight = 400
   identifier = "about"
-  url = "/about/"
 
   [[main]]
-  name = "Accomplishments"
+  name = "Biography"
   weight = 500
-  identifier = "accomplishments"
+  identifier = "bio"
+  url = "/about/"
+  parent = "about"
 
   [[main]]
   name = "Awards"
   weight = 510
   identifier = "awards"
   url = "/awards/"
-  parent = "accomplishments"  
+  parent = "about"
 
   [[main]]
   name = "Certifications"
   weight = 520
   identifier = "certifications"
   url = "/certifications/"
-  parent = "accomplishments"
+  parent = "about"
 
   [[main]]
   name = "Contact"

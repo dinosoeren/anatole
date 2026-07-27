@@ -1,0 +1,181 @@
+<!-- Image resize data partial - returns dict with image attributes -->
+<!-- For use in both non-rendering and pre-rendering contexts -->
+<!-- e.g. in the search index json and image partial -->
+
+{{- /* Initialize return data structure */ -}}
+{{- $imageData := dict -}}
+
+{{- /* Process main image source */ -}}
+{{- $u := urls.Parse (or .hdSrc .src) -}}
+{{- $src := $u.String -}}
+{{- $image := false -}}
+{{- $isAsset := false -}}
+{{- if not $u.IsAbs -}}
+  {{- if .page -}}
+    {{- with .page.Resources.Get $u.Path -}}
+      {{- $image = . -}}
+      {{- $src = .RelPermalink -}}
+      {{- $isAsset = true -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $image -}}
+    {{- with resources.Get $u.Path -}}
+      {{- $image = . -}}
+      {{- $src = .RelPermalink -}}
+      {{- $isAsset = true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Process HD source if provided */ -}}
+{{- $hdSrc := "" -}}
+{{- $hdImg := false -}}
+{{- if .hdSrc -}}
+  {{- $hdu := urls.Parse .hdSrc -}}
+  {{- $hdSrc = $u.String -}}
+  {{- if not $hdu.IsAbs -}}
+    {{- if .page -}}
+      {{- with .page.Resources.Get $hdu.Path -}}
+        {{- $hdImg = . -}}
+        {{- $hdSrc = .RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if not $hdImg -}}
+      {{- with resources.Get $hdu.Path -}}
+        {{- $hdImg = . -}}
+        {{- $hdSrc = .RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Set basic attributes */ -}}
+{{- $imageData = merge $imageData (dict "src" $src) -}}
+{{- if .alt -}}
+  {{- $imageData = merge $imageData (dict "alt" .alt) -}}
+{{- end -}}
+{{- if .class -}}
+  {{- $imageData = merge $imageData (dict "class" .class) -}}
+{{- end -}}
+{{- if $hdSrc -}}
+  {{- $imageData = merge $imageData (dict "hdSrc" $hdSrc) -}}
+{{- end -}}
+{{- if .loading -}}
+  {{- $imageData = merge $imageData (dict "loading" .loading) -}}
+{{- end -}}
+{{- if .fetchpriority -}}
+  {{- $imageData = merge $imageData (dict "fetchpriority" .fetchpriority) -}}
+{{- end -}}
+
+{{- /* Resize logic adapted from Gruvbox theme | MIT license */ -}}
+{{- /* https://github.com/schnerring/hugo-theme-gruvbox/blob/e37181494ba57cde994384fac8ef1becd3265fd0/layouts/partials/image.html */ -}}
+{{- /* Handle different image types */ -}}
+{{- if $u.IsAbs -}}
+  {{- /* External image - use provided dimensions or defaults */ -}}
+  {{- if .width -}}
+    {{- $imageData = merge $imageData (dict "width" .width) -}}
+  {{- end -}}
+  {{- if .height -}}
+    {{- $imageData = merge $imageData (dict "height" .height) -}}
+  {{- end -}}
+{{- else if $isAsset -}}
+  {{- if not $image -}}
+    {{- errorf "Image '%s' not found in page bundle or assets folder" $src -}}
+  {{- end -}}
+  {{- if eq $image.MediaType.SubType "svg" -}}
+    {{- /* SVG - no processing, use provided or image dimensions */ -}}
+    {{- if .width -}}
+      {{- $imageData = merge $imageData (dict "width" .width) -}}
+    {{- end -}}
+    {{- if .height -}}
+      {{- $imageData = merge $imageData (dict "height" .height) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- /* Processable image - calculate responsive sets */ -}}
+    {{- $minWidth := .page.Site.Params.imageResize.min | default 300 -}}
+    {{- $maxWidth := .page.Site.Params.imageResize.max | default 700 -}}
+    {{- $increment := .page.Site.Params.imageResize.increment | default 200 -}}
+    {{- $widths := seq $minWidth $increment $maxWidth -}}
+    {{- if lt $image.Width $maxWidth -}}
+      {{- $widths = $widths | append $image.Width -}}
+    {{- end -}}
+    {{- $widthsCount := len $widths -}}
+
+    {{- $sizes := slice -}}
+    {{- $srcSet := slice -}}
+    {{- $webpSrcSet := slice -}}
+    {{- range $i, $width := $widths -}}
+      {{- if ge $image.Width $width -}}
+        {{- if eq $i (sub $widthsCount 1) -}}
+          {{- $sizes = $sizes | append (printf "%dpx" $width) -}}
+        {{- else -}}
+          {{- $maxWidth := (add $width (sub $increment 1)) -}}
+          {{- $sizes = $sizes | append (printf "(max-width: %dpx) %dpx" $maxWidth $width) -}}
+        {{- end -}}
+        {{- $isWebP := eq "webp" $image.MediaType.SubType -}}
+        {{- $isGif := eq "gif" $image.MediaType.SubType -}}
+        {{- /* Hugo does not support resizing animated Gifs, WebP, etc */ -}}
+        {{- $isAnimated := or $isGif (and $isWebP $image.Content (findRE "ANIM" $image.Content)) -}}
+        {{- if not $isAnimated -}}
+          {{- $resized := $image.Resize (printf "%dx" $width) -}}
+          {{- $srcSet = $srcSet | append (printf "%s %dw" $resized.RelPermalink $resized.Width) -}}
+        {{- end -}}
+        {{- if and (not $isGif) (not $isWebP) -}}
+          {{- /* If image format is not Gif or WebP, add conversions */ -}}
+          {{- $webp := $image.Resize (printf "%dx webp" $width) -}}
+          {{- $webpSrcSet = $webpSrcSet | append (printf "%s %dw" $webp.RelPermalink $webp.Width) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* Add responsive attributes */ -}}
+    {{- if $srcSet -}}
+      {{- $imageData = merge $imageData (dict "srcset" (delimit $srcSet ",")) -}}
+    {{- end -}}
+    {{- if $sizes -}}
+      {{- $imageData = merge $imageData (dict "sizes" (delimit $sizes ",")) -}}
+    {{- end -}}
+    {{- if $webpSrcSet -}}
+      {{- $imageData = merge $imageData (dict "webpSrcset" (delimit $webpSrcSet ",")) -}}
+    {{- end -}}
+
+    {{- /* Set dimensions */ -}}
+    {{- if .width -}}
+      {{- $imageData = merge $imageData (dict "width" .width) -}}
+    {{- else -}}
+      {{- $imageData = merge $imageData (dict "width" (string $image.Width)) -}}
+    {{- end -}}
+    {{- if .height -}}
+      {{- $imageData = merge $imageData (dict "height" .height) -}}
+    {{- else -}}
+      {{- $imageData = merge $imageData (dict "height" (string $image.Height)) -}}
+    {{- end -}}
+  {{- end -}}
+{{- else -}}
+  {{- /* Static image - can't be resized */ -}}
+  {{- $imageConfig := false -}}
+  {{- $src = .src | relURL -}}
+  {{- if fileExists (path.Join "static" .src) -}}
+    {{- $imageConfig = images.Config (path.Join "static" .src) -}}
+  {{- else if not (fileExists $src) -}}
+    {{- warnf "Image '%s' not found in static/ folder or site root" $src -}}
+  {{- end -}}
+
+  {{- /* Update src for static images */ -}}
+  {{- $imageData = merge $imageData (dict "src" $src) -}}
+
+  {{- /* Set dimensions for static images */ -}}
+  {{- if .width -}}
+    {{- $imageData = merge $imageData (dict "width" .width) -}}
+  {{- else if $imageConfig -}}
+    {{- $imageData = merge $imageData (dict "width" (string $imageConfig.Width)) -}}
+  {{- end -}}
+  {{- if .height -}}
+    {{- $imageData = merge $imageData (dict "height" .height) -}}
+  {{- else if $imageConfig -}}
+    {{- $imageData = merge $imageData (dict "height" (string $imageConfig.Height)) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Return the data dictionary */ -}}
+{{- return $imageData -}}

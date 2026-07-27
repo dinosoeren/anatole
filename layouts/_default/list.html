@@ -1,42 +1,75 @@
 {{ define "main" }}
-  <div
-    class="archive {{ with .Site.Params.doNotLoadAnimations }}
-      .
-    {{ else }}
-      animated fadeInDown
-    {{ end }}"
-  >
-    {{ range .Data.Pages.GroupByDate "2006" }}
-      <div class="archive__heading">{{ .Key }}</div>
-      {{ range .Pages }}
-        <ul class="archive__list">
-          <li class="archive__list-item">
-            {{ if (eq .Site.Params.disableArchiveTitleStyling true) }}
-              <a class="archive__list-title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Title }}</a>
-            {{ else }}
-              <a class="archive__list-title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ upper .Title }}</a>
-            {{ end }}
-            <div class="archive__list-date">
-              {{ if isset .Site.Params "listdateformat" }}
-                {{ if .Site.Params.localizedDates }}
-                  {{ time.Format .Site.Params.listDateFormat .Date }}
-                {{ else }}
-                  {{ .Date.Format .Site.Params.listDateFormat }}
-                {{ end }}
-
-              {{ else }}
-                {{ if .Site.Params.localizedDates }}
-                  {{ time.Format "Jan 2" .Date }}
-                {{ else }}
-                  {{ .Date.Format "Jan 2" }}
-                {{ end }}
-
-              {{ end }}
-            </div>
-          </li>
-        </ul>
+  {{ if gt .Pages.Len 0 }}
+    <div
+      class="archive {{ with .Site.Params.doNotLoadAnimations }}
+        .
+      {{ else }}
+        animated fadeInDown
+      {{ end }}"
+    >
+      {{ $taxonCountMap := dict }}
+      {{ if eq .Kind "taxonomy" }}
+        {{ $taxonomyName := .Data.Plural }}
+        {{ $taxonomy := cond (isset $.Site.Taxonomies $taxonomyName) (index $.Site.Taxonomies $taxonomyName) (slice) }}
+        {{ range $taxonomy.ByCount }}
+          {{ $taxonCountMap = merge $taxonCountMap (dict .Page.Title (dict "count" .Count "page" .Page)) }}
+        {{ end }}
       {{ end }}
 
+      {{ if and .Site.Params.listTaxonomyByCount (eq .Kind "taxonomy") }}
+        {{- $headerAnchor := .Title | anchorize -}}
+        <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Title }}</h2>
+        {{ $sortedTaxons := slice }}
+        {{ range $key, $value := $taxonCountMap }}
+          {{ $sortedTaxons = $sortedTaxons | append (dict "name" $key "count" $value.count "page" $value.page) }}
+        {{ end }}
+        {{ $sortedTaxons = sort $sortedTaxons "count" "desc" }}
+        {{ range $sortedTaxons }}
+          <ul class="archive__list">
+            <li class="archive__list-item">
+              {{ $linkClass := "styled" }}
+              {{ if (eq $.Site.Params.disableArchiveTitleStyling true) }}
+                {{ $linkClass = "" }}
+              {{ end }}
+              <a class="archive__list-title {{ $linkClass }}" href="{{ .page.Permalink }}" title="{{ .name }}">
+                {{ .name }}
+              </a>
+              <div class="archive__list-date">
+                <span class="sidebar__post-link-count">({{ .count }})</span>
+              </div>
+            </li>
+          </ul>
+        {{ end }}
+      {{ else }}
+        {{ range .Pages.GroupByDate "2006" }}
+          {{- $headerAnchor := .Key | anchorize -}}
+          <h2 class="archive__heading" id="{{ $headerAnchor }}">{{ .Key }}</h2>
+          {{ partial "postlist.html" .Pages }}
+        {{ end }}
+      {{ end }}
+    </div>
+  {{ else }}
+    {{ if .Content }}
+      <div
+        class="post {{ with .Site.Params.doNotLoadAnimations }}
+          .
+        {{ else }}
+          animated fadeInDown
+        {{ end }}"
+      >
+        <div class="post__content">
+          {{ if (eq .Site.Params.disableTitleCapitalization true) }}
+            <h1>{{ .Title }}</h1>
+          {{ else }}
+            <h1>{{ title .Title }}</h1>
+          {{ end }}
+
+          {{ .Content | safeHTML }}
+        </div>
+      </div>
     {{ end }}
-  </div>
+
+    {{ partial "portfolio.html" . }}
+  {{ end }}
+
 {{ end }}

@@ -1,0 +1,120 @@
+{{- $position := .position | default "below" -}}
+{{- $idSuffix := cond (eq $position "above") "-above" "" -}}
+{{- $navId := cond (eq $position "above") "navMenuAbove" "navMenu" -}}
+
+
+<nav class="nav nav--{{ $position }}" id="{{ $navId }}">
+  <ul class="nav__list">
+    {{ $url := .page.RelPermalink }}
+    {{ range $menuId, $menuItem := .page.Site.Menus.main }}
+      {{ if $menuItem.HasChildren }}
+        <li class="nav__list-item">
+          <div class="optionswitch">
+            <input class="optionswitch__picker" type="checkbox" id="{{ $menuId }}{{ $idSuffix }}" hidden />
+
+            {{ $labelClass := "optionswitch__label" }}
+            {{ range $menuItem.Children }}
+              {{ if eq $url .URL }}
+                {{ $labelClass = "optionswitch__label nav__link--active" }}
+              {{ end }}
+            {{ end }}
+
+
+            <label class="{{ $labelClass }}" for="{{ $menuId }}{{ $idSuffix }}"
+              >{{ $menuItem.Name }}
+              {{ partial "icons/icon" (dict "vendor" "fas" "name" "angle-down" "className" "icon") }}</label
+            >
+
+            <div class="optionswitch__triangle"></div>
+            <ul class="optionswitch__list">
+              {{ range $menuItem.Children }}
+                {{ $active := eq $url .URL }}
+                <li class="optionswitch__list-item">
+                  {{ .Pre }}
+                  <a
+                    {{ if $active }}
+                      class="optionswitch__link optionswitch__link--active"
+                    {{ else }}
+                      class="optionswitch__link"
+                    {{ end }}
+                    href="{{ .URL }}"
+                    {{ if strings.HasPrefix .URL "http" }}
+                      target="_blank" rel="noopener noreferrer"
+                    {{ end }}
+                    title="{{ .Title }}"
+                    >{{ .Name }}</a
+                  >
+                </li>
+              {{ end }}
+            </ul>
+          </div>
+        </li>
+      {{ else }}
+        {{ $active := eq $url $menuItem.URL }}
+        <li class="nav__list-item">
+          {{ .Pre }}
+          <a
+            {{ if $active }}
+              class="nav__link nav__link--active"
+            {{ else }}
+              class="nav__link"
+            {{ end }}
+            href="{{ .URL }}"
+            {{ if strings.HasPrefix .URL "http" }}
+              target="_blank" rel="noopener noreferrer"
+            {{ end }}
+            title="{{ .Title }}"
+            >{{ $menuItem.Name }}</a
+          >
+        </li>
+      {{ end }}
+    {{ end }}
+  </ul>
+  <ul class="nav__list nav__list--end">
+    {{ if and .page.IsTranslated hugo.IsMultilingual }}
+      <li class="nav__list-item">
+        <div class="optionswitch">
+          <input class="optionswitch__picker" type="checkbox" id="languagepicker{{ $idSuffix }}" hidden />
+          <label class="optionswitch__label" for="languagepicker{{ $idSuffix }}"
+            >{{ .page.Site.Language.LanguageName }}
+            {{ partial "icons/icon" (dict "vendor" "fas" "name" "angle-down" "className" "icon") }}</label
+          >
+          <div class="optionswitch__triangle"></div>
+          <ul class="optionswitch__list">
+            {{ range $.page.Translations }}
+              <li class="optionswitch__list-item">
+                <a href="{{ .RelPermalink }}" title="{{ .Language.LanguageName }}"
+                  ><span
+                    {{ if eq . $.page.Site.Language }}
+                      class="active"
+                    {{ end }}
+                    aria-label="{{ i18n "ariaLanguage" }}{{ .Language.LanguageName }}"
+                    >{{ .Language.LanguageName }}</span
+                  >
+                </a>
+              </li>
+            {{ end }}
+          </ul>
+        </div>
+      </li>
+    {{ end }}
+    {{ if not .page.Site.Params.disableThemeSwitcher }}
+      <li class="nav__list-item">
+        <div class="themeswitch">
+          <a role="button" title="Switch Theme" aria-label="Switch theme"
+            >{{ partial "icons/icon" (dict "vendor" "fas" "name" "circle-half-stroke" "className" "icon") }}</a
+          >
+        </div>
+      </li>
+    {{ end }}
+    {{ if ne .page.Site.Params.disableNavPosSwitcher true }}
+      <li class="nav__list-item">
+        <div class="navpos-switch">
+          <a role="button" title="Switch Navigation Position" aria-label="Switch navigation position"
+            >{{ partial "icons/icon" (dict "vendor" "fas" "name" "arrows-up-down" "className" "icon") }}</a
+          >
+        </div>
+      </li>
+    {{ end }}
+  </ul>
+</nav>

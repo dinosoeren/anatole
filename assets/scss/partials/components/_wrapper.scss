@@ -54,6 +54,10 @@
 
     &--hidden {
       display: none;
+
+      & + .wrapper__main {
+        padding-top: 16px;
+      }
     }
   }
 }

@@ -1,0 +1,46 @@
+{{- /* Get recent posts from mainSections when no search results and not on a page */ -}}
+{{- if ne .Site.Params.flexSearch.suggestRecentPostsWhenNoResults false -}}
+  {{- $maxCount := .Site.Params.flexSearch.noResultsSuggestionCount | default 3 -}}
+  {{- $mainSections := .Site.Params.mainSections | default (slice "post") -}}
+
+  {{- /* Get recent posts from mainSections */ -}}
+  {{- $recentPosts := slice -}}
+  {{- range $section := $mainSections -}}
+    {{- $sectionPosts := where $.Site.RegularPages "Section" $section -}}
+    {{- $recentPosts = $recentPosts | append $sectionPosts -}}
+  {{- end -}}
+
+  {{- /* Sort by date and get the most recent ones */ -}}
+  {{- $recentPosts = sort $recentPosts "Date" "desc" | first $maxCount -}}
+
+  {{- with $recentPosts -}}
+    {{- range . -}}
+      {{- /* Create search suggestion item following flexsearch.js structure */ -}}
+      <a href="{{ .RelPermalink }}" class="search__suggestions-item related recent">
+        {{- /* Add thumbnail if available, using image.html partial directly */ -}}
+        {{- if .Params.thumbnail -}}
+          {{- $imageOpts := dict
+            "src" .Params.thumbnail
+            "hdSrc" .Params.thumbnailHd
+            "alt" .Title
+            "page" .Page
+            "loading" "lazy"
+            "class" "search__suggestions-thumbnail"
+            "width" "40"
+            "height" "40"
+          -}}
+          {{- partial "image.html" $imageOpts -}}
+        {{- end -}}
+
+        {{- /* Add title with same structure as flexsearch.js */ -}}
+        <div class="search__suggestions-title">
+          {{- .Title -}}
+          <span class="search__suggestions-separator"> | </span>
+          <span class="search__suggestions-lastmod" data-humanize-date="{{ .Date.Unix }}">
+            {{ partial "humanize-date.html" (time .Date) }}
+          </span>
+        </div>
+      </a>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

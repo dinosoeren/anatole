@@ -1,0 +1,44 @@
+{
+  "name": "anatole",
+  "version": "1.17.1",
+  "description": "Anatole is a beautiful minimalist two-column hugo theme based on farbox-theme-Anatole.",
+  "scripts": {
+    "build": "hugo --themesDir=../.. --source=exampleSite && shx rm -rf ./resources && shx cp -r ./exampleSite/resources ./resources && shx echo Done building resources.",
+    "dev": "hugo serve --themesDir=../.. --source=exampleSite",
+    "prettier": "npx prettier --write .",
+    "prepare": "husky",
+    "release": "release-it",
+    "setup": "npm install && npm run prepare",
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lxndrblz/anatole.git"
+  },
+  "keywords": [
+    "theme",
+    "hugo",
+    "farbox",
+    "anatole"
+  ],
+  "author": "Alexander Bilz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lxndrblz/anatole/issues"
+  },
+  "homepage": "https://github.com/lxndrblz/anatole#readme",
+  "dependencies": {
+    "flexsearch": "^0.7.43"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@release-it/conventional-changelog": "^8.0.2",
+    "husky": "^9.1.6",
+    "prettier": "^3.3.3",
+    "prettier-plugin-go-template": "^0.0.15",
+    "release-it": "^17.6.0",
+    "shx": "^0.3.4"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
